@@ -1,0 +1,31 @@
+imax 1
+jmax 5
+kmax *
+--------------- 
+bin 1 
+observation 953.00 
+------------------------------
+bin                1         1             1        1        1       1
+process            ggH700    vbfH700       WJets    TTbar    STop    VV 
+process            -1        0             1        2        3       4
+rate               51.33    9.79    596.35   247.92    41.80    95.16
+-------------------------------- 
+lumi     lnN       1.044     1.044         -        1.044   1.044   1.044
+QCDscale_ggH lnN   1.060     -             -        -       -       -
+pdf_gg       lnN   1.101     -             -        -       -       -
+hwwlnJ_pdfAcc_gg lnN 1.038   -             -        -       -       -
+QCDscale_vbfH lnN  -         1.008         -        -       -       -
+pdf_qqbar     lnN  -         1.042         -        -       -       -
+hwwlnJ_pdfAcc_vbf lnN -      1.008         -        -       -       -
+intf_ggH  lnN      1.100     -             -        -       -       -
+intf_vbfH lnN      -         1.500         -        -       -       -
+XS_TTbar lnN       -         -             -        1.063   -       -
+XS_STop  lnN       -         -             -        -       1.050   -
+XS_VV    lnN       -         -             -        -       -       1.100
+WJ_norm_el lnN     -         -             1.081    -       -       -
+JetMass_el lnN     -         -             1.011    1.006   1.020   1.008
+wtagger_el lnN     1.043     1.043         -        1.043   1.043   1.043
+btagger_el lnN     1.025     1.025         -        1.025   1.025   1.025
+trigger_el lnN     1.010     1.010         -        1.010   1.010   1.010
+eff_el   lnN       1.020     1.020         -        1.020   1.020   1.020
+Shape    lnN       -         -             1.087    -       -       -

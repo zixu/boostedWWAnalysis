@@ -1,0 +1,66 @@
+Combination of el=hwwlvj_ggH700_el_10_00_unbin.txt, mu=hwwlvj_ggH700_mu_10_00_unbin.txt
+imax 2 number of bins
+jmax 5 number of processes minus 1
+kmax 50 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *   el  hwwlvj_ggH700_el_10_00_workspace.root workspace4limit_:$PROCESS_el
+shapes *   mu  hwwlvj_ggH700_mu_10_00_workspace.root workspace4limit_:$PROCESS_mu
+----------------------------------------------------------------------------------------------------------------------------------
+bin          el      mu    
+observation  2200.0  2722.0
+----------------------------------------------------------------------------------------------------------------------------------
+bin                                  el         el         el         el         el         el         mu         mu         mu         mu         mu         mu       
+process                              vbfH700    ggH700     STop       WJets      VV         TTbar      vbfH700    ggH700     STop       WJets      VV         TTbar    
+process                              -1         0          1          2          3          4          -1         0          1          2          3          4        
+rate                                 12.8800    68.8100    86.3500    1384.0800  187.0700   528.9300   14.4500    78.7900    98.5400    1699.9100  217.1300   596.9500 
+----------------------------------------------------------------------------------------------------------------------------------
+JetMass_el              lnN          -          -          1.02       1.011      1.008      1.006      -          -          -          -          -          -        
+JetMass_mu              lnN          -          -          -          -          -          -          -          -          1.003      1.01       1.012      1.011    
+QCDscale_ggH            lnN          -          1.06       -          -          -          -          -          1.06       -          -          -          -        
+QCDscale_vbfH           lnN          1.008      -          -          -          -          -          1.008      -          -          -          -          -        
+WJ_norm_el              lnN          -          -          -          1.081      -          -          -          -          -          -          -          -        
+WJ_norm_mu              lnN          -          -          -          -          -          -          -          -          -          1.053      -          -        
+XS_STop                 lnN          -          -          1.05       -          -          -          -          -          1.05       -          -          -        
+XS_TTbar                lnN          -          -          -          -          -          1.063      -          -          -          -          -          1.063    
+XS_VV                   lnN          -          -          -          -          1.1        -          -          -          -          -          1.1        -        
+btagger_el              lnN          1.025      1.025      1.025      -          1.025      1.025      -          -          -          -          -          -        
+btagger_mu              lnN          -          -          -          -          -          -          1.025      1.025      1.025      -          1.025      1.025    
+eff_el                  lnN          1.02       1.02       1.02       -          1.02       1.02       -          -          -          -          -          -        
+eff_mu                  lnN          -          -          -          -          -          -          1.02       1.02       1.02       -          1.02       1.02     
+hwwlnJ_pdfAcc_gg        lnN          -          1.038      -          -          -          -          -          1.038      -          -          -          -        
+hwwlnJ_pdfAcc_vbf       lnN          1.008      -          -          -          -          -          1.008      -          -          -          -          -        
+intf_ggH                lnN          -          1.1        -          -          -          -          -          1.1        -          -          -          -        
+intf_vbfH               lnN          1.5        -          -          -          -          -          1.5        -          -          -          -          -        
+lumi                    lnN          1.044      1.044      1.044      -          1.044      1.044      1.044      1.044      1.044      -          1.044      1.044    
+pdf_gg                  lnN          -          1.101      -          -          -          -          -          1.101      -          -          -          -        
+pdf_qqbar               lnN          1.042      -          -          -          -          -          1.042      -          -          -          -          -        
+trigger_el              lnN          1.01       1.01       1.01       -          1.01       1.01       -          -          -          -          -          -        
+trigger_mu              lnN          -          -          -          -          -          -          1.01       1.01       1.01       -          1.01       1.01     
+wtagger_el              lnN          1.043      1.043      1.043      -          1.043      1.043      -          -          -          -          -          -        
+wtagger_mu              lnN          -          -          -          -          -          -          1.043      1.043      1.043      -          1.043      1.043    
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig4  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig5  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig4  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig7  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig6  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig1  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig0  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig3  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig2  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig1  param  0.0 1.4
+Deco_WJets0_sim_el_mlvj_eig0  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig3  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig2  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig4  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig5  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig6  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig7  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig0  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig1  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig2  param  0.0 1.4
+Deco_WJets0_sim_mu_mlvj_eig3  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_mu_mlvj_eig4  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_mu_mlvj_eig0  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_mu_mlvj_eig1  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_mu_mlvj_eig2  param  0.0 1.4
+Deco_WJets0_sb_lo_from_fitting_mu_mlvj_eig3  param  0.0 1.4

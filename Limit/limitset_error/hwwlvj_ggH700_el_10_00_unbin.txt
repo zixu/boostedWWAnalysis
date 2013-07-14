@@ -1,0 +1,45 @@
+imax 1
+jmax 5
+kmax *
+--------------- 
+shapes * * hwwlvj_ggH700_el_10_00_workspace.root workspace4limit_:$PROCESS_el
+--------------- 
+bin 1 
+observation 2200.00 
+------------------------------
+bin                1         1             1        1        1       1
+process            ggH700    vbfH700       WJets    TTbar    STop    VV 
+process            -1        0             1        2        3       4
+rate               68.81    12.88       1384.08   528.93    86.35    187.07 
+-------------------------------- 
+lumi     lnN       1.044     1.044         -        1.044   1.044   1.044
+QCDscale_ggH lnN   1.060     -             -        -       -       -
+pdf_gg       lnN   1.101     -             -        -       -       -
+hwwlnJ_pdfAcc_gg lnN 1.038   -             -        -       -       -
+QCDscale_vbfH lnN  -         1.008         -        -       -       -
+pdf_qqbar     lnN  -         1.042         -        -       -       -
+hwwlnJ_pdfAcc_vbf lnN -      1.008         -        -       -       -
+intf_ggH  lnN      1.100     -             -        -       -       -
+intf_vbfH lnN      -         1.500         -        -       -       -
+XS_TTbar lnN       -         -             -        1.063   -       -
+XS_STop  lnN       -         -             -        -       1.050   -
+XS_VV    lnN       -         -             -        -       -       1.100
+WJ_norm_el lnN     -         -             1.081    -       -       -
+JetMass_el lnN     -         -             1.011    1.006   1.020   1.008
+wtagger_el lnN     1.043     1.043         -        1.043   1.043   1.043
+btagger_el lnN     1.025     1.025         -        1.025   1.025   1.025
+trigger_el lnN     1.010     1.010         -        1.010   1.010   1.010
+eff_el   lnN       1.020     1.020         -        1.020   1.020   1.020
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig0 param  0.0  1.4 
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig1 param  0.0  1.4 
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig2 param  0.0  1.4 
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig3 param  0.0  1.4 
+Deco_WJets0_sb_lo_from_fitting_el_mlvj_eig4 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig0 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig1 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig2 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig3 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig4 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig5 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig6 param  0.0  1.4 
+Deco_WJets0_sim_el_mlvj_eig7 param  0.0  1.4 
