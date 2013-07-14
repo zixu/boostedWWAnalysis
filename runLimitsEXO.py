@@ -35,7 +35,7 @@ parser.add_option('--massPoint',action="store",type="int",dest="massPoint",defau
 parser.add_option('--cPrime',action="store",type="int",dest="cPrime",default=-1)
 parser.add_option('--odir',action="store",type="string",dest="odir",default=".")
 parser.add_option('--category',action="store",type="string",dest="category",default="HP")
-
+parser.add_option('--closuretest', action='store',type="int", dest='closuretest', default=0, help='closure test; 0: no test; 1: A1->A2; 2: A->B')
 parser.add_option('--batchMode', action='store_true', dest='batchMode', default=False,
                                     help='no X11 windows')
 
@@ -45,46 +45,49 @@ parser.add_option('--batchMode', action='store_true', dest='batchMode', default=
 
 #globals 
 
-mass  = [1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500] 
+mass  = [600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500] 
+ccmlo = [500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]  
+ccmhi = [700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]  
 
-ccmlo = [ 900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]  
-ccmhi = [1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]  
+mjlo  = [  40, 40, 40, 40, 40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40]  
+mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
 
-mjlo  = [  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40]  
-mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
+mlo   = [ 400, 400, 600, 600, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,800]      
+mhi   = [ 1300, 1300, 1800, 1800,2800,28000,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,3000]          
 
-mlo   = [ 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,800]      
-mhi   = [2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,3000]          
+shapeAlt = ["ErfPow2_v1","ErfPow2_v1","Pow","Pow","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
+shape    = ["ErfPowExp_v1","ErfPowExp_v1","Exp","Exp","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
 
-shapeAlt = ["ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
-shape    = ["ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
+#shape    = ["Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp"]
+#shapeAlt = ["Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow"]
 
 BRnew = 00;
 cprime = [10];
 
 #cross-sections for kappa = 0.5
-#xsDict = {600:0.32298, 
-#          700:0.11827,
-#          800:0.04931,
-#          900:0.022506,
-#          1000:0.011035,
-#          1100:0.0056883,
-#          1200:0.0030626,
-#          1300:0.0017003,
-#          1400:0.00097456,
-#          1500:0.00056979,
-#          1600:0.00034149,
-#          1700:0.00020677,
-#          1800:0.000127,
-#          1900:7.9677e-05,
-#          2000:5.0345e-05,    
-#          2100:3.198e-05,    
-#          2200:2.0502e-05,    
-#          2300:1.324e-05,    
-#          2400:8.6099e-06,    
-#          2500:5.6338e-06}
+xsDict2 = {
+          600:0.32298, 
+          700:0.11827,
+          800:0.04931,
+          900:0.022506,
+          1000:0.011035,
+          1100:0.0056883,
+          1200:0.0030626,
+          1300:0.0017003,
+          1400:0.00097456,
+          1500:0.00056979,
+          1600:0.00034149,
+          1700:0.00020677,
+          1800:0.000127,
+          1900:7.9677e-05,
+          2000:5.0345e-05,    
+          2100:3.198e-05,    
+          2200:2.0502e-05,    
+          2300:1.324e-05,    
+          2400:8.6099e-06,    
+          2500:5.6338e-06}
 #cross-sections for kappa = 0.2
-xsDict = {600:0.052087, 
+xsDict  = {600:0.052087, 
           700:0.019006,
           800:0.0079064,
           900:0.0036364,
@@ -241,9 +244,6 @@ def getPValueFromCard( file ):
 
 def doULPlot( suffix ):
 
-#    mass  = [ 600, 700, 800, 900,1000]    
-#    cprime = 10;
-#    brnew = 00;
     
     xbins = array('d', [])
     xbins_env = array('d', [])
@@ -251,10 +251,13 @@ def doULPlot( suffix ):
     ybins_obs = array('d', [])            
     ybins_1s = array('d', [])                        
     ybins_2s = array('d', [])    
+    ybins_xs_02 = array('d', [])    
+    ybins_xs_05 = array('d', [])    
     
     for i in range(len(mass)):
         curFile = "higgsCombine_lim_%03d%s.Asymptotic.mH%03d.root"%(mass[i],suffix,mass[i]);
         sf = xsDict[mass[i]];
+        sf2 = xsDict2[mass[i]];
         #print "curFile: ",curFile
         curAsymLimits = getAsymLimits(curFile);
         xbins.append( mass[i] );
@@ -263,6 +266,8 @@ def doULPlot( suffix ):
         ybins_obs.append( curAsymLimits[0]*sf );                                
         ybins_2s.append( curAsymLimits[1]*sf );                                
         ybins_1s.append( curAsymLimits[2]*sf ); 
+        ybins_xs_02.append(sf); 
+        ybins_xs_05.append(sf2); 
     
     for i in range( len(mass)-1, -1, -1 ):
         curFile = "higgsCombine_lim_%03d%s.Asymptotic.mH%03d.root"%(mass[i],suffix,mass[i]);
@@ -275,36 +280,63 @@ def doULPlot( suffix ):
     
     curGraph_exp = ROOT.TGraph(nPoints,xbins,ybins_exp);
     curGraph_obs = ROOT.TGraph(nPoints,xbins,ybins_obs);
+    curGraph_xs_02 = ROOT.TGraph(nPoints,xbins,ybins_xs_02);
+    curGraph_xs_05 = ROOT.TGraph(nPoints,xbins,ybins_xs_05);
     curGraph_1s = ROOT.TGraph(nPoints*2,xbins_env,ybins_1s);
     curGraph_2s = ROOT.TGraph(nPoints*2,xbins_env,ybins_2s);
     
     curGraph_obs.SetMarkerStyle(20);
     curGraph_exp.SetLineStyle(2);
+    curGraph_xs_02.SetLineStyle(2);
+    curGraph_xs_05.SetLineStyle(1);
     curGraph_exp.SetLineWidth(2);
     curGraph_obs.SetLineWidth(2);                    
+    curGraph_xs_02.SetLineWidth(3);                    
+    curGraph_xs_02.SetLineWidth(3);                    
     curGraph_exp.SetMarkerSize(2);
+    curGraph_xs_02.SetMarkerSize(2);
+    curGraph_xs_05.SetMarkerSize(2);
     curGraph_obs.SetMarkerSize(2);                    
+    curGraph_xs_02.SetLineColor(ROOT.kRed+1);
+    curGraph_xs_05.SetLineColor(ROOT.kRed+1);
     curGraph_1s.SetFillColor(ROOT.kGreen);
     curGraph_2s.SetFillColor(ROOT.kYellow);
 
     # -------
-    banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, e+#mu"));
-    banner.SetNDC(); banner.SetTextSize(0.028);
+    if suffix =="_el_HP" :        
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, ele HP"));
+        banner.SetNDC(); banner.SetTextSize(0.028);
+    if suffix =="_el_LP" :        
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, ele LP"));
+        banner.SetNDC(); banner.SetTextSize(0.028);
+    if suffix =="_mu_HP" :        
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, #mu HP"));
+        banner.SetNDC(); banner.SetTextSize(0.028);
+    if suffix =="_mu_LP" :        
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, #mu LP"));
+        banner.SetNDC(); banner.SetTextSize(0.028);
+    if suffix =="_em" :        
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, e+#mu"));
+        banner.SetNDC(); banner.SetTextSize(0.028);
+        
     oneLine = ROOT.TF1("oneLine","1",599,1001);
     oneLine.SetLineColor(ROOT.kRed);
     oneLine.SetLineWidth(3);
 
     can_SM = ROOT.TCanvas("can_SM","can_SM",1000,800);
-    hrl_SM = can_SM.DrawFrame(999,1e-3,2501,5.0);
+    hrl_SM = can_SM.DrawFrame(599,1e-3,2501,5.0);
     hrl_SM.GetYaxis().SetTitle("#sigma_{95%} #times BR_{WW} (pb)");
     hrl_SM.GetYaxis().SetTitleOffset(1.4);
     hrl_SM.GetXaxis().SetTitle("mass (GeV/c^{2})");
+    hrl_SM.GetYaxis().SetRangeUser(0.0001,5);
     can_SM.SetGrid();
 
     curGraph_2s.Draw("F");
     curGraph_1s.Draw("F");
     curGraph_obs.Draw("PL");
     curGraph_exp.Draw("PL");
+    curGraph_xs_02.Draw("PL");
+    curGraph_xs_05.Draw("PL");
 
     leg2 = ROOT.TLegend(0.55,0.65,0.85,0.85);
     leg2.SetFillStyle(0);
@@ -314,15 +346,16 @@ def doULPlot( suffix ):
     leg2.AddEntry(curGraph_1s,"Expected, #pm 1#sigma","F")
     leg2.AddEntry(curGraph_2s,"Expected, #pm 2#sigma","F")
 #    leg2.AddEntry(oneLine,"SM Expected","L")
+    leg2.AddEntry(curGraph_xs_02,"#sigma_{Bulk}#times BR(G#rightarrow WW), #tilde{k}=0.2","L")
+    leg2.AddEntry(curGraph_xs_05,"#sigma_{Bulk}#times BR(G#rightarrow WW), #tilde{k}=0.5","L")
 
     leg2.Draw();
     banner.Draw();
 #    oneLine.Draw("LESAMES");
 
     ROOT.gPad.SetLogy();
-    can_SM.SaveAs("limitFigs/Lim%s.eps"%(suffix));                      
-    can_SM.SaveAs("limitFigs/Lim%s.png"%(suffix));                      
-    can_SM.SaveAs("limitFigs/Lim%s.pdf"%(suffix));       
+    can_SM.SaveAs("~/limitFigs/Lim%s.png"%(suffix));                      
+    can_SM.SaveAs("~/limitFigs/Lim%s.pdf"%(suffix));       
 
 ############################################################
 
@@ -383,7 +416,7 @@ if __name__ == '__main__':
                 
                 #command = "nohup python EXO_doFit_class.py %s ggH%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %02d --BRnew 00  > log/log_%s_ggH%03d_%02d_%02d_%02d_%02d_%02d_%02d_%s_%s_cprime_%02d_BRnew_00 &"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j]);
                 #command = "nohup python exo_doFit_class.py %s BulkG_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %02d --BRnew 00  &"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j]);
-                command = "python exo_doFit_class.py %s BulkG_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], os.getcwd(), options.category);
+                command = "python exo_doFit_class.py %s BulkG_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], os.getcwd(), options.category,options.closuretest);
 
                 print command #raw_input("ENTER");
                 unbinnedCard = options.odir+"/cards_%s/hwwlvj_ggH%03d_%s_%02d_%02d_unbin.txt"%(options.channel,mass[i],options.channel,cprime[j],BRnew);
@@ -408,34 +441,39 @@ if __name__ == '__main__':
             print combineCmmd
             os.system(combineCmmd);
             
+            # mu LP
+            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
+#            os.system(runCmmd);
+            # el LP            
+            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
+#            os.system(runCmmd);
                 
             # mu HP
             runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd);
-            # mu LP
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
-            os.system(runCmmd);
             # el HP            
             runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
-            os.system(runCmmd);
-            # el LP            
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd);
             # combined            
             runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt"%(mass[i],mass[i],"em",mass[i],"em");
             os.system(runCmmd);
 
             #############
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 0"%(mass[i],mass[i],"el",mass[i],"el");
-            os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 0"%(mass[i],mass[i],"mu",mass[i],"mu");
-            os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 0"%(mass[i],mass[i],"el",mass[i],"el");
-            os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 0"%(mass[i],mass[i],"mu",mass[i],"mu");
-            os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt -v 0"%(mass[i],mass[i],"em",mass[i],"em");
-            os.system(runCmmd2);
+            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+#            os.system(runCmmd2);
+
+            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+#            os.system(runCmmd2);
+
+            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+#            os.system(runCmmd2);
+
+            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+#            os.system(runCmmd2);
+
+            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
+            print runCmmd2 ;
+#            os.system(runCmmd2);
 
     # =====================================
     
@@ -457,7 +495,11 @@ if __name__ == '__main__':
 
         for i in range(mLo,mHi):
             print "------------------"+str(mass[i])+"-------------------------";                
-            print "getting card: higgsCombinepval_%03d_%s.ProfileLikelihood.m%03d.root"%(mass[i],"em",mass[i]);
+            print "getting card: higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            print "getting card: higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            print "getting card: higgsCombine_pval_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            print "getting card: higgsCombine_pval_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            print "getting card: higgsCombine_pval_%03d_%s.ProfileLikelihood.mH%03d.root"%(mass[i],"em",mass[i])
 
             orootname_el_hp = "higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
             orootname_mu_hp = "higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
@@ -474,22 +516,22 @@ if __name__ == '__main__':
 
         gr_el_hp = ROOT.TGraph(nPoints,xbins,ybins_el_hp);
         gr_mu_hp = ROOT.TGraph(nPoints,xbins,ybins_mu_hp);
-        gr_el_hp.SetLineColor( 2 ); gr_el_hp.SetMarkerColor( 2 ); gr_el_hp.SetMarkerStyle( 20 );
-        gr_mu_hp.SetLineColor( 4 ); gr_mu_hp.SetMarkerColor( 4 ); gr_mu_hp.SetMarkerStyle( 20 );
+        gr_el_hp.SetLineColor( 1 ); gr_el_hp.SetMarkerColor( 1 ); gr_el_hp.SetMarkerStyle( 20 );  gr_el_hp.SetLineWidth( 3 );gr_el_hp.SetMarkerSize( 1.6 );
+        gr_mu_hp.SetLineColor( 1 ); gr_mu_hp.SetMarkerColor( 1 ); gr_mu_hp.SetMarkerStyle( 20 );  gr_mu_hp.SetLineWidth( 3 );gr_mu_hp.SetMarkerSize( 1.6 );
         gr_el_lp = ROOT.TGraph(nPoints,xbins,ybins_el_lp);
         gr_mu_lp = ROOT.TGraph(nPoints,xbins,ybins_mu_lp);
-        gr_el_lp.SetLineColor( 3 ); gr_el_lp.SetMarkerColor( 3 ); gr_el_lp.SetMarkerStyle( 20 );
-        gr_mu_lp.SetLineColor( 6 ); gr_mu_lp.SetMarkerColor( 6 ); gr_mu_lp.SetMarkerStyle( 20 );
+        gr_el_lp.SetLineColor( 1 ); gr_el_lp.SetMarkerColor( 1 ); gr_el_lp.SetMarkerStyle( 20 ); gr_el_lp.SetLineWidth( 3 );gr_el_lp.SetMarkerSize( 1.6 );
+        gr_mu_lp.SetLineColor( 1 ); gr_mu_lp.SetMarkerColor( 1 ); gr_mu_lp.SetMarkerStyle( 20 ); gr_mu_lp.SetLineWidth( 3 );gr_mu_lp.SetMarkerSize( 1.6 );
         gr_em = ROOT.TGraph(nPoints,xbins,ybins_em);
-        gr_em.SetLineColor( 1 ); gr_em.SetMarkerColor( 1 ); gr_em.SetMarkerStyle( 20 );
+        gr_em.SetLineColor( 1 ); gr_em.SetMarkerColor( 1 ); gr_em.SetMarkerStyle( 20 );gr_em.SetLineWidth( 3 ); gr_em.SetMarkerSize( 1.4 );
     
-        oneSLine = ROOT.TF1("oneSLine","1.58655253931457074e-01",1000,2500);
+        oneSLine = ROOT.TF1("oneSLine","1.58655253931457074e-01",600,2500);
         oneSLine.SetLineColor(ROOT.kRed); oneSLine.SetLineWidth(2); oneSLine.SetLineStyle(2);
-        twoSLine = ROOT.TF1("twoSLine","2.27501319481792155e-02",1000,2500);
+        twoSLine = ROOT.TF1("twoSLine","2.27501319481792155e-02",600,2500);
         twoSLine.SetLineColor(ROOT.kRed); twoSLine.SetLineWidth(2); twoSLine.SetLineStyle(2);
-        threeSLine = ROOT.TF1("threeSLine","1.34989803163009588e-03",1000,2500);
+        threeSLine = ROOT.TF1("threeSLine","1.34989803163009588e-03",600,2500);
         threeSLine.SetLineColor(ROOT.kRed); threeSLine.SetLineWidth(2); threeSLine.SetLineStyle(2);
-        fourSLine = ROOT.TF1("fourSLine","3.16712418331199785e-05",1000,2500);
+        fourSLine = ROOT.TF1("fourSLine","3.16712418331199785e-05",600,2500);
         fourSLine.SetLineColor(ROOT.kRed); fourSLine.SetLineWidth(2); fourSLine.SetLineStyle(2);           
     
         banner = TLatex(0.43,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV"));
@@ -504,26 +546,38 @@ if __name__ == '__main__':
         ban4s = TLatex(2400,3.16712418331199785e-05,("4 #sigma"));
         ban4s.SetTextSize(0.028); ban4s.SetTextColor(2)    
     
-        leg2 = ROOT.TLegend(0.15,0.15,0.60,0.40);
+        leg2 = ROOT.TLegend(0.2,0.2,0.5,0.35);
         leg2.SetFillStyle(0);
         leg2.SetBorderSize(1);
         leg2.AddEntry( gr_el_hp, "obs signif, e (HP)", "pl" );
-        leg2.AddEntry( gr_mu_hp, "obs signif, #mu (HP)", "pl" );
-        leg2.AddEntry( gr_el_lp, "obs signif, e (LP)", "pl" );
-        leg2.AddEntry( gr_mu_lp, "obs signif, #mu (LP)", "pl" );
-        leg2.AddEntry( gr_em, "obs signif, all", "pl" );
+
+        leg3 = ROOT.TLegend(0.2,0.2,0.5,0.35);
+        leg3.SetFillStyle(0);
+        leg3.SetBorderSize(1);
+        leg3.AddEntry( gr_mu_hp, "obs signif, #mu (HP)", "pl" );
+
+        leg4 = ROOT.TLegend(0.2,0.2,0.5,0.35);
+        leg4.SetFillStyle(0);
+        leg4.SetBorderSize(1);
+        leg4.AddEntry( gr_el_lp, "obs signif, e (LP)", "pl" );
+
+        leg5 = ROOT.TLegend(0.2,0.2,0.5,0.35);
+        leg5.SetFillStyle(0);
+        leg5.SetBorderSize(1);
+        leg5.AddEntry( gr_mu_lp, "obs signif, #mu (LP)", "pl" );
+
+        leg6 = ROOT.TLegend(0.2,0.2,0.5,0.35);
+        leg6.SetFillStyle(0);
+        leg6.SetBorderSize(1);
+        leg6.AddEntry( gr_em, "obs signif, all", "pl" );
     
         can = ROOT.TCanvas("can","can",800,800);
-        hrl = can.DrawFrame(1000,1e-5,2500,0.6);
+        hrl = can.DrawFrame(699,1e-5,2500,0.6);
         hrl.GetYaxis().SetTitle("p-value");
         hrl.GetXaxis().SetTitle("mass (GeV)");
         can.SetGrid();
         ROOT.gPad.SetLogy();
         gr_el_hp.Draw("PL");
-        gr_mu_hp.Draw("PL");
-        gr_el_lp.Draw("PL");
-        gr_mu_lp.Draw("PL");
-        gr_em.Draw("PL");
         oneSLine.Draw("same");
         twoSLine.Draw("same");
         threeSLine.Draw("same");
@@ -534,7 +588,90 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();    
-        can.SaveAs("limitFigs/pvals.eps");
+        can.SaveAs("~/limitFigs/pvals_el_HP.pdf","pdf");
+        can.SaveAs("~/limitFigs/pvals_el_HP.png","png");
+
+        can2 = ROOT.TCanvas("can2","can2",800,800);
+        hrl2 = can2.DrawFrame(699,1e-5,2500,0.6);
+        hrl2.GetYaxis().SetTitle("p-value");
+        hrl2.GetXaxis().SetTitle("mass (GeV)");
+        can2.SetGrid();
+        ROOT.gPad.SetLogy();
+        gr_mu_hp.Draw("PL");
+        oneSLine.Draw("same");
+        twoSLine.Draw("same");
+        threeSLine.Draw("same");
+        fourSLine.Draw("same");
+        banner.Draw();
+        leg3.Draw();
+        ban1s.Draw();
+        ban2s.Draw();
+        ban3s.Draw();
+        ban4s.Draw();    
+        can2.SaveAs("~/limitFigs/pvals_mu_HP.pdf","pdf");
+        can2.SaveAs("~/limitFigs/pvals_mu_HP.png","png");
+
+        can3 = ROOT.TCanvas("can3","can3",800,800);
+        hrl3 = can3.DrawFrame(699,1e-5,2500,0.6);
+        hrl3.GetYaxis().SetTitle("p-value");
+        hrl3.GetXaxis().SetTitle("mass (GeV)");
+        can3.SetGrid();
+        ROOT.gPad.SetLogy();
+        gr_el_lp.Draw("PL");
+        oneSLine.Draw("same");
+        twoSLine.Draw("same");
+        threeSLine.Draw("same");
+        fourSLine.Draw("same");
+        banner.Draw();
+        leg4.Draw();
+        ban1s.Draw();
+        ban2s.Draw();
+        ban3s.Draw();
+        ban4s.Draw();    
+        can3.SaveAs("~/limitFigs/pvals_el_LP.pdf","pdf");
+        can3.SaveAs("~/limitFigs/pvals_el_LP.png","png");
+
+        can4 = ROOT.TCanvas("can4","can4",800,800);
+        hrl4 = can4.DrawFrame(699,1e-5,2500,0.6);
+        hrl4.GetYaxis().SetTitle("p-value");
+        hrl4.GetXaxis().SetTitle("mass (GeV)");
+        can4.SetGrid();
+        ROOT.gPad.SetLogy();
+        gr_mu_lp.Draw("PL");
+        oneSLine.Draw("same");
+        twoSLine.Draw("same");
+        threeSLine.Draw("same");
+        fourSLine.Draw("same");
+        banner.Draw();
+        leg5.Draw();
+        ban1s.Draw();
+        ban2s.Draw();
+        ban3s.Draw();
+        ban4s.Draw();    
+        can4.SaveAs("~/limitFigs/pvals_mu_LP.pdf","pdf");
+        can4.SaveAs("~/limitFigs/pvals_mu_LP.png","png");
+
+        can5 = ROOT.TCanvas("can5","can5",800,800);
+        hrl5 = can5.DrawFrame(699,1e-5,2500,0.6);
+        hrl5.GetYaxis().SetTitle("p-value");
+        hrl5.GetXaxis().SetTitle("mass (GeV)");
+        can5.SetGrid();
+        ROOT.gPad.SetLogy();
+        gr_em.Draw("PL");
+        oneSLine.Draw("same");
+        twoSLine.Draw("same");
+        threeSLine.Draw("same");
+        fourSLine.Draw("same");
+        banner.Draw();
+        leg6.Draw();
+        ban1s.Draw();
+        ban2s.Draw();
+        ban3s.Draw();
+        ban4s.Draw();    
+        can5.SaveAs("~/limitFigs/pvals_em.pdf","pdf");
+        can5.SaveAs("~/limitFigs/pvals_em.png","png");
+
+
 
         ####################################################
 
@@ -551,3 +688,5 @@ if __name__ == '__main__':
 
 
 
+
+#  LocalWords:  mlo
