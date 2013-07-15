@@ -9,7 +9,7 @@ import time
 from array import array
 
 import ROOT
-from ROOT import gROOT, gStyle, gSystem, TLatex
+from ROOT import gROOT, gStyle, gSystem, TLatex, TH1D
 import subprocess
 from subprocess import Popen
 from optparse import OptionParser
@@ -338,6 +338,12 @@ def doULPlot( suffix ):
     curGraph_exp.Draw("PL");
     curGraph_xs_02.Draw("PL");
     curGraph_xs_05.Draw("PL");
+
+
+    #draw grid on top of limits
+    postGrid=TH1D("postGrid","postGrid",1,999,2501);
+    postGrid.GetYaxis().SetRangeUser(1e-3,5.0);
+    postGrid.Draw("AXISSAME");
 
     leg2 = ROOT.TLegend(0.55,0.65,0.85,0.85);
     leg2.SetFillStyle(0);
