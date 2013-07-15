@@ -54,7 +54,7 @@ mjlo  = [  40, 40, 40, 40, 40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,
 mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
 
 mlo   = [ 400, 400, 600, 600, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,800]      
-mhi   = [1300, 1300, 1800, 1800, 2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800]          
+mhi   = [ 1300, 1300, 1800, 1800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800]          
 
 shapeAlt = ["ErfPow2_v1","ErfPow2_v1","Pow","Pow","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
 shape    = ["ErfPowExp_v1","ErfPowExp_v1","Exp","Exp","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
@@ -325,7 +325,7 @@ def doULPlot( suffix ):
     oneLine.SetLineWidth(3);
 
     can_SM = ROOT.TCanvas("can_SM","can_SM",1000,800);
-    hrl_SM = can_SM.DrawFrame(999,1e-3,2501,5.0);
+    hrl_SM = can_SM.DrawFrame(599,1e-3,2501,5.0);
     hrl_SM.GetYaxis().SetTitle("#sigma_{95%} #times BR_{WW} (pb)");
     hrl_SM.GetYaxis().SetTitleOffset(1.4);
     hrl_SM.GetXaxis().SetTitle("mass (GeV/c^{2})");
@@ -341,7 +341,7 @@ def doULPlot( suffix ):
 
 
     #draw grid on top of limits
-    postGrid=TH1D("postGrid","postGrid",1,999,2501);
+    postGrid=TH1D("postGrid","postGrid",1,599,2501);
     postGrid.GetYaxis().SetRangeUser(1e-3,5.0);
     postGrid.Draw("AXISSAME");
 
@@ -528,13 +528,13 @@ if __name__ == '__main__':
         gr_em = ROOT.TGraph(nPoints,xbins,ybins_em);
         gr_em.SetLineColor( 1 ); gr_em.SetMarkerColor( 1 ); gr_em.SetMarkerStyle( 20 );gr_em.SetLineWidth( 3 ); gr_em.SetMarkerSize( 1.4 );
     
-        oneSLine = ROOT.TF1("oneSLine","1.58655253931457074e-01",800,2500);
+        oneSLine = ROOT.TF1("oneSLine","1.58655253931457074e-01",600,2500);
         oneSLine.SetLineColor(ROOT.kRed); oneSLine.SetLineWidth(2); oneSLine.SetLineStyle(2);
-        twoSLine = ROOT.TF1("twoSLine","2.27501319481792155e-02",800,2500);
+        twoSLine = ROOT.TF1("twoSLine","2.27501319481792155e-02",600,2500);
         twoSLine.SetLineColor(ROOT.kRed); twoSLine.SetLineWidth(2); twoSLine.SetLineStyle(2);
-        threeSLine = ROOT.TF1("threeSLine","1.34989803163009588e-03",800,2500);
+        threeSLine = ROOT.TF1("threeSLine","1.34989803163009588e-03",600,2500);
         threeSLine.SetLineColor(ROOT.kRed); threeSLine.SetLineWidth(2); threeSLine.SetLineStyle(2);
-        fourSLine = ROOT.TF1("fourSLine","3.16712418331199785e-05",800,2500);
+        fourSLine = ROOT.TF1("fourSLine","3.16712418331199785e-05",600,2500);
         fourSLine.SetLineColor(ROOT.kRed); fourSLine.SetLineWidth(2); fourSLine.SetLineStyle(2);           
     
         banner = TLatex(0.43,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV"));
@@ -575,7 +575,7 @@ if __name__ == '__main__':
         leg6.AddEntry( gr_em, "obs signif, all", "pl" );
     
         can = ROOT.TCanvas("can","can",800,800);
-        hrl = can.DrawFrame(999,1e-5,2500,0.6);
+        hrl = can.DrawFrame(699,1e-5,2500,0.6);
         hrl.GetYaxis().SetTitle("p-value");
         hrl.GetXaxis().SetTitle("mass (GeV)");
         can.SetGrid();
@@ -596,7 +596,7 @@ if __name__ == '__main__':
         can.SaveAs("~/limitFigs/pvals_el_HP.root","root");
 
         can2 = ROOT.TCanvas("can2","can2",800,800);
-        hrl2 = can2.DrawFrame(999,1e-5,2500,0.6);
+        hrl2 = can2.DrawFrame(699,1e-5,2500,0.6);
         hrl2.GetYaxis().SetTitle("p-value");
         hrl2.GetXaxis().SetTitle("mass (GeV)");
         can2.SetGrid();
@@ -617,7 +617,7 @@ if __name__ == '__main__':
         can2.SaveAs("~/limitFigs/pvals_mu_HP.root","root");
 
         can3 = ROOT.TCanvas("can3","can3",800,800);
-        hrl3 = can3.DrawFrame(999,1e-5,2500,0.6);
+        hrl3 = can3.DrawFrame(699,1e-5,2500,0.6);
         hrl3.GetYaxis().SetTitle("p-value");
         hrl3.GetXaxis().SetTitle("mass (GeV)");
         can3.SetGrid();
@@ -638,7 +638,7 @@ if __name__ == '__main__':
         can3.SaveAs("~/limitFigs/pvals_el_LP.root","root");
 
         can4 = ROOT.TCanvas("can4","can4",800,800);
-        hrl4 = can4.DrawFrame(999,1e-5,2500,0.6);
+        hrl4 = can4.DrawFrame(699,1e-5,2500,0.6);
         hrl4.GetYaxis().SetTitle("p-value");
         hrl4.GetXaxis().SetTitle("mass (GeV)");
         can4.SetGrid();
@@ -659,7 +659,7 @@ if __name__ == '__main__':
         can4.SaveAs("~/limitFigs/pvals_mu_LP.root","root");
 
         can5 = ROOT.TCanvas("can5","can5",800,800);
-        hrl5 = can5.DrawFrame(999,1e-5,2500,0.6);
+        hrl5 = can5.DrawFrame(699,1e-5,2500,0.6);
         hrl5.GetYaxis().SetTitle("p-value");
         hrl5.GetXaxis().SetTitle("mass (GeV)");
         can5.SetGrid();
