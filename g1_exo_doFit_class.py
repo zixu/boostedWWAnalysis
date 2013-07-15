@@ -3275,6 +3275,7 @@ class doFit_wj_and_wlvj:
         model.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE) );
         rfresult = model.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE) );
         #rfresult = model.fitTo( rdataset, RooFit.Save(1),RooFit.Extended(kTRUE) );
+        #model.Print(); raw_input("ENTER");
         rfresult.SetName("rfresult"+label+in_range+"_"+self.channel+"_mlvj")
         getattr(self.workspace4fit_,"import")(rfresult)
         
@@ -3301,7 +3302,7 @@ class doFit_wj_and_wlvj:
             model_pdf.getParameters(rdataset).Print("v");
             model_pdf.Print();
             model_pdf_deco.Print();
-            rfresult_pdf.covarianceMatrix().Print();# raw_input("ENTER");
+            rfresult_pdf.covarianceMatrix().Print(); #raw_input("ENTER");
             mplot_deco=rrv_mass_lvj.frame( RooFit.Bins(int(rrv_mass_lvj.getBins()/self.narrow_factor)));
             if label=="_TTbar" and in_range=="_signal_region": 
                 rdataset.plotOn(mplot_deco, RooFit.Name("Powheg Sample"), RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
@@ -3881,7 +3882,7 @@ class doFit_wj_and_wlvj:
         if mode == "unbin":
             for i in range(len(params_list)):
                 if TString(params_list[i].GetName()).Contains("Deco_TTbar_signal_region"):
-                    datacard_out.write( "\n#%s param  %0.1f  %0.1f "%( params_list[i].GetName(), params_list[i].getVal(), params_list[i].getError() ) ) 
+                    datacard_out.write( "\n%s param  %0.1f  %0.1f "%( params_list[i].GetName(), params_list[i].getVal(), params_list[i].getError() ) ) 
                 else:
                     datacard_out.write( "\n%s param  %0.1f  %0.1f "%( params_list[i].GetName(), params_list[i].getVal(), params_list[i].getError() ) ) 
         if mode == "counting":
@@ -4060,6 +4061,19 @@ class doFit_wj_and_wlvj:
                 #if options.closuretest==0:
                 #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel))); 
                 #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel))); 
+
+        #add signal shape parameters' uncertainty
+        if self.workspace4limit_.var("rrv_mean_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)): 
+            self.workspace4limit_.var("rrv_mean_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)).setError( (   self.workspace4limit_.var("rrv_mean_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)).getError()**2 + (self.workspace4limit_.var("rrv_mean_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)).getVal()*0.013)**2 )**0.5 );
+            self.workspace4limit_.var("rrv_sigma_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)).setError( (   self.workspace4limit_.var("rrv_sigma_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)).getError()**2 + (self.workspace4limit_.var("rrv_sigma_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)).getVal()*0.045)**2 )**0.5 );
+            params_list.append(self.workspace4limit_.var("rrv_mean_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)) );
+            params_list.append(self.workspace4limit_.var("rrv_sigma_voig_%s_signal_region_%s"%(self.signal_sample, self.channel)) );
+        if self.workspace4limit_.var("rrv_mean_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)): 
+            self.workspace4limit_.var("rrv_mean_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)).setError( (   self.workspace4limit_.var("rrv_mean_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)).getError()**2 + (self.workspace4limit_.var("rrv_mean_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)).getVal()*0.013)**2 )**0.5 );
+            self.workspace4limit_.var("rrv_sigma_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)).setError( (   self.workspace4limit_.var("rrv_sigma_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)).getError()**2 + (self.workspace4limit_.var("rrv_sigma_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)).getVal()*0.045)**2 )**0.5 );
+            params_list.append(self.workspace4limit_.var("rrv_mean_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)) );
+            params_list.append(self.workspace4limit_.var("rrv_sigma_CB_%s_signal_region_%s"%(self.signal_sample, self.channel)) );
+
 
         getattr(self.workspace4limit_,"import")(self.FloatingParams);
  
@@ -4441,17 +4455,17 @@ class doFit_wj_and_wlvj:
         self.fit_mj_single_MC(self.file_signal,"_%s"%(self.signal_sample),"2Gaus");
     
         if TString(self.signal_sample).Contains("600") and (not TString(self.signal_sample).Contains("1600") ):            
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 1, 0, 1);
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 0, 0, 1);
         elif TString(self.signal_sample).Contains("700") and (not TString(self.signal_sample).Contains("1700") ):   
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 1, 0, 1);
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 0, 0, 1);
         elif TString(self.signal_sample).Contains("800") and (not  TString(self.signal_sample).Contains("1800") ):   
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 1, 0, 1);
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 0, 0, 1);
         elif TString(self.signal_sample).Contains("900") and (not  TString(self.signal_sample).Contains("1900") ):   
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 1, 0, 1);           
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 0, 0, 1);           
         elif TString(self.signal_sample).Contains("1000") :   
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 1, 0, 1);           
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","Voig_v2", 0, 0, 1);           
         else:    
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","CB_v1", 1, 0, 1);  
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","CB_v1", 0, 0, 1);  
 
         print "________________________________________________________________________"
 
@@ -4564,8 +4578,8 @@ class doFit_wj_and_wlvj:
     ######## ++++++++++++++
     def fit_AllSamples_Mj_and_Mlvj(self):
         print "fit_AllSamples_Mj_and_Mlvj"
-        self.fit_WJets()
         self.fit_Signal()
+        self.fit_WJets()
         self.fit_TTbar()
         self.fit_VV()
         self.fit_STop()
@@ -4863,14 +4877,15 @@ def pre_limit_simple(channel):
     print "pre_limit_simple for %s sampel"%(channel)
     #pre_limit_sb_correction_without_systermatic(channel,"rsg1000_kMpl01_hw",800,1200,40,130, 800,2500,"Exp","Pow")
     #pre_limit_sb_correction_without_systermatic(channel,"BulkG_c0p2_M1000",800,1200,40,130, 700,2500,"Exp","Pow")
-    #pre_limit_sb_correction_without_systermatic(channel,"BulkG_c0p2_M1600",1500,1700,40,130,  800,2800,"Exp","Pow")
     #pre_limit_sb_correction_without_systermatic(channel,"BulkG_c0p2_M2000",1900,2100,40,130,  800,3000,"Exp","Pow")
     #pre_limit_sb_correction_without_systermatic(channel,"BulkG_c0p2_M2000",1900,2100,40,130,  800,3000,"2Exp","Exp")
     #pre_limit_sb_correction_without_systermatic(channel,"BulkG_c0p2_M2000",1900,2100,40,130,  800,2800,"ExpTail","Exp")
-    pre_limit_sb_correction_without_systermatic(channel,"BulkG_WW_lvjj_c0p2_M1000",1900,2100,40,130,  800,2800,"ExpN","ExpTail")
     #pre_limit_sb_correction_without_systermatic(channel,"BulkG_c0p2_M1600",1500,1700,40,130,  800,2800,"ExpN","ExpTail")
     #pre_limit_sb_correction_without_systermatic(channel,"BulkG_c0p2_M1000", 800,1200,40,130,  800,2800,"ExpN","ExpTail")
 
+    #pre_limit_sb_correction_without_systermatic(channel,"BulkG_WW_lvjj_c0p2_M800",700,900,40,130,600,1800,"ExpN","ExpTail")
+    pre_limit_sb_correction_without_systermatic(channel,"BulkG_WW_lvjj_c0p2_M1000",1900,2100,40,130,  800,2800,"ExpN","ExpTail")
+    #pre_limit_sb_correction_without_systermatic(channel,"BulkG_WW_lvjj_c0p2_M1600",1500,1700,40,130,  800,2800,"ExpN","ExpTail")
 def control_single(channel):
     print "control_single for %s sampel"%(channel)
     #control_single_sb_correction("method1",channel, "BulkG_c0p2_M1000",500,700,30,140,400,1000,"ErfExp_v1")
