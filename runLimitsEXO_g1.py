@@ -183,8 +183,8 @@ def submitBatchJob( command, fn ):
     outScript.write("\n"+'date');
     outScript.write("\n"+'source /uscmst1/prod/sw/cms/bashrc prod');
     outScript.write("\n"+'echo "condor dir: " ${_CONDOR_SCRATCH_DIR}');
-    #outScript.write("\n"+'cd '+currentDir);
-    outScript.write("\n"+'cd '+'/uscms_data/d3/zixu/BoostJet/CMSSW_6_1_1/src');
+    outScript.write("\n"+'cd '+currentDir);
+    #outScript.write("\n"+'cd '+'/uscms_data/d3/zixu/BoostJet/CMSSW_6_1_1/src');
     outScript.write("\n"+'eval `scram runtime -sh`');
     outScript.write("\n"+'cd -');
     outScript.write("\n"+'export PATH=${PATH}:'+currentDir);
@@ -228,8 +228,8 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
     outScript.write("\n"+'date');
     outScript.write("\n"+'source /uscmst1/prod/sw/cms/bashrc prod');
     outScript.write("\n"+'echo "condor dir: " ${_CONDOR_SCRATCH_DIR}');
-    #outScript.write("\n"+'cd '+currentDir);
-    outScript.write("\n"+'cd '+'/uscms_data/d3/zixu/BoostJet/CMSSW_6_1_1/src');
+    outScript.write("\n"+'cd '+currentDir);
+    #outScript.write("\n"+'cd '+'/uscms_data/d3/zixu/BoostJet/CMSSW_6_1_1/src');
     outScript.write("\n"+'eval `scram runtime -sh`');
     outScript.write("\n"+'cd -');
     outScript.write("\n"+'export PATH=${PATH}:'+currentDir);
