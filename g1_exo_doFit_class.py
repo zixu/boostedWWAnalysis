@@ -1848,7 +1848,7 @@ class doFit_wj_and_wlvj:
         rfresult.covarianceMatrix().Print(); #raw_input("ENTER");
 
         wsfit_tmp=RooWorkspace("wsfit_tmp%s_sim_mlvj"%(label));
-        Deco=PdfDiagonalizer("Deco%s_sim_%s_mlvj"%(label,self.channel),wsfit_tmp,rfresult);
+        Deco=PdfDiagonalizer("Deco%s_sim_%s_%s_mlvj"%(label,self.channel,self.wtagger_label),wsfit_tmp,rfresult);
         correct_factor_pdf_deco=Deco.diagonalize(correct_factor_pdf);
         correct_factor_pdf_deco.Print();
         correct_factor_pdf_deco.getParameters(rdataset_WJets_signal_region_mlvj).Print("v");
@@ -1872,50 +1872,47 @@ class doFit_wj_and_wlvj:
         model_pdf_signal_region_WJets.plotOn(mplot, RooFit.LineColor(kRed) ,RooFit.Name("Signal Region"));
         correct_factor_pdf_deco.plotOn(mplot, RooFit.LineColor(kBlack),RooFit.Name("#alpha") );
         if label=="_WJets0":
-            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_mlvj"%(self.channel)):
-                #self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_mlvj"%(self.channel)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha: Alternate Parton Shower") ); 
-                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_mlvj"%(self.channel)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha: Alternate PS") ); 
-            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_mlvj"%(self.channel)):
-                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_mlvj"%(self.channel)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha: Alternate Function") ); 
+            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel, self.wtagger_label)):
+                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel, self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha: Alternate PS") ); 
+            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_%s_mlvj"%(self.channel, self.wtagger_label)):
+                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_%s_mlvj"%(self.channel, self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha: Alternate Function") ); 
 
         paras=RooArgList();
         if mlvj_model=="ErfExp_v1" or mlvj_model=="ErfPow_v1"  or mlvj_model=="2Exp" :
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig0"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig1"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig2"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig3"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig4"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig5"%(label,self.channel) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig0"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig1"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig2"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig3"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig4"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig5"%(label,self.channel, self.wtagger_label) ));
         if mlvj_model=="ErfPow2_v1" or mlvj_model=="ErfPowExp_v1" :
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig0"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig1"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig2"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig3"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig4"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig5"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig6"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig7"%(label,self.channel) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig0"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig1"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig2"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig3"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig4"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig5"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig6"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig7"%(label,self.channel, self.wtagger_label) ));
         if mlvj_model=="Exp" or mlvj_model=="Pow":
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig0"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig1"%(label,self.channel) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig0"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig1"%(label,self.channel, self.wtagger_label) ));
         if mlvj_model=="ExpN" or mlvj_model=="ExpTail" or mlvj_model=="Pow2":
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig0"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig1"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig2"%(label,self.channel) ));
-            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_mlvj_eig3"%(label,self.channel) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig0"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig1"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig2"%(label,self.channel, self.wtagger_label) ));
+            paras.add(self.workspace4fit_.var("Deco%s_sim_%s_%s_mlvj_eig3"%(label,self.channel, self.wtagger_label) ));
         if label=="_WJets0":
-            draw_error_band_shape_Decor("correct_factor_pdf_Deco%s_sim_%s_mlvj"%(label,self.channel),"rrv_mass_lvj", paras, self.workspace4fit_,1 ,mplot,kGray+3,"F",3001,"#alpha #pm",20,400);
-            #draw_error_band_shape_Decor("correct_factor_pdf_Deco%s_sim_%s_mlvj"%(label,self.channel),"rrv_mass_lvj", paras, self.workspace4fit_,2 ,mplot,kGreen+2,"F",3013,"#alpha #pm",20,400);
-            draw_error_band_shape_Decor("correct_factor_pdf_Deco%s_sim_%s_mlvj"%(label,self.channel),"rrv_mass_lvj", paras, self.workspace4fit_,2 ,mplot,kGreen+2,"F",3002,"#alpha #pm",20,400);
-            draw_error_band_shape_Decor("correct_factor_pdf_Deco%s_sim_%s_mlvj"%(label,self.channel),"rrv_mass_lvj", paras, self.workspace4fit_,1 ,mplot,kGray+3,"F",3001,"#alpha_invisible #pm",20,400);
+            draw_error_band_shape_Decor("correct_factor_pdf_Deco%s_sim_%s_%s_mlvj"%(label,self.channel, self.wtagger_label),"rrv_mass_lvj", paras, self.workspace4fit_,1 ,mplot,kGray+3,"F",3001,"#alpha #pm",20,400);
+            draw_error_band_shape_Decor("correct_factor_pdf_Deco%s_sim_%s_%s_mlvj"%(label,self.channel, self.wtagger_label),"rrv_mass_lvj", paras, self.workspace4fit_,2 ,mplot,kGreen+2,"F",3002,"#alpha #pm",20,400);
+            draw_error_band_shape_Decor("correct_factor_pdf_Deco%s_sim_%s_%s_mlvj"%(label,self.channel, self.wtagger_label),"rrv_mass_lvj", paras, self.workspace4fit_,1 ,mplot,kGray+3,"F",3001,"#alpha_invisible #pm",20,400);
 
         correct_factor_pdf_deco.plotOn(mplot, RooFit.LineColor(kBlack),RooFit.Name("#alpha_invisible") );
         if label=="_WJets0":
-            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_mlvj"%(self.channel)):
-                #self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_mlvj"%(self.channel)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha_invisible: Alternate Parton Shower") ); 
-                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_mlvj"%(self.channel)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha_invisible: Alternate PS") ); 
-            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_mlvj"%(self.channel)):
-                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_mlvj"%(self.channel)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha_invisible: Alternate Function") ); 
+            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)):
+                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha_invisible: Alternate PS") ); 
+            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)):
+                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha_invisible: Alternate Function") ); 
 
         #leg=self.legend4Plot(mplot,0,0, -0.15, 0);mplot.addObject(leg);
         leg=self.legend4Plot(mplot,-1,0, -0.15, 0);mplot.addObject(leg);
@@ -1948,10 +1945,10 @@ class doFit_wj_and_wlvj:
 
         correct_factor_pdf_deco.getParameters(rdataset_WJets_sb_lo_mlvj).Print("v");
 
-        model_pdf_WJets_sb_lo_from_fitting_mlvj_Deco=self.workspace4fit_.pdf("model_pdf%s_sb_lo_from_fitting_%s_mlvj_Deco%s_sb_lo_from_fitting_%s_mlvj"%(label,self.channel,label, self.channel));
+        model_pdf_WJets_sb_lo_from_fitting_mlvj_Deco=self.workspace4fit_.pdf("model_pdf%s_sb_lo_from_fitting_%s_mlvj_Deco%s_sb_lo_from_fitting_%s_%s_mlvj"%(label,self.channel,label, self.channel,self.wtagger_label));
         model_pdf_WJets_sb_lo_from_fitting_mlvj_Deco.Print("v");
 
-        model_pdf_WJets_signal_region_after_correct_mlvj=RooProdPdf("model_pdf%s_signal_region_%s_after_correct_mlvj"%(label,self.channel),"model_pdf%s_signal_region_%s_after_correct_mlvj"%(label,self.channel),model_pdf_WJets_sb_lo_from_fitting_mlvj_Deco,self.workspace4fit_.pdf("correct_factor_pdf_Deco%s_sim_%s_mlvj"%(label,self.channel)) );
+        model_pdf_WJets_signal_region_after_correct_mlvj=RooProdPdf("model_pdf%s_signal_region_%s_after_correct_mlvj"%(label,self.channel),"model_pdf%s_signal_region_%s_after_correct_mlvj"%(label,self.channel),model_pdf_WJets_sb_lo_from_fitting_mlvj_Deco,self.workspace4fit_.pdf("correct_factor_pdf_Deco%s_sim_%s_%s_mlvj"%(label,self.channel,self.wtagger_label)) );
         model_pdf_WJets_signal_region_after_correct_mlvj.Print()
         self.fix_Pdf(model_pdf_WJets_signal_region_after_correct_mlvj,RooArgSet(rrv_x))
         getattr(self.workspace4fit_,"import")(model_pdf_WJets_signal_region_after_correct_mlvj)
@@ -3292,7 +3289,7 @@ class doFit_wj_and_wlvj:
             model_pdf.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) );
             rfresult_pdf=model_pdf.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) );
             wsfit_tmp=RooWorkspace("wsfit_tmp"+label+in_range+"_"+self.channel+"_mlvj");
-            Deco=PdfDiagonalizer("Deco"+label+in_range+"_"+self.channel+"_mlvj",wsfit_tmp,rfresult_pdf);
+            Deco=PdfDiagonalizer("Deco"+label+in_range+"_"+self.channel+"_"+self.wtagger_label+"_mlvj",wsfit_tmp,rfresult_pdf);
             model_pdf_deco=Deco.diagonalize(model_pdf);
             getattr(self.workspace4fit_,"import")(model_pdf_deco);
             wsfit_tmp.Print("v");
@@ -3566,7 +3563,7 @@ class doFit_wj_and_wlvj:
 
         #model deco
         wsfit_tmp=RooWorkspace("wsfit_tmp%s_sb_lo_from_fitting_mlvj"%(label));
-        Deco=PdfDiagonalizer("Deco%s_sb_lo_from_fitting_%s_mlvj"%(label,self.channel),wsfit_tmp,rfresult);
+        Deco=PdfDiagonalizer("Deco%s_sb_lo_from_fitting_%s_%s_mlvj"%(label,self.channel,self.wtagger_label),wsfit_tmp,rfresult);
         model_pdf_WJets_deco=Deco.diagonalize(model_pdf_WJets); model_pdf_WJets_deco.Print("v");
         model_pdf_WJets_deco.getParameters(rdataset_data_mlvj).Print("") ;wsfit_tmp.allVars().Print("v");
         getattr(self.workspace4fit_,"import")(model_pdf_WJets_deco);
@@ -3642,7 +3639,7 @@ class doFit_wj_and_wlvj:
 
 
         model_pdf_WJets0_backgrounds  = self.workspace4fit_.pdf("model_pdf_WJets0_signal_region_%s_after_correct_mlvj"%(self.channel)) 
-        model_pdf_TTbar_backgrounds   = self.workspace4fit_.pdf("model_pdf_TTbar_signal_region_%s_mlvj_Deco_TTbar_signal_region_%s_mlvj"%(self.channel, self.channel)) 
+        model_pdf_TTbar_backgrounds   = self.workspace4fit_.pdf("model_pdf_TTbar_signal_region_%s_mlvj_Deco_TTbar_signal_region_%s_%s_mlvj"%(self.channel, self.channel,self.wtagger_label)) 
         model_pdf_VV_backgrounds      = self.workspace4fit_.pdf("model_pdf_VV_signal_region_%s_mlvj"%(self.channel))  
         model_pdf_STop_backgrounds    = self.workspace4fit_.pdf("model_pdf_STop_signal_region_%s_mlvj"%(self.channel)) 
 
@@ -3861,31 +3858,31 @@ class doFit_wj_and_wlvj:
         if self.number_WJets_insideband >0:
             datacard_out.write( "\nWJ_norm gmN %0.3f        %0.3f           -      -        -"%(self.number_WJets_insideband, getattr(self, "datadriven_alpha_WJets_%s"%(mode)) ) )
         else:
-            datacard_out.write( "\nWJ_norm_%s lnN     -                       %0.3f    -       -       -"%(self.channel, 1+ self.workspace4limit_.var("rate_WJets_for_unbin").getError()/self.workspace4limit_.var("rate_WJets_for_unbin").getVal() ) );
-        datacard_out.write( "\nTop_norm_%s lnN    -                       -        %0.3f   %0.3f   -"%(self.channel, 1+self.rrv_wtagger_eff_reweight_forT.getError()/self.rrv_wtagger_eff_reweight_forT.getVal(), 1+self.rrv_wtagger_eff_reweight_forT.getError()/self.rrv_wtagger_eff_reweight_forT.getVal() ) );
-        datacard_out.write( "\nwtagger_%s lnN     %0.3f                   -        -       -       %0.3f"%(self.channel, 1+self.rrv_wtagger_eff_reweight_forV.getError()/self.rrv_wtagger_eff_reweight_forV.getVal(),  1+self.rrv_wtagger_eff_reweight_forV.getError()/self.rrv_wtagger_eff_reweight_forV.getVal() ) );
+            datacard_out.write( "\nWJ_norm_%s_%s lnN     -                       %0.3f    -       -       -"%(self.channel, self.wtagger_label, 1+ self.workspace4limit_.var("rate_WJets_for_unbin").getError()/self.workspace4limit_.var("rate_WJets_for_unbin").getVal() ) );
+        datacard_out.write( "\nTop_norm_%s_%s lnN    -                       -        %0.3f   %0.3f   -"%(self.channel, self.wtagger_label, 1+self.rrv_wtagger_eff_reweight_forT.getError()/self.rrv_wtagger_eff_reweight_forT.getVal(), 1+self.rrv_wtagger_eff_reweight_forT.getError()/self.rrv_wtagger_eff_reweight_forT.getVal() ) );
+        datacard_out.write( "\nwtagger_%s_%s lnN     %0.3f                   -        -       -       %0.3f"%(self.channel, self.wtagger_label, 1+self.rrv_wtagger_eff_reweight_forV.getError()/self.rrv_wtagger_eff_reweight_forV.getVal(),  1+self.rrv_wtagger_eff_reweight_forV.getError()/self.rrv_wtagger_eff_reweight_forV.getVal() ) );
         datacard_out.write( "\nbtagger_%s lnN     %0.3f                   -        %0.3f   %0.3f   %0.3f"%(self.channel, 1+self.btag_scale_uncertainty,                                1+self.btag_scale_uncertainty, 1+self.btag_scale_uncertainty, 1+self.btag_scale_uncertainty ) );
         datacard_out.write( "\n#JetMass_%s lnN     -                       %0.3f    %0.3f   %0.3f   %0.3f"%(self.channel, 1+self.WJets_normlization_uncertainty_from_jet_mass, 1+self.TTbar_normlization_uncertainty_from_jet_mass, 1+self.STop_normlization_uncertainty_from_jet_mass, 1+self.VV_normlization_uncertainty_from_jet_mass ) )
         datacard_out.write( "\n#trigger_%s lnN     %0.3f                   -        %0.3f   %0.3f   %0.3f"%(self.channel,                                1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty ) );
         datacard_out.write( "\n#eff_%s   lnN       %0.3f                   -        %0.3f   %0.3f   %0.3f"%(self.channel, 1+self.lep_eff_uncertainty,                           1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty ) );
-        datacard_out.write( "\nlepton_scale_%s   lnN       %0.3f                   -        -   -   -"%(self.channel,                                 
+        datacard_out.write( "\n#lepton_scale_%s   lnN       %0.3f                   -        -   -   -"%(self.channel,                                 
 1+self.signal_lepton_energy_scale_uncertainty));
-        datacard_out.write( "\nlepton_res_%s     lnN       %0.3f                   -        -   -   -"%(self.channel,                                
+        datacard_out.write( "\n#lepton_res_%s     lnN       %0.3f                   -        -   -   -"%(self.channel,                                
 1+self.signal_lepton_energy_res_uncertainty));
         datacard_out.write( "\njet_scale_%s       lnN       %0.3f                   -        -   -   -"%(self.channel,                                
 1+self.signal_jet_energy_scale_uncertainty));
-        datacard_out.write( "\njet_res_%s        lnN       %0.3f                   -        -   -   -"%(self.channel,                                
+        datacard_out.write( "\n#jet_res_%s        lnN       %0.3f                   -        -   -   -"%(self.channel,                                
 1+self.signal_jet_energy_res_uncertainty));
-        datacard_out.write( "\nbtag_eff_%s       lnN       %0.3f                   -        -   -   -"%(self.channel,                                1+self.signal_btag_uncertainty));
+        datacard_out.write( "\n#btag_eff_%s       lnN       %0.3f                   -        -   -   -"%(self.channel,                                1+self.signal_btag_uncertainty));
         
         if mode == "unbin":
             for i in range(len(params_list)):
                 if TString(params_list[i].GetName()).Contains("Deco_TTbar_signal_region"):
-                    datacard_out.write( "\n%s param  %0.1f  %0.1f "%( params_list[i].GetName(), params_list[i].getVal(), params_list[i].getError() ) ) 
+                    datacard_out.write( "\n#%s param  %0.1f  %0.1f "%( params_list[i].GetName(), params_list[i].getVal(), params_list[i].getError() ) ) 
                 else:
                     datacard_out.write( "\n%s param  %0.1f  %0.1f "%( params_list[i].GetName(), params_list[i].getVal(), params_list[i].getError() ) ) 
         if mode == "counting":
-            datacard_out.write( "\nShape    lnN       -         -             %0.3f    -       -       -"%(1+self.rrv_counting_uncertainty_from_shape_uncertainty.getError()))
+            datacard_out.write( "\nShape_%s_%s    lnN       -         -             %0.3f    -       -       -"%(self.channel, self.wtagger_label, 1+self.rrv_counting_uncertainty_from_shape_uncertainty.getError()))
     ######## ++++++++++++++
     def prepare_limit(self,mode):
         print "prepare_limit for %s method"%(mode);
@@ -3911,7 +3908,7 @@ class doFit_wj_and_wlvj:
             getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_WJets0_signal_region_%s_after_correct_mlvj"%(self.channel)).clone("WJets_%s"%(self.channel)))
             self.workspace4limit_.allVars().Print();
         #getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_TTbar_signal_region_%s_mlvj"%(self.channel)).clone("TTbar_%s"%(self.channel)))
-        getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_TTbar_signal_region_%s_mlvj_Deco_TTbar_signal_region_%s_mlvj"%(self.channel, self.channel)).clone("TTbar_%s"%(self.channel)))
+        getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_TTbar_signal_region_%s_mlvj_Deco_TTbar_signal_region_%s_%s_mlvj"%(self.channel, self.channel, self.wtagger_label)).clone("TTbar_%s"%(self.channel)))
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_STop_signal_region_%s_mlvj"%(self.channel)).clone("STop_%s"%(self.channel)))
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_VV_signal_region_%s_mlvj"%(self.channel)).clone("VV_%s"%(self.channel)))
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_signal_region_%s_mlvj"%(self.signal_sample,self.channel)).clone(self.signal_sample+"_%s"%(self.channel)))
@@ -3933,84 +3930,80 @@ class doFit_wj_and_wlvj:
   
         if mode=="sideband_correction_method1":
             if self.MODEL_4_mlvj=="ErfExp_v1" or self.MODEL_4_mlvj=="ErfPow_v1"  or self.MODEL_4_mlvj=="2Exp" :
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig3"%(self.channel)).setError(shape_para_error_WJets0);
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig3"%(self.channel)));
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig3"%(self.channel)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)));
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)) ); 
 
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig4"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig4"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig5"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig5"%(self.channel)))
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig4"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig5"%(self.channel)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig5"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig5"%(self.channel, self.wtagger_label)))
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig5"%(self.channel, self.wtagger_label)) ); 
 
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_TTbar);
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_TTbar);
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_TTbar);
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig2"%(self.channel)));
-                #if options.closuretest==0:
-                #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel))); 
-                #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel))); 
-                #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig2"%(self.channel))); 
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
 
             if self.MODEL_4_mlvj=="ErfPow2_v1" or self.MODEL_4_mlvj=="ErfPowExp_v1" :
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig3"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig4"%(self.channel)).setError(shape_para_error_WJets0);
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig3"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig4"%(self.channel)));
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig3"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig4"%(self.channel)) ); 
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig4"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig4"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig5"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig5"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig6"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig6"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig7"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig7"%(self.channel)))
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig4"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig5"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig6"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig7"%(self.channel)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)));
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig5"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig5"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig6"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig6"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig7"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig7"%(self.channel, self.wtagger_label)))
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig4"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig5"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig6"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig7"%(self.channel, self.wtagger_label)) ); 
 
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_TTbar);
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_TTbar);
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_TTbar);
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig3"%(self.channel)).setError(shape_para_error_TTbar);
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig2"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig3"%(self.channel)));
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)));
                 #if options.closuretest==0:
                 #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel))); 
                 #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel))); 
@@ -4018,44 +4011,44 @@ class doFit_wj_and_wlvj:
                 #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig3"%(self.channel))); 
 
             if self.MODEL_4_mlvj=="Exp" or self.MODEL_4_mlvj=="Pow" :
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_WJets0);
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)));
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)) ); 
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)))
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)))
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
 
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_TTbar);
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)));
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar);
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
                 #if options.closuretest==0:
                 #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel))); 
 
             if self.MODEL_4_mlvj=="ExpN" or self.MODEL_4_mlvj=="ExpTail" or self.MODEL_4_mlvj=="Pow2" :
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_WJets0);
-                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_WJets0);
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)));
-                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)));
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig1"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_mlvj_eig2"%(self.channel)) ); 
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)))
-                self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)))
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig0"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig1"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig2"%(self.channel)) ); 
-                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_mlvj_eig3"%(self.channel)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_WJets0);
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                params_list.append(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sb_lo_from_fitting_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)) ); 
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)))
+                self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)).setError(shape_para_error_alpha); params_list.append(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)))
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)) ); 
+                self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)) ); 
                 #TTbar use exp
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)).setError(shape_para_error_TTbar); 
+                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(shape_para_error_TTbar); 
                 #self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel)).setError(shape_para_error_TTbar);
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)));
+                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
                 #params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel))); 
                 #if options.closuretest==0:
                 #    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel))); 
@@ -4433,11 +4426,11 @@ class doFit_wj_and_wlvj:
     ######## ++++++++++++++
     def GetLumi(self):
         if options.fitwtagger or options.fitwtaggersim:
-            if self.channel=="el": return 19.6#13.9;
-            if self.channel=="mu": return 19.6#14.0;
+            if self.channel=="el": return 19.5#13.9;
+            if self.channel=="mu": return 19.5#14.0;
 
-        if self.channel=="el": return 19.6#5.1#19.2#13.9;
-        if self.channel=="mu": return 19.6#5.3#19.3#14.0;
+        if self.channel=="el": return 19.5#5.1#19.2#13.9;
+        if self.channel=="mu": return 19.5#5.3#19.3#14.0;
 
 
     ######## ++++++++++++++
