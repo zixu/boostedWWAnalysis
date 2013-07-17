@@ -42,26 +42,60 @@ parser.add_option('--batchMode', action='store_true', dest='batchMode', default=
 
 (options, args) = parser.parse_args()
 ############################################################
-
 #globals 
 
-mass  = [600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500] 
+mass  = [800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500] 
 
-ccmlo = [500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]  
-ccmhi = [700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]  
+ccmlo = [700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]  
+ccmhi = [900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]  
 
-mjlo  = [  40, 40, 40, 40, 40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40]  
-mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
+mjlo  = [ 40, 40, 40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40]  
+mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
 
-mlo   = [ 400, 400, 600, 600, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,800]      
-mhi   = [ 1300, 1300, 1800, 1800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800]          
+mlo   = [  700,  700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700,700]      
+mhi   = [ 2800, 2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800]          
 
-shapeAlt = ["ErfPow2_v1","ErfPow2_v1","Pow","Pow","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
-shape    = ["ErfPowExp_v1","ErfPowExp_v1","Exp","Exp","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
+shape    = ["ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
+shapeAlt = ["ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
 
 
-#shape    = ["Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp"]
-#shapeAlt = ["Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow"]
+###globals 
+#mass  = [600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500] 
+#
+#ccmlo = [500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]  
+#ccmhi = [700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]  
+#
+#mjlo  = [  40, 40, 40, 40, 40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40]  
+#mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
+#
+#mlo   = [  400,  400,  700,  700, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,800]      
+#mhi   = [ 1300, 1300, 2800, 2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800]          
+#shape    = ["ErfPowExp_v1","ErfPowExp_v1","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
+#shapeAlt = [  "ErfPow2_v1",  "ErfPow2_v1","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
+
+
+##globals 
+#
+##mass  = [600,700,800] 
+##ccmlo = [500,600,700]  
+##ccmhi = [700,800,900]  
+##mjlo  = [ 40, 40, 40]  
+##mjhi  = [130,130,130]  
+##mlo   = [  400,  400,  700]      
+##mhi   = [ 1300, 1300, 2800]          
+##shape    = ["ErfPowExp_v1","ErfPowExp_v1","ExpN"]
+##shapeAlt = [  "ErfPow2_v1",  "ErfPow2_v1","ExpTail"]
+#
+#mass  = [900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500] 
+#ccmlo = [800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]  
+#ccmhi = [1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]  
+#mjlo  = [40, 40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40]  
+#mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
+#mlo   = [ 700, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,800]      
+#mhi   = [2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800]          
+#shape    = ["ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
+#shapeAlt = ["ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
+
 
 BRnew = 00;
 cprime = [10];
@@ -149,7 +183,8 @@ def submitBatchJob( command, fn ):
     outScript.write("\n"+'date');
     outScript.write("\n"+'source /uscmst1/prod/sw/cms/bashrc prod');
     outScript.write("\n"+'echo "condor dir: " ${_CONDOR_SCRATCH_DIR}');
-    outScript.write("\n"+'cd '+currentDir);
+    #outScript.write("\n"+'cd '+currentDir);
+    outScript.write("\n"+'cd '+'/uscms_data/d3/zixu/BoostJet/CMSSW_6_1_1/src');
     outScript.write("\n"+'eval `scram runtime -sh`');
     outScript.write("\n"+'cd -');
     outScript.write("\n"+'export PATH=${PATH}:'+currentDir);
@@ -193,7 +228,8 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
     outScript.write("\n"+'date');
     outScript.write("\n"+'source /uscmst1/prod/sw/cms/bashrc prod');
     outScript.write("\n"+'echo "condor dir: " ${_CONDOR_SCRATCH_DIR}');
-    outScript.write("\n"+'cd '+currentDir);
+    #outScript.write("\n"+'cd '+currentDir);
+    outScript.write("\n"+'cd '+'/uscms_data/d3/zixu/BoostJet/CMSSW_6_1_1/src');
     outScript.write("\n"+'eval `scram runtime -sh`');
     outScript.write("\n"+'cd -');
     outScript.write("\n"+'export PATH=${PATH}:'+currentDir);
@@ -305,27 +341,27 @@ def doULPlot( suffix ):
 
     # -------
     if suffix =="_el_HP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, ele HP"));
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, ele HP"));
         banner.SetNDC(); banner.SetTextSize(0.028);
     if suffix =="_el_LP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, ele LP"));
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, ele LP"));
         banner.SetNDC(); banner.SetTextSize(0.028);
     if suffix =="_mu_HP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, #mu HP"));
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, #mu HP"));
         banner.SetNDC(); banner.SetTextSize(0.028);
     if suffix =="_mu_LP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, #mu LP"));
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, #mu LP"));
         banner.SetNDC(); banner.SetTextSize(0.028);
     if suffix =="_em" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, e+#mu"));
+        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, e+#mu"));
         banner.SetNDC(); banner.SetTextSize(0.028);
         
-    oneLine = ROOT.TF1("oneLine","1",599,1001);
+    oneLine = ROOT.TF1("oneLine","1",799,1001);
     oneLine.SetLineColor(ROOT.kRed);
     oneLine.SetLineWidth(3);
 
     can_SM = ROOT.TCanvas("can_SM","can_SM",1000,800);
-    hrl_SM = can_SM.DrawFrame(599,1e-3,2501,5.0);
+    hrl_SM = can_SM.DrawFrame(799,1e-3,2501,5.0);
     hrl_SM.GetYaxis().SetTitle("#sigma_{95%} #times BR_{WW} (pb)");
     hrl_SM.GetYaxis().SetTitleOffset(1.4);
     hrl_SM.GetXaxis().SetTitle("mass (GeV/c^{2})");
@@ -341,9 +377,10 @@ def doULPlot( suffix ):
 
 
     #draw grid on top of limits
-    postGrid=TH1D("postGrid","postGrid",1,599,2501);
+    postGrid=TH1D("postGrid","postGrid",1,799,2501);  
+    postGrid.SetStats(0);
     postGrid.GetYaxis().SetRangeUser(1e-3,5.0);
-    postGrid.Draw("AXISSAME");
+    postGrid.Draw("AXIGSAME");
 
     leg2 = ROOT.TLegend(0.55,0.65,0.85,0.85);
     leg2.SetFillStyle(0);
@@ -388,6 +425,7 @@ if __name__ == '__main__':
             #sys.exit(0);
 
     if options.computeLimits or options.plotLimits: os.chdir("cards_em_EXO_allCat_v2_ExpN_g1");
+    #if options.computeLimits or options.plotLimits: os.chdir("cards_em_600_2500");
 
 
     # put in functionality to test just one mass point or just one cprime
@@ -451,31 +489,37 @@ if __name__ == '__main__':
             
                 
             # mu HP
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd);
             # mu LP
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd);
             # el HP            
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
+            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd);
             # el LP            
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
+            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd);
             # combined            
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt"%(mass[i],mass[i],"em",mass[i],"em");
+            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt"%(mass[i],mass[i],"em",mass[i],"em");
             os.system(runCmmd);
 
             #############
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+
+            tmp_rMin=0.01; tmp_rMax=10000;
+            if mass[i]>2000: tmp_rMin=1; tmp_rMax=100000;
+            elif mass[i]>1500: tmp_rMin=1; tmp_rMax=10000;
+            if mass[i]>1000: tmp_rMin=0.1; tmp_rMax=200;
+            else:         tmp_rMin=0.001; tmp_rMax=50;
+            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd2);
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
+            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
             os.system(runCmmd2);
 
     # =====================================
@@ -537,7 +581,7 @@ if __name__ == '__main__':
         fourSLine = ROOT.TF1("fourSLine","3.16712418331199785e-05",600,2500);
         fourSLine.SetLineColor(ROOT.kRed); fourSLine.SetLineWidth(2); fourSLine.SetLineStyle(2);           
     
-        banner = TLatex(0.43,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV"));
+        banner = TLatex(0.43,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV"));
         banner.SetNDC(); banner.SetTextSize(0.028);
     
         ban1s = TLatex(2400,1.58655253931457074e-01,("1 #sigma"));
@@ -575,7 +619,7 @@ if __name__ == '__main__':
         leg6.AddEntry( gr_em, "obs signif, all", "pl" );
     
         can = ROOT.TCanvas("can","can",800,800);
-        hrl = can.DrawFrame(699,1e-5,2500,0.6);
+        hrl = can.DrawFrame(799,1e-5,2500,0.6);
         hrl.GetYaxis().SetTitle("p-value");
         hrl.GetXaxis().SetTitle("mass (GeV)");
         can.SetGrid();
@@ -596,7 +640,7 @@ if __name__ == '__main__':
         can.SaveAs("~/limitFigs/pvals_el_HP.root","root");
 
         can2 = ROOT.TCanvas("can2","can2",800,800);
-        hrl2 = can2.DrawFrame(699,1e-5,2500,0.6);
+        hrl2 = can2.DrawFrame(799,1e-5,2500,0.6);
         hrl2.GetYaxis().SetTitle("p-value");
         hrl2.GetXaxis().SetTitle("mass (GeV)");
         can2.SetGrid();
@@ -617,7 +661,7 @@ if __name__ == '__main__':
         can2.SaveAs("~/limitFigs/pvals_mu_HP.root","root");
 
         can3 = ROOT.TCanvas("can3","can3",800,800);
-        hrl3 = can3.DrawFrame(699,1e-5,2500,0.6);
+        hrl3 = can3.DrawFrame(799,1e-5,2500,0.6);
         hrl3.GetYaxis().SetTitle("p-value");
         hrl3.GetXaxis().SetTitle("mass (GeV)");
         can3.SetGrid();
@@ -638,7 +682,7 @@ if __name__ == '__main__':
         can3.SaveAs("~/limitFigs/pvals_el_LP.root","root");
 
         can4 = ROOT.TCanvas("can4","can4",800,800);
-        hrl4 = can4.DrawFrame(699,1e-5,2500,0.6);
+        hrl4 = can4.DrawFrame(799,1e-5,2500,0.6);
         hrl4.GetYaxis().SetTitle("p-value");
         hrl4.GetXaxis().SetTitle("mass (GeV)");
         can4.SetGrid();
@@ -659,7 +703,7 @@ if __name__ == '__main__':
         can4.SaveAs("~/limitFigs/pvals_mu_LP.root","root");
 
         can5 = ROOT.TCanvas("can5","can5",800,800);
-        hrl5 = can5.DrawFrame(699,1e-5,2500,0.6);
+        hrl5 = can5.DrawFrame(799,1e-5,2500,0.6);
         hrl5.GetYaxis().SetTitle("p-value");
         hrl5.GetXaxis().SetTitle("mass (GeV)");
         can5.SetGrid();
