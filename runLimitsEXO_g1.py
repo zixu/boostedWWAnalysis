@@ -489,19 +489,19 @@ if __name__ == '__main__':
             
                 
             # mu HP
-            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd = "combine  -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd);
             # mu LP
-            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd = "combine  -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd);
             # el HP            
-            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
+            runCmmd = "combine  -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd);
             # el LP            
-            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
+            runCmmd = "combine  -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd);
             # combined            
-            runCmmd = "combine -S 0 -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt"%(mass[i],mass[i],"em",mass[i],"em");
+            runCmmd = "combine  -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt"%(mass[i],mass[i],"em",mass[i],"em");
             os.system(runCmmd);
 
             #############
@@ -511,15 +511,15 @@ if __name__ == '__main__':
             elif mass[i]>1500: tmp_rMin=1; tmp_rMax=10000;
             if mass[i]>1000: tmp_rMin=0.1; tmp_rMax=200;
             else:         tmp_rMin=0.001; tmp_rMax=50;
-            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+            runCmmd2 = "combine  -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd2);
-            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd2 = "combine  -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd2);
-            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+            runCmmd2 = "combine  -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
             os.system(runCmmd2);
-            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+            runCmmd2 = "combine  -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
             os.system(runCmmd2);
-            runCmmd2 = "combine -S 0 -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
+            runCmmd2 = "combine  -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
             os.system(runCmmd2);
 
     # =====================================
