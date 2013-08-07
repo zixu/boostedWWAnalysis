@@ -14,10 +14,10 @@ import subprocess
 from subprocess import Popen
 from optparse import OptionParser
 
-############################################################
 ############################################
 #            Job steering                  #
 ############################################
+
 parser = OptionParser()
 
 parser.add_option('-b', action='store_true', dest='noX', default=False,
@@ -38,33 +38,38 @@ parser.add_option('--category',action="store",type="string",dest="category",defa
 parser.add_option('--closuretest', action='store',type="int", dest='closuretest', default=0, help='closure test; 0: no test; 1: A1->A2; 2: A->B')
 parser.add_option('--batchMode', action='store_true', dest='batchMode', default=False,
                                     help='no X11 windows')
+parser.add_option('--limitMode', action='store',type="int", dest='limitMode', default=0, help='limit Mode; 0: Asymptotic ; 1: ProfileLikelihood ; 2: FullCLs ; 3: MaxLikelihoodFit')
 
 
 (options, args) = parser.parse_args()
+
 ############################################################
 
 #globals 
 
 mass  = [600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500] 
+
 ccmlo = [500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]  
 ccmhi = [700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]  
 
 mjlo  = [  40, 40, 40, 40, 40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40]  
 mjhi  = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]  
 
-mlo   = [ 400, 400, 600, 600, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,800]      
-mhi   = [ 1300, 1300, 1800, 1800,2800,28000,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,2800,3000]          
+mlo   = [ 400, 400, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700,700]      
+mhi   = [ 1300, 1300, 3000, 3000, 3000, 3000, 3000, 3000, 3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000]          
 
-shapeAlt = ["ErfPow2_v1","ErfPow2_v1","Pow","Pow","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
-shape    = ["ErfPowExp_v1","ErfPowExp_v1","Exp","Exp","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
+shape    = ["ErfPowExp_v1","ErfPowExp_v1","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
+shapeAlt = ["ErfPow2_v1","ErfPow2_v1","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
 
-#shape    = ["Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp"]
-#shapeAlt = ["Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow"]
+#shape    = ["ErfPow2_v1","ErfPow2_v1","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp"]
+#shapeAlt = ["ErfPow_v1","ErfPow_v1","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow","Pow"]
+
 
 BRnew = 00;
 cprime = [10];
 
 #cross-sections for kappa = 0.5
+
 xsDict2 = {
           600:0.32298, 
           700:0.11827,
@@ -86,7 +91,9 @@ xsDict2 = {
           2300:1.324e-05,    
           2400:8.6099e-06,    
           2500:5.6338e-06}
+
 #cross-sections for kappa = 0.2
+
 xsDict  = {600:0.052087, 
           700:0.019006,
           800:0.0079064,
@@ -110,32 +117,6 @@ xsDict  = {600:0.052087,
 
 ############################################################
 
-def getAsymLimits(file):
-    
-    
-    f = ROOT.TFile(file);
-    t = f.Get("limit");
-    entries = t.GetEntries();
-    
-    lims = [0,0,0,0,0,0];
-    
-    for i in range(entries):
-        
-        t.GetEntry(i);
-        t_quantileExpected = t.quantileExpected;
-        t_limit = t.limit;
-        
-        #print "limit: ", t_limit, ", quantileExpected: ",t_quantileExpected;
-        
-        if t_quantileExpected == -1.: lims[0] = t_limit;
-        elif t_quantileExpected >= 0.024 and t_quantileExpected <= 0.026: lims[1] = t_limit;
-        elif t_quantileExpected >= 0.15 and t_quantileExpected <= 0.17: lims[2] = t_limit;            
-        elif t_quantileExpected == 0.5: lims[3] = t_limit;            
-        elif t_quantileExpected >= 0.83 and t_quantileExpected <= 0.85: lims[4] = t_limit;
-        elif t_quantileExpected >= 0.974 and t_quantileExpected <= 0.976: lims[5] = t_limit;
-        else: print "Unknown quantile!"
-    
-    return lims;
 
 def submitBatchJob( command, fn ):
 
@@ -178,11 +159,9 @@ def submitBatchJob( command, fn ):
 
     # ----------------------------------------
 
-def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
+### Submit Combine Jobs on condor
 
-
-    SIGCH = "";
-    if options.sigChannel.find("H") >= 0: SIGCH = "_"+options.sigChannel;
+def submitBatchJobCombine( command, fn, channel, mass, cprime, BRnew, purity ):
 
     currentDir = os.getcwd();
     # create a dummy bash/csh
@@ -199,33 +178,74 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
     outScript.write("\n"+'echo ${PATH}');
     outScript.write("\n"+'ls');
     outScript.write("\n"+command);
-    outScript.write("\n"+'tar -cvzf outputFrom_'+fn+'.tar.gz *');
+    if not purity=="em" :
+     outScript.write("\n"+'tar -cvzf outputFrom_'+fn+'.tar.gz *'+str(mass)+'*'+str(channel)+'*'+str(purity)+'*');
+    else:
+     outScript.write("\n"+'tar -cvzf outputFrom_'+fn+'.tar.gz *'+str(mass)+'*'+str(purity)+'*');
+        
     outScript.close();
 
-    file1 = "hwwlvj_ggH%03d_em%s_%02d_%02d_unbin.txt"%(mass,SIGCH,cprime,BRnew);
-    file2 = "hwwlvj_ggH%03d_mu_%02d_%02d_workspace.root"%(mass,cprime,BRnew);
-    file3 = "hwwlvj_ggH%03d_el_%02d_%02d_workspace.root"%(mass,cprime,BRnew);
+    if not purity=="em" : 
+     file1 = "wwlvj_BulkG_c0p2_M%03d_%s_10_00_%s_unbin.txt"%(mass,channel,purity);
+     file2 = "wwlvj_BulkG_c0p2_M%03d_%s_10_00_%s_workspace.root"%(mass,channel,purity);
+    else:
+     file1 = "wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt"%(mass,purity);
+     file2 = "wwlvj_BulkG_c0p2_M%03d_mu_10_00_HP_workspace.root"%(mass);
+     file3 = "wwlvj_BulkG_c0p2_M%03d_el_10_00_HP_workspace.root"%(mass);
+     file4 = "wwlvj_BulkG_c0p2_M%03d_mu_10_00_LP_workspace.root"%(mass);
+     file5 = "wwlvj_BulkG_c0p2_M%03d_el_10_00_LP_workspace.root"%(mass);
+        
     # link a condor script to your shell script
     condorScript=open("subCondor_"+fn,"w");
     condorScript.write('universe = vanilla')
     condorScript.write("\n"+"Executable = "+fn+".sh")
     condorScript.write("\n"+'Requirements = Memory >= 199 &&OpSys == "LINUX"&& (Arch != "DUMMY" )&& Disk > 1000000')
     condorScript.write("\n"+'Should_Transfer_Files = YES')
-    condorScript.write("\n"+'Transfer_Input_Files = '+file1+', '+file2+', '+file3)
-    condorScript.write("\n"+'WhenToTransferOutput  = ON_EXIT_OR_EVICT')
-                                                                    
+    if not purity=="em" : condorScript.write("\n"+'Transfer_Input_Files = '+file1+', '+file2)
+    else : condorScript.write("\n"+'Transfer_Input_Files = '+file1+', '+file2+', '+file3+', '+file4+', '+file5)
+    condorScript.write("\n"+'WhenToTransferOutput = ON_EXIT_OR_EVICT')
+
     condorScript.write("\n"+'Output = out_$(Cluster).stdout')
-    condorScript.write("\n"+'Error  = out_$(Cluster).stderr')
-    condorScript.write("\n"+'Error  = out_$(Cluster).stderr')
-    condorScript.write("\n"+'Log    = out_$(Cluster).log')
-    condorScript.write("\n"+'Notification    = Error')
+    condorScript.write("\n"+'Error = out_$(Cluster).stderr')
+    condorScript.write("\n"+'Error = out_$(Cluster).stderr')
+    condorScript.write("\n"+'Log = out_$(Cluster).log')
+    condorScript.write("\n"+'Notification = Error')
     condorScript.write("\n"+'Queue 1')
     condorScript.close();
 
-    # submit the condor job
 
     os.system("condor_submit "+"subCondor_"+fn)
-                                               
+
+# --------------------------------------
+
+def getAsymLimits(file):
+    
+    
+    f = ROOT.TFile(file);
+    t = f.Get("limit");
+    entries = t.GetEntries();
+    
+    lims = [0,0,0,0,0,0];
+    
+    for i in range(entries):
+        
+        t.GetEntry(i);
+        t_quantileExpected = t.quantileExpected;
+        t_limit = t.limit;
+        
+        #print "limit: ", t_limit, ", quantileExpected: ",t_quantileExpected;
+        
+        if t_quantileExpected == -1.: lims[0] = t_limit;
+        elif t_quantileExpected >= 0.024 and t_quantileExpected <= 0.026: lims[1] = t_limit;
+        elif t_quantileExpected >= 0.15 and t_quantileExpected <= 0.17: lims[2] = t_limit;            
+        elif t_quantileExpected == 0.5: lims[3] = t_limit;            
+        elif t_quantileExpected >= 0.83 and t_quantileExpected <= 0.85: lims[4] = t_limit;
+        elif t_quantileExpected >= 0.974 and t_quantileExpected <= 0.976: lims[5] = t_limit;
+        else: print "Unknown quantile!"
+    
+    return lims;
+
+#### ---------------------------------------   
 
 def getPValueFromCard( file ):
 
@@ -241,6 +261,8 @@ def getPValueFromCard( file ):
         lims = t.limit
     
     return lims;
+
+#### -----------------------------
 
 def doULPlot( suffix ):
 
@@ -258,7 +280,6 @@ def doULPlot( suffix ):
         curFile = "higgsCombine_lim_%03d%s.Asymptotic.mH%03d.root"%(mass[i],suffix,mass[i]);
         sf = xsDict[mass[i]];
         sf2 = xsDict2[mass[i]];
-        #print "curFile: ",curFile
         curAsymLimits = getAsymLimits(curFile);
         xbins.append( mass[i] );
         xbins_env.append( mass[i] );                                
@@ -303,32 +324,36 @@ def doULPlot( suffix ):
     curGraph_2s.SetFillColor(ROOT.kYellow);
 
     # -------
-    if suffix =="_el_HP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, ele HP"));
-        banner.SetNDC(); banner.SetTextSize(0.028);
-    if suffix =="_el_LP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, ele LP"));
-        banner.SetNDC(); banner.SetTextSize(0.028);
-    if suffix =="_mu_HP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, #mu HP"));
-        banner.SetNDC(); banner.SetTextSize(0.028);
-    if suffix =="_mu_LP" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, #mu LP"));
-        banner.SetNDC(); banner.SetTextSize(0.028);
-    if suffix =="_em" :        
-        banner = TLatex(0.44,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV, e+#mu"));
-        banner.SetNDC(); banner.SetTextSize(0.028);
-        
+    if suffix =="_el_HP" :
+      banner = TLatex(0.31,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, W#rightarrow e#nu HP"));
+      banner.SetNDC(); banner.SetTextSize(0.032);
+    if suffix =="_el_LP" :
+      banner = TLatex(0.31,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, W#rightarrow e#nu LP"));
+      banner.SetNDC(); banner.SetTextSize(0.032);
+    if suffix =="_mu_HP" :
+      banner = TLatex(0.31,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, W#rightarrow #mu#nu HP"));
+      banner.SetNDC(); banner.SetTextSize(0.032);
+    if suffix =="_mu_LP" :
+      banner = TLatex(0.31,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, W#rightarrow #mu#nu LP"));
+      banner.SetNDC(); banner.SetTextSize(0.032);
+    if suffix =="_em" :
+      banner = TLatex(0.31,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV, e+#mu combined"));
+      banner.SetNDC(); banner.SetTextSize(0.032);
+      
     oneLine = ROOT.TF1("oneLine","1",599,1001);
     oneLine.SetLineColor(ROOT.kRed);
     oneLine.SetLineWidth(3);
 
     can_SM = ROOT.TCanvas("can_SM","can_SM",1000,800);
-    hrl_SM = can_SM.DrawFrame(599,1e-3,2501,5.0);
+    hrl_SM = can_SM.DrawFrame(799,1e-5,2501,5.0);
     hrl_SM.GetYaxis().SetTitle("#sigma_{95%} #times BR_{WW} (pb)");
-    hrl_SM.GetYaxis().SetTitleOffset(1.4);
-    hrl_SM.GetXaxis().SetTitle("mass (GeV/c^{2})");
-    hrl_SM.GetYaxis().SetRangeUser(0.0001,5);
+    hrl_SM.GetYaxis().SetTitleOffset(1.2);
+    hrl_SM.GetXaxis().SetTitle("m_{WW} (GeV)");
+    hrl_SM.GetXaxis().SetTitleSize(0.036);
+    hrl_SM.GetXaxis().SetTitleSize(0.036);
+    hrl_SM.GetXaxis().SetLabelSize(0.036);
+    hrl_SM.GetYaxis().SetRangeUser(0.0001,10);
+    hrl_SM.GetYaxis().SetNdivisions(504);
     can_SM.SetGrid();
 
     curGraph_2s.Draw("F");
@@ -338,24 +363,32 @@ def doULPlot( suffix ):
     curGraph_xs_02.Draw("PL");
     curGraph_xs_05.Draw("PL");
 
-    leg2 = ROOT.TLegend(0.55,0.65,0.85,0.85);
-    leg2.SetFillStyle(0);
+       
+    leg2 = ROOT.TLegend(0.52,0.60,0.88,0.85);
+    leg2.SetFillColor(0);
     leg2.SetBorderSize(0);
-    leg2.AddEntry(curGraph_obs,"Observed","L")
+    leg2.SetFillStyle(3001);
+    leg2.AddEntry(curGraph_obs,"Observed","LP")
     leg2.AddEntry(curGraph_exp,"Expected","L")
     leg2.AddEntry(curGraph_1s,"Expected, #pm 1#sigma","F")
     leg2.AddEntry(curGraph_2s,"Expected, #pm 2#sigma","F")
-#    leg2.AddEntry(oneLine,"SM Expected","L")
     leg2.AddEntry(curGraph_xs_02,"#sigma_{Bulk}#times BR(G#rightarrow WW), #tilde{k}=0.2","L")
     leg2.AddEntry(curGraph_xs_05,"#sigma_{Bulk}#times BR(G#rightarrow WW), #tilde{k}=0.5","L")
 
+    ROOT.gPad.SetLogy();
+    can_SM.Update();
+    can_SM.RedrawAxis();
+    can_SM.RedrawAxis("g");
+    can_SM.Update();
+
     leg2.Draw();
     banner.Draw();
-#    oneLine.Draw("LESAMES");
 
     ROOT.gPad.SetLogy();
     can_SM.SaveAs("~/limitFigs/Lim%s.png"%(suffix));                      
     can_SM.SaveAs("~/limitFigs/Lim%s.pdf"%(suffix));       
+    can_SM.SaveAs("~/limitFigs/Lim%s.root"%(suffix));       
+    can_SM.SaveAs("~/limitFigs/Lim%s.C"%(suffix));       
 
 ############################################################
 
@@ -365,34 +398,29 @@ if __name__ == '__main__':
     ###############
     
     CHAN = options.channel;
-    DIR = "cards_exo_"+CHAN;
 
-
-    
     moreCombineOpts = "";
     
     ###############
     
-    if options.makeCards:
-        if not os.path.isdir(DIR): os.system("mkdir "+DIR);
-        else: 
-            print "Directory "+DIR+" already exists...";
-            #sys.exit(0);
-
     if options.computeLimits or options.plotLimits: os.chdir("cards_em_EXO_allCat_v2_ExpN");
 
 
     # put in functionality to test just one mass point or just one cprime
+
     nMasses = len(mass);
     mLo = 0;
     mHi = nMasses;
+
     nCprimes = len(cprime);
     cpLo = 0;
     cpHi = nCprimes;
+
     if options.massPoint > 0:   
         curIndex = mass.index(options.massPoint);
         mLo = curIndex;
         mHi = curIndex+1;
+
     if options.cPrime > 0:   
         curIndex = cprime.index(options.cPrime);
         cpLo = curIndex;
@@ -414,18 +442,12 @@ if __name__ == '__main__':
                 
                 time.sleep(0.3);
                 
-                #command = "nohup python EXO_doFit_class.py %s ggH%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %02d --BRnew 00  > log/log_%s_ggH%03d_%02d_%02d_%02d_%02d_%02d_%02d_%s_%s_cprime_%02d_BRnew_00 &"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j]);
-                #command = "nohup python exo_doFit_class.py %s BulkG_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %02d --BRnew 00  &"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j]);
                 command = "python exo_doFit_class.py %s BulkG_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], os.getcwd(), options.category,options.closuretest);
 
-                print command #raw_input("ENTER");
-                unbinnedCard = options.odir+"/cards_%s/hwwlvj_ggH%03d_%s_%02d_%02d_unbin.txt"%(options.channel,mass[i],options.channel,cprime[j],BRnew);
-
-                fileExists = os.path.isfile(unbinnedCard)
-                print "fileExists: ",fileExists,", cards: ", unbinnedCard
                 if options.batchMode and not fileExists:
                  fn = "fitScript_%s_%03d_%02d_%02d_%s"%(options.channel,mass[i],cprime[j],BRnew,options.category);
                  submitBatchJob( command, fn );
+
                 if not options.batchMode:
                  os.system(command);
 
@@ -435,45 +457,280 @@ if __name__ == '__main__':
     if options.computeLimits:
 
         for i in range(mLo,mHi):
-            print "------------------"+str(mass[i])+"-------------------------";                
-#            print "creating card: wwlvj_BulkG_c0p2_M%03d_%s_10_00_counting.txt"%(mass[i],CHAN);
+            print "------------------"+str(mass[i])+"-------------------------";
+
+            time.sleep(0.3);
+
             combineCmmd = "combineCards.py wwlvj_BulkG_c0p2_M%03d_el_10_00_HP_unbin.txt wwlvj_BulkG_c0p2_M%03d_mu_10_00_HP_unbin.txt wwlvj_BulkG_c0p2_M%03d_el_10_00_LP_unbin.txt wwlvj_BulkG_c0p2_M%03d_mu_10_00_LP_unbin.txt > wwlvj_BulkG_c0p2_M%03d_em_10_00_unbin.txt"%(mass[i],mass[i],mass[i],mass[i],mass[i]);
+
             print combineCmmd
             os.system(combineCmmd);
             
-            # mu LP
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
-#            os.system(runCmmd);
-            # el LP            
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
-#            os.system(runCmmd);
+
+            if options.limitMode==0:
+            
+             runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+             if options.batchMode:
+              fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"HP");
+              submitBatchJobCombine( runCmmd2, fn, "el",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+              os.system(runCmmd2);
+
+             time.sleep(0.1);
+
+
+             runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+             if options.batchMode:
+              fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"HP");
+              submitBatchJobCombine( runCmmd2, fn, "mu",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+              os.system(runCmmd2);
+
+             time.sleep(0.1);
+
+
+             runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+             if options.batchMode:
+              fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"LP");
+              submitBatchJobCombine( runCmmd2, fn, "el",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+              os.system(runCmmd2);
+
+             time.sleep(0.1);
+
+             runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+             if options.batchMode:
+              fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"LP");
+              submitBatchJobCombine( runCmmd2, fn, "mu",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+              os.system(runCmmd2);
+
+             time.sleep(0.1);
+
+             runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
+             if options.batchMode:
+              fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d"%("em",mass[i],"em",cprime[0],BRnew[0]);
+              submitBatchJobCombine( runCmmd2, fn, "",mass[i], cprime[0], BRnew[0],"em" );
+             else:  
+              os.system(runCmmd2);
+
+            if options.limitMode == 1 :
                 
-            # mu HP
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"mu",mass[i],"mu");
-            os.system(runCmmd);
-            # el HP            
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt"%(mass[i],mass[i],"el",mass[i],"el");
-            os.system(runCmmd);
-            # combined            
-            runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_%03d_%s wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt"%(mass[i],mass[i],"em",mass[i],"em");
-            os.system(runCmmd);
+             # mu HP
+             runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -t -1 --expectSignal=6.25 --toysFreq"%(mass[i],mass[i],"mu",mass[i],"mu");
+             if options.batchMode:
+              fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"HP");
+              submitBatchJobCombine( runCmmd, fn, "mu",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+             # mu LP
+             runCmmd ="";
+             runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"mu",mass[i],"mu");
+             if options.batchMode:
+              fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"LP");
+              submitBatchJobCombine( runCmmd, fn, "mu",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+             # el HP
+             runCmmd ="";
+             runCmmd = "combine -M ProfileLikelihood  --signif --pvalue -m %03d -n _pval_obs_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(mass[i],mass[i],"el",mass[i],"el");
+             runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
+             if options.batchMode:
+              fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"HP");
+              submitBatchJobCombine( runCmmd, fn, "el",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+             # el LP
+             runCmmd ="";
+             runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(mass[i],mass[i],"el",mass[i],"el");
+             runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
+             if options.batchMode:
+              fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"LP");
+              submitBatchJobCombine( runCmmd, fn, "el",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+            # combined
+             runCmmd ="";
+             runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt\n"%(mass[i],mass[i],"em",mass[i],"em");
+             runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"em",mass[i],"em");
+             if options.batchMode:
+              fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d"%("em",mass[i],"",cprime[0],BRnew[0]);
+              submitBatchJobCombine( runCmmd, fn, "em",mass[i], cprime[0], BRnew[0],"em" );
+             else:  
+              os.system(runCmmd);
 
             #############
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
-#            os.system(runCmmd2);
 
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
-#            os.system(runCmmd2);
+            if options.limitMode ==2:
 
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
-#            os.system(runCmmd2);
+             runCmmd3="";
 
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
-#            os.system(runCmmd2);
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2  -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4  -v 0 -s -1\n"%(mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4  -v 0 -s -1 --expectedFromGrid 0.5\n"%(mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4  -v 0 -s -1 --expectedFromGrid 0.16\n"%(mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4  -v 0 -s -1 --expectedFromGrid 0.84\n"%(mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4  -v 0 -s -1 --expectedFromGrid 0.025\n"%(mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4  -v 0 -s -1 --expectedFromGrid 0.975\n"%(mass[i],mass[i],"el",mass[i],"el");
 
-            runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping --rMin 1 --rMax 100000 -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
-            print runCmmd2 ;
-#            os.system(runCmmd2);
+                                                                     
+             if options.batchMode:
+               fn = "combineScript_HybridNew_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"HP");
+               submitBatchJobCombine( runCmmd3,fn, "el",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+               os.system(runCmmd3);
+
+             time.sleep(0.1);
+
+             runCmmd3="";
+
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 \n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.5 \n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.16\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.84\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.025\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.975\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+
+             if options.batchMode:
+               fn = "combineScript_HybridNew_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"HP");
+               submitBatchJobCombine( runCmmd3,fn, "mu",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+               os.system(runCmmd3);
+
+             time.sleep(0.1);
+              
+             runCmmd3="";
+
+
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 \n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.5\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.16\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.84\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.025\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.975\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"el",mass[i],"el");
+
+
+             time.sleep(0.1);
+              
+
+             if options.batchMode:
+               fn = "combineScript_HybridNew_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"LP");
+               submitBatchJobCombine( runCmmd3,fn, "el",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+               os.system(runCmmd3);
+
+             runCmmd3="";
+
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 \n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.5\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.16\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.84\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.025\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.975\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"mu",mass[i],"mu");
+
+                                                                     
+             if options.batchMode:
+               fn = "combineScript_HybridNew_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"LP");
+               submitBatchJobCombine( runCmmd3,fn, "mu",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+               os.system(runCmmd3);
+
+             time.sleep(0.1);
+
+             runCmmd3="";
+
+
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 \n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.5\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.16\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.84\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.025\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
+             runCmmd3 = runCmmd3 + "combine -M HybridNew --frequentist --minimizerAlgo Minuit2 --rMin %s --rMax %s -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --testStat LHC -H ProfileLikelihood --fork 4 -v 0 -s -1 --expectedFromGrid 0.975\n"%(tmp_rMin,tmp_rMax, mass[i],mass[i],"em",mass[i],"em");
+
+                                                                     
+             if options.batchMode:
+               fn = "combineScript_HybridNew_%s_%03d%s_%02d_%02d"%("em",mass[i],"",cprime[0],BRnew[0]);
+               submitBatchJobCombine( runCmmd3,fn, "",mass[i], cprime[0], BRnew[0],"em" );
+             else:  
+               os.system(runCmmd3);
+
+            if options.limitMode == 3 :
+  
+             tmp_rMin=0.01; tmp_rMax=10000;
+             if mass[i]>2000: tmp_rMin=1; tmp_rMax=100000;
+             elif mass[i]>1500: tmp_rMin=1; tmp_rMax=10000;
+             if mass[i]>1000: tmp_rMin=0.1; tmp_rMax=200;
+             else: tmp_rMin=0.001; tmp_rMax=50;
+                
+             # mu HP
+             runCmmd = "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd += "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_toy_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --toysFrequentist -t 1000 --noErrors --minos none --expectSignal=6.25"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"mu",mass[i],"mu");
+             if options.batchMode:
+              fn = "combineScript_MaxLikelihoodFit_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"HP");
+              submitBatchJobCombine( runCmmd, fn, "mu",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+             # mu LP
+             runCmmd = "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"mu",mass[i],"mu");
+             runCmmd += "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_toy_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --toysFrequentist -t 1000 --noErrors --minos none --expectSignal=6.25"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"mu",mass[i],"mu");
+             if options.batchMode:
+              fn = "combineScript_MaxLikelihoodFit_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"LP");
+              submitBatchJobCombine( runCmmd, fn, "mu",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+             # el HP
+             runCmmd = "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"el",mass[i],"el");
+             runCmmd += "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_toy_%03d_%s_HP wwlvj_BulkG_c0p2_M%03d_%s_10_00_HP_unbin.txt --toysFrequentist -t 1000 --noErrors --minos none --expectSignal=6.25"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"el",mass[i],"el");
+             if options.batchMode:
+              fn = "combineScript_MaxLikelihoodFit_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"HP");
+              submitBatchJobCombine( runCmmd, fn, "el",mass[i], cprime[0], BRnew[0],"HP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+             # el LP
+             runCmmd = "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"el",mass[i],"el");
+             runCmmd += "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_toy_%03d_%s_LP wwlvj_BulkG_c0p2_M%03d_%s_10_00_LP_unbin.txt --toysFrequentist -t 1000 --noErrors --minos none --expectSignal=6.25"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"el",mass[i],"el");
+             if options.batchMode:
+              fn = "combineScript_MaxLikelihoodFit_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"LP");
+              submitBatchJobCombine( runCmmd, fn, "el",mass[i], cprime[0], BRnew[0],"LP" );
+             else:  
+              os.system(runCmmd);
+
+             time.sleep(0.1);
+
+            # combined
+             runCmmd = "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_%03d_%s wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt\n"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"em",mass[i],"em");
+             runCmmd += "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %s  --rMax %s -m %03d -n _fit_toy_%03d_%s wwlvj_BulkG_c0p2_M%03d_%s_10_00_unbin.txt --toysFrequentist -t 1000 --noErrors --minos none --expectSignal=6.25"%(tmp_rMin,tmp_rMax,mass[i],mass[i],"em",mass[i],"em");
+             if options.batchMode:
+              fn = "combineScript_MaxLikelihoodFit_%s_%03d%s_%02d_%02d"%("em",mass[i],"",cprime[0],BRnew[0]);
+              submitBatchJobCombine( runCmmd, fn, "em",mass[i], cprime[0], BRnew[0],"em" );
+             else:  
+              os.system(runCmmd);
+
+            #############
+
+
 
     # =====================================
     
@@ -493,19 +750,26 @@ if __name__ == '__main__':
         ybins_mu_lp = array('d', [])
         ybins_em = array('d', [])
 
+        xbins_exp = array('d', [])
+        ybins_el_hp_exp = array('d', [])
+        ybins_mu_hp_exp = array('d', [])
+        ybins_el_lp_exp = array('d', [])
+        ybins_mu_lp_exp = array('d', [])
+        ybins_em_exp = array('d', [])
+
         for i in range(mLo,mHi):
             print "------------------"+str(mass[i])+"-------------------------";                
-            print "getting card: higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
-            print "getting card: higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
-            print "getting card: higgsCombine_pval_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
-            print "getting card: higgsCombine_pval_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
-            print "getting card: higgsCombine_pval_%03d_%s.ProfileLikelihood.mH%03d.root"%(mass[i],"em",mass[i])
+            print "getting card: higgsCombine_pval_obs_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            print "getting card: higgsCombine_pval_obs_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            print "getting card: higgsCombine_pval_obs_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            print "getting card: higgsCombine_pval_obs_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            print "getting card: higgsCombine_pval_obs_%03d_%s.ProfileLikelihood.mH%03d.root"%(mass[i],"em",mass[i])
 
-            orootname_el_hp = "higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
-            orootname_mu_hp = "higgsCombine_pval_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
-            orootname_el_lp = "higgsCombine_pval_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
-            orootname_mu_lp = "higgsCombine_pval_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
-            orootname_em = "higgsCombine_pval_%03d_%s.ProfileLikelihood.mH%03d.root"%(mass[i],"em",mass[i]);
+            orootname_el_hp = "higgsCombine_pval_obs_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            orootname_mu_hp = "higgsCombine_pval_obs__%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            orootname_el_lp = "higgsCombine_pval_obs_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            orootname_mu_lp = "higgsCombine_pval_obs_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            orootname_em = "higgsCombine_pval_obs_%03d_%s.ProfileLikelihood.mH%03d.root"%(mass[i],"em",mass[i]);
 
             xbins.append( mass[i] );
             ybins_el_hp.append( getPValueFromCard(orootname_el_hp) );
@@ -513,6 +777,19 @@ if __name__ == '__main__':
             ybins_el_lp.append( getPValueFromCard(orootname_el_lp) );
             ybins_mu_lp.append( getPValueFromCard(orootname_mu_lp) );
             ybins_em.append( getPValueFromCard(orootname_em) );
+
+            orootname_el_hp_exp = "higgsCombine_pval_exp_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            orootname_mu_hp_exp = "higgsCombine_pval_exp_%03d_%s_HP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            orootname_el_lp_exp = "higgsCombine_pval_exp_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"el",mass[i]);
+            orootname_mu_lp_exp = "higgsCombine_pval_exp_%03d_%s_LP.ProfileLikelihood.mH%03d.root"%(mass[i],"mu",mass[i]);
+            orootname_em_exp = "higgsCombine_pval_exp_%03d_%s.ProfileLikelihood.mH%03d.root"%(mass[i],"em",mass[i]);
+
+            xbins_exp.append( mass[i] );
+            ybins_el_hp_exp.append( getPValueFromCard(orootname_el_hp_exp) );
+            ybins_mu_hp_exp.append( getPValueFromCard(orootname_mu_hp_exp) );
+            ybins_el_lp_exp.append( getPValueFromCard(orootname_el_lp_exp) );
+            ybins_mu_lp_exp.append( getPValueFromCard(orootname_mu_lp_exp) );
+            ybins_em_exp.append( getPValueFromCard(orootname_em_exp) );
 
         gr_el_hp = ROOT.TGraph(nPoints,xbins,ybins_el_hp);
         gr_mu_hp = ROOT.TGraph(nPoints,xbins,ybins_mu_hp);
@@ -524,7 +801,18 @@ if __name__ == '__main__':
         gr_mu_lp.SetLineColor( 1 ); gr_mu_lp.SetMarkerColor( 1 ); gr_mu_lp.SetMarkerStyle( 20 ); gr_mu_lp.SetLineWidth( 3 );gr_mu_lp.SetMarkerSize( 1.6 );
         gr_em = ROOT.TGraph(nPoints,xbins,ybins_em);
         gr_em.SetLineColor( 1 ); gr_em.SetMarkerColor( 1 ); gr_em.SetMarkerStyle( 20 );gr_em.SetLineWidth( 3 ); gr_em.SetMarkerSize( 1.4 );
-    
+
+        gr_el_hp_exp = ROOT.TGraph(nPoints,xbins_exp,ybins_el_hp_exp);
+        gr_mu_hp_exp = ROOT.TGraph(nPoints,xbins_exp,ybins_mu_hp_exp);
+        gr_el_hp_exp.SetLineColor( 1 ); gr_el_hp_exp.SetMarkerColor( 1 ); gr_el_hp_exp.SetMarkerStyle( 20 );  gr_el_hp_exp.SetLineWidth( 3 );gr_el_hp_exp.SetMarkerSize( 1.6 );
+        gr_mu_hp_exp.SetLineColor( 1 ); gr_mu_hp_exp.SetMarkerColor( 1 ); gr_mu_hp_exp.SetMarkerStyle( 20 );  gr_mu_hp_exp.SetLineWidth( 3 );gr_mu_hp_exp.SetMarkerSize( 1.6 );
+        gr_el_lp_exp = ROOT.TGraph(nPoints,xbins_exp,ybins_el_lp_exp);
+        gr_mu_lp_exp = ROOT.TGraph(nPoints,xbins_exp,ybins_mu_lp_exp);
+        gr_el_lp_exp.SetLineColor( 1 ); gr_el_lp_exp.SetMarkerColor( 1 ); gr_el_lp_exp.SetMarkerStyle( 20 ); gr_el_lp_exp.SetLineWidth( 3 );gr_el_lp_exp.SetMarkerSize( 1.6 );
+        gr_mu_lp_exp.SetLineColor( 1 ); gr_mu_lp_exp.SetMarkerColor( 1 ); gr_mu_lp_exp.SetMarkerStyle( 20 ); gr_mu_lp_exp.SetLineWidth( 3 );gr_mu_lp_exp.SetMarkerSize( 1.6 );
+        gr_em_exp = ROOT.TGraph(nPoints,xbins_exp,ybins_em_exp);
+        gr_em_exp.SetLineColor( 1 ); gr_em_exp.SetMarkerColor( 1 ); gr_em_exp.SetMarkerStyle( 20 );gr_em_exp.SetLineWidth( 3 ); gr_em_exp.SetMarkerSize( 1.4 );
+
         oneSLine = ROOT.TF1("oneSLine","1.58655253931457074e-01",600,2500);
         oneSLine.SetLineColor(ROOT.kRed); oneSLine.SetLineWidth(2); oneSLine.SetLineStyle(2);
         twoSLine = ROOT.TF1("twoSLine","2.27501319481792155e-02",600,2500);
@@ -534,7 +822,7 @@ if __name__ == '__main__':
         fourSLine = ROOT.TF1("fourSLine","3.16712418331199785e-05",600,2500);
         fourSLine.SetLineColor(ROOT.kRed); fourSLine.SetLineWidth(2); fourSLine.SetLineStyle(2);           
     
-        banner = TLatex(0.43,0.91,("CMS Preliminary, 19.3 fb^{-1} at #sqrt{s}=8TeV"));
+        banner = TLatex(0.43,0.91,("CMS Preliminary, 19.5 fb^{-1} at #sqrt{s}=8TeV"));
         banner.SetNDC(); banner.SetTextSize(0.028);
     
         ban1s = TLatex(2400,1.58655253931457074e-01,("1 #sigma"));
@@ -550,34 +838,40 @@ if __name__ == '__main__':
         leg2.SetFillStyle(0);
         leg2.SetBorderSize(1);
         leg2.AddEntry( gr_el_hp, "obs signif, e (HP)", "pl" );
+        leg2.AddEntry( gr_el_hp_exp, "exp signif, #tilde{k}=0.5", "pl" );
 
         leg3 = ROOT.TLegend(0.2,0.2,0.5,0.35);
         leg3.SetFillStyle(0);
         leg3.SetBorderSize(1);
         leg3.AddEntry( gr_mu_hp, "obs signif, #mu (HP)", "pl" );
+        leg3.AddEntry( gr_mu_hp_exp, "exp signif, #tilde{k}=0.5", "pl" );
 
         leg4 = ROOT.TLegend(0.2,0.2,0.5,0.35);
         leg4.SetFillStyle(0);
         leg4.SetBorderSize(1);
         leg4.AddEntry( gr_el_lp, "obs signif, e (LP)", "pl" );
+        leg4.AddEntry( gr_el_lp_exp, "exp signif, #tilde{k}=0.5", "pl" );
 
         leg5 = ROOT.TLegend(0.2,0.2,0.5,0.35);
         leg5.SetFillStyle(0);
         leg5.SetBorderSize(1);
         leg5.AddEntry( gr_mu_lp, "obs signif, #mu (LP)", "pl" );
+        leg5.AddEntry( gr_mu_lp_exp, "exp signif, #tilde{k}=0.5", "pl" );
 
         leg6 = ROOT.TLegend(0.2,0.2,0.5,0.35);
         leg6.SetFillStyle(0);
         leg6.SetBorderSize(1);
         leg6.AddEntry( gr_em, "obs signif, all", "pl" );
+        leg6.AddEntry( gr_em_exp, "exp signif, #tilde{k}=0.5", "pl" );
     
         can = ROOT.TCanvas("can","can",800,800);
-        hrl = can.DrawFrame(699,1e-5,2500,0.6);
+        hrl = can.DrawFrame(599,1e-3,2500,0.6);
         hrl.GetYaxis().SetTitle("p-value");
         hrl.GetXaxis().SetTitle("mass (GeV)");
         can.SetGrid();
         ROOT.gPad.SetLogy();
         gr_el_hp.Draw("PL");
+        gr_el_hp_exp.Draw("PLsame");
         oneSLine.Draw("same");
         twoSLine.Draw("same");
         threeSLine.Draw("same");
@@ -588,16 +882,21 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();    
+        can.RedrawAxis();
+        can.RedrawAxis("g");
+        can.Update();
         can.SaveAs("~/limitFigs/pvals_el_HP.pdf","pdf");
         can.SaveAs("~/limitFigs/pvals_el_HP.png","png");
+        can.SaveAs("~/limitFigs/pvals_el_HP.root","root");
 
         can2 = ROOT.TCanvas("can2","can2",800,800);
-        hrl2 = can2.DrawFrame(699,1e-5,2500,0.6);
+        hrl2 = can2.DrawFrame(599,1e-3,2500,0.6);
         hrl2.GetYaxis().SetTitle("p-value");
         hrl2.GetXaxis().SetTitle("mass (GeV)");
         can2.SetGrid();
         ROOT.gPad.SetLogy();
         gr_mu_hp.Draw("PL");
+        gr_mu_hp_exp.Draw("PLsame");
         oneSLine.Draw("same");
         twoSLine.Draw("same");
         threeSLine.Draw("same");
@@ -608,16 +907,21 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();    
+        can2.RedrawAxis();
+        can2.RedrawAxis("g");
+        can2.Update();
         can2.SaveAs("~/limitFigs/pvals_mu_HP.pdf","pdf");
         can2.SaveAs("~/limitFigs/pvals_mu_HP.png","png");
+        can2.SaveAs("~/limitFigs/pvals_mu_HP.root","root");
 
         can3 = ROOT.TCanvas("can3","can3",800,800);
-        hrl3 = can3.DrawFrame(699,1e-5,2500,0.6);
+        hrl3 = can3.DrawFrame(599,1e-3,2500,0.6);
         hrl3.GetYaxis().SetTitle("p-value");
         hrl3.GetXaxis().SetTitle("mass (GeV)");
         can3.SetGrid();
         ROOT.gPad.SetLogy();
         gr_el_lp.Draw("PL");
+        gr_el_lp_exp.Draw("PLsame");
         oneSLine.Draw("same");
         twoSLine.Draw("same");
         threeSLine.Draw("same");
@@ -627,17 +931,23 @@ if __name__ == '__main__':
         ban1s.Draw();
         ban2s.Draw();
         ban3s.Draw();
-        ban4s.Draw();    
+        ban4s.Draw();
+        can3.RedrawAxis();
+        can3.RedrawAxis("g");
+        can3.Update();
+
         can3.SaveAs("~/limitFigs/pvals_el_LP.pdf","pdf");
         can3.SaveAs("~/limitFigs/pvals_el_LP.png","png");
+        can3.SaveAs("~/limitFigs/pvals_el_LP.root","root");
 
         can4 = ROOT.TCanvas("can4","can4",800,800);
-        hrl4 = can4.DrawFrame(699,1e-5,2500,0.6);
+        hrl4 = can4.DrawFrame(599,1e-3,2500,0.6);
         hrl4.GetYaxis().SetTitle("p-value");
         hrl4.GetXaxis().SetTitle("mass (GeV)");
         can4.SetGrid();
         ROOT.gPad.SetLogy();
         gr_mu_lp.Draw("PL");
+        gr_mu_lp_exp.Draw("PLsame");
         oneSLine.Draw("same");
         twoSLine.Draw("same");
         threeSLine.Draw("same");
@@ -648,16 +958,21 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();    
+        can4.RedrawAxis();
+        can4.RedrawAxis("g");
+        can4.Update();
         can4.SaveAs("~/limitFigs/pvals_mu_LP.pdf","pdf");
         can4.SaveAs("~/limitFigs/pvals_mu_LP.png","png");
+        can4.SaveAs("~/limitFigs/pvals_mu_LP.root","root");
 
         can5 = ROOT.TCanvas("can5","can5",800,800);
-        hrl5 = can5.DrawFrame(699,1e-5,2500,0.6);
+        hrl5 = can5.DrawFrame(599,1e-3,2500,0.6);
         hrl5.GetYaxis().SetTitle("p-value");
         hrl5.GetXaxis().SetTitle("mass (GeV)");
         can5.SetGrid();
         ROOT.gPad.SetLogy();
         gr_em.Draw("PL");
+        gr_em_exp.Draw("PLsame");
         oneSLine.Draw("same");
         twoSLine.Draw("same");
         threeSLine.Draw("same");
@@ -667,9 +982,13 @@ if __name__ == '__main__':
         ban1s.Draw();
         ban2s.Draw();
         ban3s.Draw();
-        ban4s.Draw();    
+        ban4s.Draw();
+        can5.RedrawAxis();
+        can5.RedrawAxis("g");
+        can5.Update();
         can5.SaveAs("~/limitFigs/pvals_em.pdf","pdf");
         can5.SaveAs("~/limitFigs/pvals_em.png","png");
+        can5.SaveAs("~/limitFigs/pvals_em.root","root");
 
 
 
