@@ -1870,8 +1870,8 @@ class doFit_wj_and_wlvj:
             parameters_list=model_pdf_signal_region_WJets.getParameters(rdataset_WJets_signal_region_mlvj);
             self.draw_canvas_with_pull( mplot_signal_region, mplot_pull_signal_region,parameters_list,"plots_%s_%s_%s_%s/other/"%(options.additioninformation, self.channel,self.PS_model,self.wtagger_label), "m_lvj%s_signal_region_sim"%(label),"",1,0);
 
-        model_pdf_sb_lo_WJets.plotOn(mplot,RooFit.Name("Sideband"),RooFit.LineStyle(10));
-        model_pdf_signal_region_WJets.plotOn(mplot, RooFit.LineColor(kRed) ,RooFit.Name("Signal Region"),RooFit.LineStyle(8));
+        model_pdf_sb_lo_WJets.plotOn(mplot,RooFit.Name("Sideband"));
+        model_pdf_signal_region_WJets.plotOn(mplot, RooFit.LineColor(kRed) ,RooFit.Name("Signal Region"));
         correct_factor_pdf_deco.plotOn(mplot, RooFit.LineColor(kBlack),RooFit.Name("#alpha") );
         if label=="_WJets0":
             if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel, self.wtagger_label)):
@@ -1936,8 +1936,9 @@ class doFit_wj_and_wlvj:
         #add alpha scale axis
         axis_alpha=TGaxis( rrv_x.getMax(), 0, rrv_x.getMax(), tmp_y_max, 0, tmp_y_max*tmp_alpha_scale, 510, "+L");
         axis_alpha.SetTitle("#alpha");
-        axis_alpha.SetTitleSize(0.038);
-        axis_alpha.SetLabelSize(0.038);
+        axis_alpha.SetTitleOffset(0.65);
+        axis_alpha.SetTitleSize(0.05);
+        axis_alpha.SetLabelSize(0.045);
         axis_alpha.SetTitleFont(42);
         axis_alpha.SetLabelFont(42);
         #axis_alpha.RotateTitle(1);
@@ -3331,12 +3332,12 @@ class doFit_wj_and_wlvj:
                 draw_error_band(rdataset, model_pdf,rrv_number_dataset,rfresult_pdf,mplot_deco,self.color_palet["Uncertainty"],"F");
 
             leg=self.legend4Plot(mplot_deco,0);
+            mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.5);
             mplot_deco.addObject(leg);
             self.draw_canvas( mplot_deco, "plots_%s_%s_%s_%s/other/"%(options.additioninformation, self.channel,self.PS_model, self.wtagger_label), "m_lvj"+label+in_range+in_range+mlvj_model+"_deco",0,1)
 
         mplot_pull=self.get_pull(rrv_mass_lvj,mplot);
         parameters_list=model.getParameters(rdataset);
-        mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.1);
         self.draw_canvas_with_pull( mplot, mplot_pull,parameters_list,"plots_%s_%s_%s_%s/m_lvj_fitting/"%(options.additioninformation, self.channel,self.PS_model,self.wtagger_label), in_file_name,"m_lvj"+in_range+mlvj_model, show_constant_parameter, logy);
         #rfresult.Print(); rfresult.covarianceMatrix().Print(); raw_input("ENTER");
 
@@ -3464,9 +3465,9 @@ class doFit_wj_and_wlvj:
             #legend
             leg=self.legend4Plot(mplot,0,1, 0.15, 0);
             mplot.addObject(leg);
+            mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.5);
 
             parameters_list=model_data.getParameters(rdataset_data_mj);
-            mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.1);
             self.draw_canvas_with_pull( mplot, mplot_pull,parameters_list,"plots_%s_%s_%s_%s/m_j_fitting_wtaggercut%s_nPV%sto%s/"%(options.additioninformation, self.channel,self.PS_model,self.wtagger_label, self.wtagger_label, self.nPV_min, self.nPV_max), "m_j_sideband%s"%(label),"",1)
     
             self.get_mj_normalization_insignalregion("_data");
@@ -3564,7 +3565,7 @@ class doFit_wj_and_wlvj:
     
             mplot_pull=self.get_pull(rrv_mass_lvj,mplot);
             parameters_list=model_data.getParameters(rdataset_data_mlvj);
-            mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.1)
+            mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.5)
             self.draw_canvas_with_pull( mplot, mplot_pull,parameters_list,"plots_%s_%s_%s_%s/m_lvj_fitting/"%(options.additioninformation, self.channel,self.PS_model,self.wtagger_label), "m_lvj_sb_lo%s"%(label),"",1,1)
             #rfresult.Print(); raw_input("ENTER");
 
@@ -4193,7 +4194,7 @@ class doFit_wj_and_wlvj:
         mplot.Print();
         leg=self.legend4Plot(mplot,0, 1,0.05,0,0.1 );
         mplot.addObject(leg);
-        mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.1);
+        mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.3);
 
         parameters_list=RooArgList();
         self.draw_canvas_with_pull( mplot, mplot_pull,parameters_list,"plots_%s_%s_%s_%s/m_lvj_fitting/"%(options.additioninformation, self.channel,self.PS_model,self.wtagger_label),"check_workspace_for_limit","",0,1);
@@ -4223,6 +4224,9 @@ class doFit_wj_and_wlvj:
         mplot_pull.GetYaxis().SetLabelSize(0.10);
         mplot_pull.GetXaxis().SetTitleSize(0.10);
         mplot_pull.GetXaxis().SetLabelSize(0.10);
+        mplot_pull.GetYaxis().SetTitleOffset(0.40);    
+        mplot_pull.GetYaxis().SetTitle("#frac{Data-Fit}{#sigma_{Data}}");
+        mplot_pull.GetYaxis().CenterTitle();
         return mplot_pull;
 
     ######## ++++++++++++++
@@ -4243,6 +4247,7 @@ class doFit_wj_and_wlvj:
        return banner;
 
     ######## ++++++++++++++
+
     def legend4Plot(self, plot, left=1, isFill=1, xoffset=0., yoffset=0., x_right_offset=0., y_upper_offset=0.):
         if left==-1:
             #if left:
@@ -4259,10 +4264,11 @@ class doFit_wj_and_wlvj:
             theLeg.SetLineStyle(0);
             theLeg.SetTextFont(42);
             theLeg.SetTextSize(.04);
-            #theLeg.SetTextSize(.045);
         else:
-            theLeg = TLegend(0.49+xoffset, 0.66+yoffset, 0.76+xoffset+x_right_offset, 0.93+yoffset+y_upper_offset, "", "NDC");
+            theLeg = TLegend(0.41+xoffset, 0.61+yoffset, 0.76+xoffset+x_right_offset, 0.93+yoffset+y_upper_offset, "", "NDC");
+            
             theLeg.SetFillColor(0);
+            
             if isFill:
                 theLeg.SetFillStyle(1001);
             else:
@@ -4272,18 +4278,20 @@ class doFit_wj_and_wlvj:
         theLeg.SetLineColor(0);
         theLeg.SetLineWidth(0);
         theLeg.SetLineStyle(0);
-        
+
         entryCnt = 0;
         objName_before = "";
+        objName_signal_graviton = "";
+        objNameLeg_signal_graviton = "";        
         for obj in range(int(plot.numItems()) ):
             objName = plot.nameOf(obj);
             print objName;
-            if not ( ( (plot.getInvisible(objName)) and (not TString(objName).Contains("Uncertainty")) ) or TString(objName).Contains("invisi") or TString(objName).Contains("TLine") or objName==objName_before ):
+            if not ( ( (plot.getInvisible(objName)) and (not TString(objName).Contains("Uncertainty")) ) or TString(objName).Contains("invisi") or TString(objName).Contains("TLine") or 
+objName ==objName_before ):
                 theObj = plot.getObject(obj);
                 objTitle = objName;
                 drawoption= plot.getDrawOptions(objName).Data()
                 if drawoption=="P":drawoption="PE"
-                #if TString(objName).Contains("Graph") or TString(objName).Contains("Uncertainty"): theLeg.AddEntry(theObj, "Uncertainty","F");
                 if TString(objName).Contains("Uncertainty") or TString(objName).Contains("sigma"):
                     theLeg.AddEntry(theObj, objName,"F");
                 elif TString(objName).Contains("Graph") :
@@ -4294,47 +4302,48 @@ class doFit_wj_and_wlvj:
                     elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "WW/WZ/ZZ","F");
                     elif TString(objName).Data()=="WJets" : theLeg.AddEntry(theObj, "W+jets","F");
                     elif TString(objName).Contains("vbfH"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("vbfH","qqH")).Data() ,"L");
+                    elif TString(objName).Contains("Uncertainty"): theLeg.AddEntry(theObj, objTitle,drawoption);
                     elif TString(objName).Contains("Bulk"):
-                     if TString(objName).Contains("M600"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M600 #times 100","Bulk G, M=0.6 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M700"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M700 #times 100","Bulk G, M=0.7 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M800"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M800 #times 100","Bulk G, M=0.8 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M900"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M900 #times 100","Bulk G, M=0.9 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1000"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1000 #times 100","Bulk G, M=1 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1100"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1100 #times 100","Bulk G, M=1.1 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1200"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1200 #times 100","Bulk G, M=1.2 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1300"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1300 #times 100","Bulk G, M=1.3 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1400"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1400 #times 100","Bulk G, M=1.4 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1500"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1500 #times 100","Bulk G, M=1.5 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1600"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1600 #times 100","Bulk G, M=1.6 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1700"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1700 #times 100","Bulk G, M=1.7 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1800"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1800 #times 100","Bulk G, M=1.8 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M1900"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M1900 #times 100","Bulk G, M=1.9 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M2000"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M2000 #times 100","Bulk G, M=2 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M2100"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M2100 #times 100","Bulk G, M=2.1 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M2200"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M2200 #times 100","Bulk G, M=2.2 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M2400"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M2400 #times 100","Bulk G, M=2.3 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M2400"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M2400 #times 100","Bulk G, M=2.4 TeV ( #times 100)")).Data() ,"L");
-                     elif TString(objName).Contains("M2500"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("BulkG_WW_lvjj_c0p2_M2500 #times 100","Bulk G, M=2.5 TeV ( #times 100)")).Data() ,"L");
+                       if TString(objName).Contains("M600"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M600 #times 100","Bulk Graviton, M=0.6 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M700"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M700 #times 100","Bulk Graviton, M=0.7 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M800"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M800 #times 100","Bulk Graviton, M=0.8 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M900"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M900 #times 100","Bulk Graviton, M=0.9 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1000"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1000 #times 100","Bulk Graviton, M=1.0 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1100"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1100 #times 100","Bulk Graviton, M=1.1 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1200"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1200 #times 100","Bulk Graviton, M=1.2 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1300"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1300 #times 100","Bulk Graviton, M=1.3 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1400"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1400 #times 100","Bulk Graviton, M=1.4 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1500"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1500 #times 100","Bulk Graviton, M=1.5 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1600"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1600 #times 100","Bulk Graviton, M=1.6 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1700"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1700 #times 100","Bulk Graviton, M=1.7 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1800"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1800 #times 100","Bulk Graviton, M=1.8 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M1900"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M1900 #times 100","Bulk Graviton, M=1.9 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M2000"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M2000 #times 100","Bulk Graviton, M=2.0 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M2100"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M2100 #times 100","Bulk Graviton, M=2.1 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M2200"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M2200 #times 100","Bulk Graviton, M=2.2 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M2300"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M2300 #times 100","Bulk Graviton, M=2.3 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M2400"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M2400 #times 100","Bulk Graviton, M=2.4 TeV ( #times 100)").Data()
+                       if TString(objName).Contains("M2500"): objName_signal_graviton=theObj ;  objNameLeg_signal_graviton = TString(objName).ReplaceAll("BulkG_c0p2_M2500 #times 100","Bulk Graviton, M=2.5 TeV ( #times 100)").Data()
                     else : theLeg.AddEntry(theObj, objTitle,drawoption);
                 entryCnt=entryCnt+1;
             objName_before=objName;
-
-        #theLeg.SetY1NDC(0.9 - 0.05*entryCnt - 0.005);
-        #theLeg.SetY1(theLeg.GetY1NDC());
+        if objName_signal_graviton !="" :
+           theLeg.AddEntry(objName_signal_graviton, TString(objNameLeg_signal_graviton).Data() ,"L");
         return theLeg;
+        
 
     ######## ++++++++++++++
     def draw_canvas_with_pull(self, mplot, mplot_pull,parameters_list,in_directory, in_file_name, in_model_name="", show_constant_parameter=0, logy=0):# mplot + pull + parameters
 
         mplot.GetXaxis().SetTitleOffset(1.1);
         mplot.GetYaxis().SetTitleOffset(1.3);
-        mplot.GetXaxis().SetTitleSize(0.038);
-        mplot.GetYaxis().SetTitleSize(0.038);
-        mplot.GetXaxis().SetLabelSize(0.038);
-        mplot.GetYaxis().SetLabelSize(0.038);
-        #mplot_pull.GetYaxis().SetTitleOffset(0.50);
-        mplot_pull.GetXaxis().SetLabelSize(0.12);
-        mplot_pull.GetYaxis().SetLabelSize(0.12);
+        mplot.GetXaxis().SetTitleSize(0.05);
+        mplot.GetYaxis().SetTitleSize(0.05);
+        mplot.GetXaxis().SetLabelSize(0.045);
+        mplot.GetYaxis().SetLabelSize(0.045);
+        mplot_pull.GetXaxis().SetLabelSize(0.15);
+        mplot_pull.GetYaxis().SetLabelSize(0.15);
+        mplot_pull.GetYaxis().SetTitleSize(0.15);
         mplot_pull.GetYaxis().SetNdivisions(205);
 
         cMassFit = TCanvas("cMassFit","cMassFit", 600,600);
@@ -4344,15 +4353,15 @@ class doFit_wj_and_wlvj:
         param_first=par_first.Next()
         doParameterPlot = 0 ;
         if param_first and doParameterPlot != 0:
-            pad1=TPad("pad1","pad1",0.,0. ,0.8,0.2);
-            pad2=TPad("pad2","pad2",0.,0.2,0.8,1. );
+            pad1=TPad("pad1","pad1",0.,0. ,0.8,0.24);
+            pad2=TPad("pad2","pad2",0.,0.24,0.8,1. );
             pad3=TPad("pad3","pad3",0.8,0.,1,1);
             pad1.Draw();
             pad2.Draw();
             pad3.Draw();
         else:
-            pad1=TPad("pad1","pad1",0.,0. ,0.99,0.2);
-            pad2=TPad("pad2","pad2",0.,0.2,0.99,1. );
+            pad1=TPad("pad1","pad1",0.,0. ,0.99,0.24);
+            pad2=TPad("pad2","pad2",0.,0.24,0.99,1. );
             pad1.Draw();
             pad2.Draw();
 
@@ -4401,7 +4410,9 @@ class doFit_wj_and_wlvj:
         if string_file_name.EndsWith(".root"): string_file_name.ReplaceAll(".root","_"+in_model_name);
         else: rlt_file.Append(in_model_name);
         if logy:
-            #cMassFit.SetLogy() ;
+            pad2.cd();
+            mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*10);
+            mplot.Draw();
             pad2.SetLogy() ;
             pad2.Update();
             cMassFit.Update();
@@ -4411,7 +4422,8 @@ class doFit_wj_and_wlvj:
             cMassFit.SaveAs(rlt_file.Data());
             rlt_file.ReplaceAll(".png",".pdf");
             cMassFit.SaveAs(rlt_file.Data());
-
+            mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()/10);
+            
         self.draw_canvas(mplot,in_directory,string_file_name.Data(),0,logy,1);
 
     ######## ++++++++++++++
@@ -4423,22 +4435,22 @@ class doFit_wj_and_wlvj:
             in_obj.Draw()
 
         if not withpull :
-            in_obj.GetXaxis().SetTitleSize(0.04);
+            in_obj.GetXaxis().SetTitleSize(0.05);
             in_obj.GetXaxis().SetTitleOffset(0.95);
-            in_obj.GetXaxis().SetLabelSize(0.03);
+            in_obj.GetXaxis().SetLabelSize(0.045);
 
-            in_obj.GetYaxis().SetTitleSize(0.035);
+            in_obj.GetYaxis().SetTitleSize(0.05);
             in_obj.GetYaxis().SetTitleOffset(1.40);
-            in_obj.GetYaxis().SetLabelSize(0.03);
+            in_obj.GetYaxis().SetLabelSize(0.045);
                                 
         else:
-         in_obj.GetXaxis().SetTitleSize(0.038);
+         in_obj.GetXaxis().SetTitleSize(0.05);
          in_obj.GetXaxis().SetTitleOffset(0.95);
-         in_obj.GetXaxis().SetLabelSize(0.038);
+         in_obj.GetXaxis().SetLabelSize(0.045);
 
-         in_obj.GetYaxis().SetTitleSize(0.038);
+         in_obj.GetYaxis().SetTitleSize(0.05);
          in_obj.GetYaxis().SetTitleOffset(1.20);
-         in_obj.GetYaxis().SetLabelSize(0.038);
+         in_obj.GetYaxis().SetLabelSize(0.045);
 
         if not withpull : banner = self.banner4Plot(); banner.Draw();
 
@@ -4460,6 +4472,9 @@ class doFit_wj_and_wlvj:
         cMassFit.SaveAs(rlt_file.Data());
 
         if logy:
+            cMassFit.cd();
+            in_obj.GetYaxis().SetRangeUser(1e-2,in_obj.GetMaximum()*10);
+            in_obj.Draw();
             cMassFit.SetLogy() ;
             cMassFit.Update();
             rlt_file.ReplaceAll(".root","_log.root");
