@@ -1126,7 +1126,7 @@ class doFit_wj_and_wlvj:
       ## Get the pull 
       mplot_pull      = self.get_pull(rrv_mass_j, mplot);
       parameters_list = model.getParameters(rdataset_mj);
-      mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.15);
+      mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.2);
       
       self.draw_canvas_with_pull( mplot,mplot_pull,parameters_list,"plots_%s_%s_%s/m_j_fitting%s_wtaggercut%s/"%(options.additioninformation,self.channel,self.wtagger_label,
                                   additioninformation, self.wtagger_label),label+in_file_name+"_"+str(self.ca8_ungroomed_pt_min)+"_"+str(self.ca8_ungroomed_pt_max), in_model_name)
@@ -1505,8 +1505,8 @@ class doFit_wj_and_wlvj:
 #            xframe_data.addObject(tl_data_mean);
 #            xframe_data.addObject(tl_data_sigma);
          
-        xframe_data.GetYaxis().SetRangeUser(1e-2,xframe_data.GetMaximum()*1.1);
-        xframe_data_fail.GetYaxis().SetRangeUser(1e-2,xframe_data_fail.GetMaximum()*1.1);
+        xframe_data.GetYaxis().SetRangeUser(1e-2,xframe_data.GetMaximum()*1.2);
+        xframe_data_fail.GetYaxis().SetRangeUser(1e-2,xframe_data_fail.GetMaximum()*1.2);
 
 
         self.draw_canvas(xframe_data,"plots_%s_%s_%s/m_j_fitting_TTbar_controlsample_wtaggercut%s/"%(options.additioninformation, self.channel, self.wtagger_label, self.wtagger_label),"control%s_%s_%s_pTbin_%d_%d"%(label,self.wtagger_label,self.channel,self.ca8_ungroomed_pt_min,self.ca8_ungroomed_pt_max));
@@ -1650,7 +1650,7 @@ class doFit_wj_and_wlvj:
          model_data_extremefail.plotOn(xframe_data_extremefail,RooFit.Name("data fit"),RooFit.NormRange("controlsample_fitting_range"))
          model_data_extremefail.plotOn(xframe_data_extremefail,RooFit.Name("data fit invisi"),RooFit.NormRange("controlsample_fitting_range"))
               
-        xframe_data_extremefail.GetYaxis().SetRangeUser(1e-2,xframe_data_extremefail.GetMaximum()*1.1);
+        xframe_data_extremefail.GetYaxis().SetRangeUser(1e-2,xframe_data_extremefail.GetMaximum()*1.3);
 
         leg_data_extremefail = self.legend4Plot(xframe_data_extremefail,0,1, 0.15)
         xframe_data_extremefail.addObject(leg_data_extremefail)
@@ -1872,8 +1872,8 @@ class doFit_wj_and_wlvj:
 #            xframe_data.addObject(tl_data_mean);
 #            xframe_data.addObject(tl_data_sigma);
          
-        xframe_data.GetYaxis().SetRangeUser(1e-2,xframe_data.GetMaximum()*1.1);
-        xframe_data_fail.GetYaxis().SetRangeUser(1e-2,xframe_data_fail.GetMaximum()*1.1);
+        xframe_data.GetYaxis().SetRangeUser(1e-2,xframe_data.GetMaximum()*1.2);
+        xframe_data_fail.GetYaxis().SetRangeUser(1e-2,xframe_data_fail.GetMaximum()*1.2);
 
         self.draw_canvas(xframe_data,"plots_%s_%s_%s/m_j_fitting_TTbar_controlsample_wtaggercut%s/"%(options.additioninformation, self.channel,self.wtagger_label, self.wtagger_label),"control%s_%s_%s_pTbin_%d_%d"%(label,self.wtagger_label,self.channel,self.ca8_ungroomed_pt_min,self.ca8_ungroomed_pt_max));
         self.draw_canvas(xframe_data_fail,"plots_%s_%s_%s/m_j_fitting_TTbar_controlsample_wtaggercut%s/"%(options.additioninformation, self.channel, self.wtagger_label,self.wtagger_label),"control%s_%s_%s_fail_pTbin_%d_%d"%(label,self.wtagger_label,self.channel,self.ca8_ungroomed_pt_min,self.ca8_ungroomed_pt_max));
@@ -2135,16 +2135,16 @@ class doFit_wj_and_wlvj:
 
       if iswithpull:
        if self.channel=="el":
-        banner = TLatex(0.35,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow e #nu "%(self.GetLumi())));
+        banner = TLatex(0.3,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow e #nu "%(self.GetLumi())));
        elif self.channel=="mu":
-        banner = TLatex(0.35,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu #nu "%(self.GetLumi())));
-       banner.SetNDC(); banner.SetTextSize(0.035);
+        banner = TLatex(0.3,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu #nu "%(self.GetLumi())));
+       banner.SetNDC(); banner.SetTextSize(0.04);
       else:
        if self.channel=="el":
-        banner = TLatex(0.3,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow e #nu "%(self.GetLumi())));
+        banner = TLatex(0.22,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow e #nu "%(self.GetLumi())));
        if self.channel=="mu":
-        banner = TLatex(0.3,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu #nu "%(self.GetLumi())));
-       banner.SetNDC(); banner.SetTextSize(0.029);
+        banner = TLatex(0.22,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu #nu "%(self.GetLumi())));
+       banner.SetNDC(); banner.SetTextSize(0.033);
                                                                                                          
       return banner;
 
