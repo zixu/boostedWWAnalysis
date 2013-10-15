@@ -126,7 +126,7 @@ class doFit_wj_and_wlvj:
         self.file_pseudodata=("ofile_pseudodata4exo.root");
         self.file_pseudodata_herwig=("ofile_pseudodata4exo_herwig.root");
 
-        self.file_WJets0_mc=("ofile_WJets_Pythia180.root");
+        self.file_WJets0_mc=("ofile_WJets_Pythia.root");
         self.file_WJets1_mc=("ofile_WJets_Herwig.root");
 
         self.file_VV_mc=("ofile_VV.root");# WW+WZ 
@@ -522,7 +522,7 @@ class doFit_wj_and_wlvj:
 
         if in_model_name == "Exp":
 
-          rrv_c_Exp = RooRealVar("rrv_c_Exp"+label+"_"+self.channel,"rrv_c_Exp"+label+"_"+self.channel, -0.5, -10., 0.);
+          rrv_c_Exp = RooRealVar("rrv_c_Exp"+label+"_"+self.channel,"rrv_c_Exp"+label+"_"+self.channel, -0.05, -0.2, 0.);
           model_pdf    = ROOT.RooExponential("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Exp);
                                                                   
 
@@ -670,23 +670,23 @@ class doFit_wj_and_wlvj:
            p1_tmp   = -5.3365e-02; p1_tmp_err    = 6.74e-02;
            frac_tmp = 2.0421e-01;  frac_tmp_err  = 2.48e-02;
 
-           ## take the same gaussian used in the pass sample
-           if TString(label).Contains("data") and not TString(label).Contains("herwig"):
+          ## take the same gaussian used in the pass sample
+          if TString(label).Contains("data") and not TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_data_"+self.channel);
-           if TString(label).Contains("TotalMC") and not TString(label).Contains("herwig"):
+          if TString(label).Contains("TotalMC") and not TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_TotalMC_"+self.channel);                
 
-           if TString(label).Contains("data") and TString(label).Contains("herwig"):
+          if TString(label).Contains("data") and TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_data_herwig_"+self.channel);
-           if TString(label).Contains("TotalMC") and TString(label).Contains("herwig"):
+          if TString(label).Contains("TotalMC") and TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_TotalMC_herwig_"+self.channel);
                 
-           rrv_p0_cheb = RooRealVar("rrv_p0_cheb"+label+"_"+self.channel,"rrv_p0_cheb"+label+"_"+self.channel,p0_tmp)#,p0_tmp-p0_tmp_err*4,p0_tmp+p0_tmp_err*4);
-           rrv_p1_cheb = RooRealVar("rrv_p1_cheb"+label+"_"+self.channel,"rrv_p1_cheb"+label+"_"+self.channel,p1_tmp)#,p1_tmp-p1_tmp_err*4,p1_tmp+p1_tmp_err*4);
-           cheb = RooChebychev("cheb"+label+"_"+self.channel,"cheb"+label+"_"+self.channel, rrv_x, RooArgList(rrv_p0_cheb, rrv_p1_cheb) );
+          rrv_p0_cheb = RooRealVar("rrv_p0_cheb"+label+"_"+self.channel,"rrv_p0_cheb"+label+"_"+self.channel,p0_tmp)#,p0_tmp-p0_tmp_err*4,p0_tmp+p0_tmp_err*4);
+          rrv_p1_cheb = RooRealVar("rrv_p1_cheb"+label+"_"+self.channel,"rrv_p1_cheb"+label+"_"+self.channel,p1_tmp)#,p1_tmp-p1_tmp_err*4,p1_tmp+p1_tmp_err*4);
+          cheb = RooChebychev("cheb"+label+"_"+self.channel,"cheb"+label+"_"+self.channel, rrv_x, RooArgList(rrv_p0_cheb, rrv_p1_cheb) );
 
-           rrv_frac  = RooRealVar("rrv_frac"+label+"_"+self.channel,"rrv_frac"+label+"_"+self.channel,frac_tmp)#,frac_tmp-frac_tmp_err*4,frac_tmp+frac_tmp_err*4);
-           model_pdf = RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,RooArgList(gaus,cheb),RooArgList(rrv_frac),1)
+          rrv_frac  = RooRealVar("rrv_frac"+label+"_"+self.channel,"rrv_frac"+label+"_"+self.channel,frac_tmp)#,frac_tmp-frac_tmp_err*4,frac_tmp+frac_tmp_err*4);
+          model_pdf = RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,RooArgList(gaus,cheb),RooArgList(rrv_frac),1)
 
         ## double gauss for fail sample
         if in_model_name == "2Gaus_ttbar_failtau2tau1cut":
@@ -720,7 +720,7 @@ class doFit_wj_and_wlvj:
             if TString(label).Contains("herwig") and not TString(label).Contains("data"):
 
               c0_tmp     = -2.9357e-02 ; c0_tmp_err     = 6.83e-03;
-              offset_tmp =  7.9298e+01 ; offset_tmp_err = 9.35e+00;
+              offset_tmp =  7.9350e+01 ; offset_tmp_err = 9.35e+00;
               width_tmp  =  3.3216e+01 ; width_tmp_err  = 2.97e+00;
                                                                       
             rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,c0_tmp,c0_tmp-4e-2, c0_tmp+4e-2  );
