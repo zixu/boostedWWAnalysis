@@ -36,10 +36,10 @@ parser.add_option('--fitwtagger', action='store_true', dest='fitwtagger', defaul
 parser.add_option('--fitwtaggersim', action='store_true', dest='fitwtaggersim', default=False, help='fit wtagger jet in ttbar control sample with mu and el samples simultaneously')
 
 parser.add_option('--inPath', action="store",type="string",dest="inPath",default="./")
-
 parser.add_option('--category', action="store",type="string",dest="category",default="HP")
 
 parser.add_option('--herwig', action="store",type="int",dest="herwig",default=0)
+parser.add_option('--ttbarMC', action="store",type="int",dest="ttbarMC",default=0)
 parser.add_option('--pTbin', action="callback",callback=foo_callback,type="string",dest="pTbin",default="")
 
 
@@ -392,51 +392,21 @@ class doFit_wj_and_wlvj:
 
             model_pdf = RooFFTConvPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum, rrv_x, landau, gaus);
 
-        ## ExpN function exp([0]*x+[1]/x)
-        if in_model_name == "ExpN":
-
-           rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-3e-3,-1e-1,-1e-5);
-
-           if(ismc==1):
-            rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, -1e2, 1e4);
-
-           else :
-            if self.channel == "el" :
-              rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, -1e2, 1e4);
-            elif self.wtagger_label == "LP" :
-              rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, -1e2, 1e4);
-            else:
-              rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e2, -1e2, 7e3);
-
-           model_pdf = ROOT.RooExpNPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ExpN,rrv_n_ExpN);
-                                                                                                                             
-
-        if in_model_name == "ExpTail":
-
-            rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 170,10,300);
-            rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-3,0,1e3);
-
-            model_pdf = ROOT.RooExpTailPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_s_ExpTail, rrv_a_ExpTail);
-
-        if in_model_name == "2Exp":
-
-            rrv_c0_2Exp = RooRealVar("rrv_c0_2Exp"+label+"_"+self.channel,"rrv_c0_2Exp"+label+"_"+self.channel, -5e-3, -8e-3,-4e-3);
-            rrv_c1_2Exp = RooRealVar("rrv_c1_2Exp"+label+"_"+self.channel,"rrv_c1_2Exp"+label+"_"+self.channel, -1e-3, -4e-3,-1e-4);
-            rrv_frac_2Exp = RooRealVar("rrv_frac_2Exp"+label+"_"+self.channel,"rrv_frac_2Exp"+label+"_"+self.channel, 0., 0., 1e-2);
-
-            model_pdf = ROOT.Roo2ExpPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c0_2Exp,rrv_c1_2Exp,rrv_frac_2Exp);
-
-        if in_model_name == "Exp" or in_model_name == "Exp_sr":
-
-           rrv_c_Exp = RooRealVar("rrv_c_Exp"+label+"_"+self.channel,"rrv_c_Exp"+label+"_"+self.channel,-0.05,-0.1,0.);
-           model_pdf = ROOT.RooExponential("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Exp);
 
         ## Product between Erf and Expnential                     
         if in_model_name == "ErfExp" :
+            
 
             rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,-0.05,-0.1,-1e-4);
-            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,60.,30.,120);
-            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,30.)#,10, 60.);
+            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,85.,75.,98);
+            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,25.,5, 45.);
+            model_pdf = ROOT.RooErfExpPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ErfExp,rrv_offset_ErfExp,rrv_width_ErfExp);
+
+        if in_model_name == "ErfExp_2" :
+            
+            rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,-0.05,-0.2,-1e-4);
+            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,85.,25.,98);
+            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,45.,20, 70.);
             model_pdf = ROOT.RooErfExpPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ErfExp,rrv_offset_ErfExp,rrv_width_ErfExp);
 
 
@@ -468,8 +438,8 @@ class doFit_wj_and_wlvj:
 
         ## Exp +Gaus
         if in_model_name == "ExpGaus":
-            rrv_c_Exp = RooRealVar("rrv_c_Exp"+label+"_"+self.channel,"rrv_c_Exp"+label+"_"+self.channel,0.05,-0.2,0.2);
-            exp = ROOT.RooExponential("exp"+label+"_"+self.channel,"exp"+label+"_"+self.channel,rrv_x,rrv_c_Exp);
+            rrv_c_Exp = RooRealVar("rrv_c_ExpGaus"+label+"_"+self.channel,"rrv_c_ExpGaus"+label+"_"+self.channel,0.05,-0.2,0.2);
+            exp = ROOT.RooExponential("ExpGaus"+label+"_"+self.channel,"ExpGaus"+label+"_"+self.channel,rrv_x,rrv_c_Exp);
 
             rrv_mean1_gaus  = RooRealVar("rrv_mean1_gaus"+label+"_"+self.channel,"rrv_mean1_gaus"+label+"_"+self.channel,84,78,88);
             rrv_sigma1_gaus = RooRealVar("rrv_sigma1_gaus"+label+"_"+self.channel,"rrv_sigma1_gaus"+label+"_"+self.channel,7,4,10);
@@ -524,38 +494,37 @@ class doFit_wj_and_wlvj:
 
         if in_model_name == "2Gaus": ## double gaussian for the resonant of mJ
 
-            mean1_tmp      = 8.3145e+01;  mean1_tmp_err      = 1.63e-01;
-            deltamean_tmp  = 6.6321e+00;  deltamean_tmp_err  = 1.21e+00;
-            sigma1_tmp     = 7.5097e+00;  sigma1_tmp_err     = 2.01e-01;
-            scalesigma_tmp = 3.8707e+00;  scalesigma_tmp_err = 2.20e-01;
-            frac_tmp       = 6.4728e-01;  frac_tmp_err       = 2.03e-02; 
-
-            if self.wtagger_cut==0.43:
-                mean1_tmp     =8.3089e+01;  mean1_tmp_err     =1.61e-01;
-                deltamean_tmp =9.3065e+00;  deltamean_tmp_err =1.67e+00;
-                sigma1_tmp    =7.5280e+00;  sigma1_tmp_err    =1.91e-01;
-                scalesigma_tmp=3.4619e+00;  scalesigma_tmp_err=2.29e-01;
-                frac_tmp      =7.4246e-01;  frac_tmp_err      =2.11e-02; 
-
-            if self.wtagger_cut==0.50:
-                mean1_tmp     =8.3141e+01;  mean1_tmp_err     =1.63e-01;
-                deltamean_tmp =6.9129e+00;  deltamean_tmp_err =1.24e+00;
-                sigma1_tmp    =7.5145e+00;  sigma1_tmp_err    =1.99e-01;
-                scalesigma_tmp=3.6819e+00;  scalesigma_tmp_err=2.11e-01;
-                frac_tmp      =6.7125e-01;  frac_tmp_err      =2.09e-02; 
-
-            rrv_mean1_gaus  = RooRealVar("rrv_mean1_gaus"+label+"_"+self.channel,"rrv_mean1_gaus"+label+"_"+self.channel,mean1_tmp, mean1_tmp-4, mean1_tmp+4);
-            rrv_sigma1_gaus = RooRealVar("rrv_sigma1_gaus"+label+"_"+self.channel,"rrv_sigma1_gaus"+label+"_"+self.channel,sigma1_tmp, sigma1_tmp-4,sigma1_tmp+4 );
+            rrv_mean1_gaus  = RooRealVar("rrv_mean1_gaus"+label+"_"+self.channel,"rrv_mean1_gaus"+label+"_"+self.channel,83.5, 80., 86.5);
+            rrv_sigma1_gaus = RooRealVar("rrv_sigma1_gaus"+label+"_"+self.channel,"rrv_sigma1_gaus"+label+"_"+self.channel,7.6,3.5,10.);
             gaus1 = RooGaussian("gaus1"+label+"_"+self.channel,"gaus1"+label+"_"+self.channel, rrv_x,rrv_mean1_gaus,rrv_sigma1_gaus);
 
-            rrv_deltamean_gaus = RooRealVar("rrv_deltamean_gaus"+label+"_"+self.channel,"rrv_deltamean_gaus"+label+"_"+self.channel,deltamean_tmp, -4, deltamean_tmp+deltamean_tmp_err*4);
+            rrv_deltamean_gaus = RooRealVar("rrv_deltamean_gaus"+label+"_"+self.channel,"rrv_deltamean_gaus"+label+"_"+self.channel, 4.5, 0.,9.);
             rrv_mean2_gaus      = RooFormulaVar("rrv_mean2_gaus"+label+"_"+self.channel,"@0+@1",RooArgList(rrv_mean1_gaus, rrv_deltamean_gaus));
-            rrv_scalesigma_gaus = RooRealVar("rrv_scalesigma_gaus"+label+"_"+self.channel,"rrv_scalesigma_gaus"+label+"_"+self.channel,scalesigma_tmp, scalesigma_tmp-scalesigma_tmp_err*8, scalesigma_tmp+scalesigma_tmp_err*8); 
+            rrv_scalesigma_gaus = RooRealVar("rrv_scalesigma_gaus"+label+"_"+self.channel,"rrv_scalesigma_gaus"+label+"_"+self.channel,3.,0.,5.5); 
             rrv_sigma2_gaus = RooFormulaVar("rrv_sigma2_gaus"+label+"_"+self.channel,"@0*@1", RooArgList(rrv_sigma1_gaus,rrv_scalesigma_gaus));
             gaus2 = RooGaussian("gaus2"+label+"_"+self.channel,"gaus2"+label+"_"+self.channel, rrv_x,rrv_mean2_gaus,rrv_sigma2_gaus);
 
-            rrv_frac = RooRealVar("rrv_frac"+label+"_"+self.channel,"rrv_frac"+label+"_"+self.channel,frac_tmp, frac_tmp-frac_tmp_err*4, frac_tmp+frac_tmp_err*4);
+            rrv_frac = RooRealVar("rrv_frac"+label+"_"+self.channel,"rrv_frac"+label+"_"+self.channel, 0.5, 0., 1.);
             model_pdf =RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,RooArgList(gaus1,gaus2),RooArgList(rrv_frac),1)
+
+        if in_model_name == "GausChebychev":
+
+            rrv_mean_gaus  = RooRealVar("rrv_mean_gaus"+label+"_"+self.channel,"rrv_mean_gaus"+label+"_"+self.channel,83.5, 80., 86.5);
+            rrv_sigma_gaus = RooRealVar("rrv_sigma_gaus"+label+"_"+self.channel,"rrv_sigma_gaus"+label+"_"+self.channel,7.6,3.5,30.);
+            gaus = RooGaussian("gaus"+label+"_"+self.channel,"gaus"+label+"_"+self.channel, rrv_x,rrv_mean_gaus,rrv_sigma_gaus);
+                
+            rrv_p0_cheb = RooRealVar("rrv_p0_cheb"+label+"_"+self.channel,"rrv_p0_cheb"+label+"_"+self.channel, -0.3, -30., 30.)
+            rrv_p1_cheb = RooRealVar("rrv_p1_cheb"+label+"_"+self.channel,"rrv_p1_cheb"+label+"_"+self.channel, -0.1, -30., 30.)
+            cheb = RooChebychev("cheb"+label+"_"+self.channel,"cheb"+label+"_"+self.channel, rrv_x, RooArgList(rrv_p0_cheb, rrv_p1_cheb) );
+
+            rrv_frac  = RooRealVar("rrv_frac"+label+"_"+self.channel,"rrv_frac"+label+"_"+self.channel,0.5, 0., 1.)
+            model_pdf = RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,RooArgList(gaus,cheb),RooArgList(rrv_frac),1)
+
+        if in_model_name == "Exp":
+
+          rrv_c_Exp = RooRealVar("rrv_c_Exp"+label+"_"+self.channel,"rrv_c_Exp"+label+"_"+self.channel, -0.5, -10., 0.);
+          model_pdf    = ROOT.RooExponential("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Exp);
+                                                                  
 
         if in_model_name == "2_2Gaus":# 2Gaus + 2Gaus for the resonant W and Z part of the mJ spectra
               
@@ -565,13 +534,6 @@ class doFit_wj_and_wlvj:
             scalesigma_tmp=3.8707e+00;  scalesigma_tmp_err=2.20e-01;
             frac_tmp      =6.4728e-01;  frac_tmp_err      =2.03e-02; 
 
-
-            if self.wtagger_cut==0.43:
-                mean1_tmp     =8.3089e+01;  mean1_tmp_err     =1.61e-01;
-                deltamean_tmp =9.3065e+00;  deltamean_tmp_err =1.67e+00;
-                sigma1_tmp    =7.5280e+00;  sigma1_tmp_err    =1.91e-01;
-                scalesigma_tmp=3.4619e+00;  scalesigma_tmp_err=2.29e-01;
-                frac_tmp      =7.4246e-01;  frac_tmp_err      =2.11e-02; 
 
             if self.wtagger_cut==0.50:
                 mean1_tmp     =8.3141e+01;  mean1_tmp_err     =1.63e-01;
@@ -614,12 +576,6 @@ class doFit_wj_and_wlvj:
             scalesigma_tmp=3.8707e+00;  scalesigma_tmp_err=2.20e-01;
             frac_tmp      =6.4728e-01;  frac_tmp_err      =2.03e-02; 
 
-            if self.wtagger_cut==0.43:
-                mean1_tmp     =8.3089e+01;  mean1_tmp_err     =1.61e-01;
-                deltamean_tmp =9.3065e+00;  deltamean_tmp_err =1.67e+00;
-                sigma1_tmp    =7.5280e+00;  sigma1_tmp_err    =1.91e-01;
-                scalesigma_tmp=3.4619e+00;  scalesigma_tmp_err=2.29e-01;
-                frac_tmp      =7.4246e-01;  frac_tmp_err      =2.11e-02; 
 
             if self.wtagger_cut==0.50:
                 mean1_tmp     =8.3141e+01;  mean1_tmp_err     =1.63e-01;
@@ -644,11 +600,6 @@ class doFit_wj_and_wlvj:
             offset_tmp=    7.6259e+01 ; offset_tmp_err = 9.17e+00;
             width_tmp =    3.4207e+01 ; width_tmp_err  = 3.18e+00; 
 
-            if self.wtagger_cut==0.43:
-                c0_tmp    =   -3.0807e-02 ; c0_tmp_err     = 8.16e-03;
-                offset_tmp=    8.2863e+01 ; offset_tmp_err = 9.66e+00;
-                width_tmp =    3.1119e+01 ; width_tmp_err  = 2.80e+00; 
-
             if self.wtagger_cut==0.50:
                 c0_tmp    =   -2.9893e-02 ; c0_tmp_err     = 6.83e-03;
                 offset_tmp=    7.9350e+01 ; offset_tmp_err = 9.35e+00;
@@ -665,28 +616,19 @@ class doFit_wj_and_wlvj:
         ## 2Gaus per ttbar fit 
         if in_model_name == "2Gaus_ttbar":
 
-            if self.wtagger_cut==0.43:
-                mean1_tmp     =8.3089e+01;  mean1_tmp_err     =1.61e-01;
-                deltamean_tmp =9.3065e+00;  deltamean_tmp_err =1.67e+00;
-                sigma1_tmp    =7.5280e+00;  sigma1_tmp_err    =1.91e-01;
-                scalesigma_tmp=3.4619e+00;  scalesigma_tmp_err=2.29e-01;
-                frac_tmp      =7.4246e-01;  frac_tmp_err      =2.11e-02; 
-                
-            elif self.wtagger_cut==0.50:
+            mean1_tmp      = 8.3141e+01;     mean1_tmp_err  = 1.63e-01;
+            deltamean_tmp  = 6.9129e+00; deltamean_tmp_err  = 1.24e+00;
+            sigma1_tmp     = 7.5145e+00;    sigma1_tmp_err  = 1.99e-01;
+            scalesigma_tmp = 3.6819e+00; scalesigma_tmp_err = 2.11e-01;
+            frac_tmp       = 6.7125e-01;      frac_tmp_err  = 2.09e-02;
 
-                mean1_tmp      = 8.3141e+01;     mean1_tmp_err  = 1.63e-01;
-                deltamean_tmp  = 6.9129e+00; deltamean_tmp_err  = 1.24e+00;
-                sigma1_tmp     = 7.5145e+00;    sigma1_tmp_err  = 1.99e-01;
-                scalesigma_tmp = 3.6819e+00; scalesigma_tmp_err = 2.11e-01;
-                frac_tmp       = 6.7125e-01;      frac_tmp_err  = 2.09e-02;
+            if TString(label).Contains("herwig") and not TString(label).Contains("data"):
 
-                if TString(label).Contains("herwig") and not TString(label).Contains("data"):
-
-                 mean1_tmp      = 8.3141e+01;     mean1_tmp_err = 1.63e-01;
-                 deltamean_tmp  = 6.9129e+00; deltamean_tmp_err = 1.24e+00;
-                 sigma1_tmp     = 7.5145e+00;    sigma1_tmp_err = 1.99e-01;
-                 scalesigma_tmp = 3.6819e+00; scalesigma_tmp_err= 2.11e-01;
-                 frac_tmp = 6.7125e-01;      frac_tmp_err = 2.09e-02; 
+             mean1_tmp      = 8.3141e+01;     mean1_tmp_err = 1.63e-01;
+             deltamean_tmp  = 6.9129e+00; deltamean_tmp_err = 1.24e+00;
+             sigma1_tmp     = 7.5145e+00;    sigma1_tmp_err = 1.99e-01;
+             scalesigma_tmp = 3.6819e+00; scalesigma_tmp_err= 2.11e-01;
+             frac_tmp = 6.7125e-01;      frac_tmp_err = 2.09e-02; 
 
             ## constrain the peak and the width among electron and muon channel to be the same in case of simultaneous fit
             if self.channel=="el":
@@ -718,43 +660,37 @@ class doFit_wj_and_wlvj:
         ## Gaus + pol 2 background for resonant part in the fail sample
         if in_model_name == "GausChebychev_ttbar_failtau2tau1cut":
 
-            if self.wtagger_cut==0.43:
-                p0_tmp  =-2.3067e-01;  p0_tmp_err  =4.12e-02;
-                p1_tmp  =-2.6924e-01;  p1_tmp_err  =5.69e-02;
-                frac_tmp= 3.2004e-01;  frac_tmp_err=2.04e-02; 
+          p0_tmp = -3.5459e-01; p0_tmp_err = 5.04e-02;
+          p1_tmp = -1.2790e-01; p1_tmp_err = 6.74e-02;
+          frac_tmp = 2.7324e-01; frac_tmp_err = 2.48e-02;
 
-            elif self.wtagger_cut==0.50:
+          if TString(label).Contains("herwig") and not TString(label).Contains("data") and self.channel == "mu":
 
-                p0_tmp = -3.5459e-01; p0_tmp_err = 5.04e-02;
-                p1_tmp = -1.2790e-01; p1_tmp_err = 6.74e-02;
-                frac_tmp = 2.7324e-01; frac_tmp_err = 2.48e-02;
+           p0_tmp   = -6.6824e-01; p0_tmp_err    = 5.04e-02;
+           p1_tmp   = -5.3365e-02; p1_tmp_err    = 6.74e-02;
+           frac_tmp = 2.0421e-01;  frac_tmp_err  = 2.48e-02;
 
-                if TString(label).Contains("herwig") and not TString(label).Contains("data") and self.channel == "mu":
-
-                 p0_tmp   = -6.6824e-01; p0_tmp_err    = 5.04e-02;
-                 p1_tmp   = -5.3365e-02; p1_tmp_err    = 6.74e-02;
-                 frac_tmp = 2.0421e-01;  frac_tmp_err  = 2.48e-02;
-
-            ## take the same gaussian used in the pass sample
-            if TString(label).Contains("data") and not TString(label).Contains("herwig"):
+           ## take the same gaussian used in the pass sample
+           if TString(label).Contains("data") and not TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_data_"+self.channel);
-            if TString(label).Contains("TotalMC") and not TString(label).Contains("herwig"):
+           if TString(label).Contains("TotalMC") and not TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_TotalMC_"+self.channel);                
 
-            if TString(label).Contains("data") and TString(label).Contains("herwig"):
+           if TString(label).Contains("data") and TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_data_herwig_"+self.channel);
-            if TString(label).Contains("TotalMC") and TString(label).Contains("herwig"):
+           if TString(label).Contains("TotalMC") and TString(label).Contains("herwig"):
                 gaus = self.workspace4fit_.pdf("gaus1_ttbar_TotalMC_herwig_"+self.channel);
                 
-            rrv_p0_cheb = RooRealVar("rrv_p0_cheb"+label+"_"+self.channel,"rrv_p0_cheb"+label+"_"+self.channel,p0_tmp)#,p0_tmp-p0_tmp_err*4,p0_tmp+p0_tmp_err*4);
-            rrv_p1_cheb = RooRealVar("rrv_p1_cheb"+label+"_"+self.channel,"rrv_p1_cheb"+label+"_"+self.channel,p1_tmp)#,p1_tmp-p1_tmp_err*4,p1_tmp+p1_tmp_err*4);
-            cheb = RooChebychev("cheb"+label+"_"+self.channel,"cheb"+label+"_"+self.channel, rrv_x, RooArgList(rrv_p0_cheb, rrv_p1_cheb) );
+           rrv_p0_cheb = RooRealVar("rrv_p0_cheb"+label+"_"+self.channel,"rrv_p0_cheb"+label+"_"+self.channel,p0_tmp)#,p0_tmp-p0_tmp_err*4,p0_tmp+p0_tmp_err*4);
+           rrv_p1_cheb = RooRealVar("rrv_p1_cheb"+label+"_"+self.channel,"rrv_p1_cheb"+label+"_"+self.channel,p1_tmp)#,p1_tmp-p1_tmp_err*4,p1_tmp+p1_tmp_err*4);
+           cheb = RooChebychev("cheb"+label+"_"+self.channel,"cheb"+label+"_"+self.channel, rrv_x, RooArgList(rrv_p0_cheb, rrv_p1_cheb) );
 
-            rrv_frac  = RooRealVar("rrv_frac"+label+"_"+self.channel,"rrv_frac"+label+"_"+self.channel,frac_tmp)#,frac_tmp-frac_tmp_err*4,frac_tmp+frac_tmp_err*4);
-            model_pdf = RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,RooArgList(gaus,cheb),RooArgList(rrv_frac),1)
+           rrv_frac  = RooRealVar("rrv_frac"+label+"_"+self.channel,"rrv_frac"+label+"_"+self.channel,frac_tmp)#,frac_tmp-frac_tmp_err*4,frac_tmp+frac_tmp_err*4);
+           model_pdf = RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,RooArgList(gaus,cheb),RooArgList(rrv_frac),1)
 
         ## double gauss for fail sample
         if in_model_name == "2Gaus_ttbar_failtau2tau1cut":
+
             mean1_tmp      = 8.3209e+01;  mean1_tmp_err      = 1.17e-01;
             deltamean_tmp  = 1.1427e+00;  deltamean_tmp_err  = 1.03e+00;
             sigma1_tmp     = 7.4932e+00;  sigma1_tmp_err     = 1.44e-01;
@@ -777,23 +713,15 @@ class doFit_wj_and_wlvj:
         ## Erf*Exp in the ttbar sample
         if in_model_name == "ErfExp_ttbar":
 
-            if self.wtagger_cut==0.43:
-                c0_tmp    =   -3.0807e-02 ; c0_tmp_err     = 8.16e-03;
-                offset_tmp=    8.2863e+01 ; offset_tmp_err = 9.66e+00;
-                width_tmp =    3.1119e+01 ; width_tmp_err  = 2.80e+00; 
+            c0_tmp     = -2.9893e-02 ; c0_tmp_err     = 6.83e-03;
+            offset_tmp = 7.9350e+01 ;  offset_tmp_err = 9.35e+00;
+            width_tmp  = 3.3083e+01 ;  width_tmp_err  = 2.97e+00;
 
-            elif self.wtagger_cut==0.50:
+            if TString(label).Contains("herwig") and not TString(label).Contains("data"):
 
-                c0_tmp     = -2.9893e-02 ; c0_tmp_err     = 6.83e-03;
-                offset_tmp = 7.9350e+01 ;  offset_tmp_err = 9.35e+00;
-                width_tmp  = 3.3083e+01 ;  width_tmp_err  = 2.97e+00;
-
-                if TString(label).Contains("herwig") and not TString(label).Contains("data"):
-
-                 c0_tmp     = -2.9357e-02 ; c0_tmp_err     = 6.83e-03;
-                 offset_tmp =  7.9298e+01 ; offset_tmp_err = 9.35e+00;
-                 width_tmp  =  3.3216e+01 ; width_tmp_err  = 2.97e+00;
-
+              c0_tmp     = -2.9357e-02 ; c0_tmp_err     = 6.83e-03;
+              offset_tmp =  7.9298e+01 ; offset_tmp_err = 9.35e+00;
+              width_tmp  =  3.3216e+01 ; width_tmp_err  = 2.97e+00;
                                                                       
             rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,c0_tmp,c0_tmp-4e-2, c0_tmp+4e-2  );
             rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel, offset_tmp,offset_tmp-offset_tmp_err*4,offset_tmp+offset_tmp_err*4);
@@ -809,22 +737,15 @@ class doFit_wj_and_wlvj:
         ## Erf*Exp for failing events
         if in_model_name == "ErfExp_ttbar_failtau2tau1cut":
 
-            if self.wtagger_cut==0.43:
-               c0_tmp    =   -5.0476e-02 ; c0_tmp_err     = 6.92e-03; 
-               offset_tmp=    1.1323e+02 ; offset_tmp_err = 1.94e+01;
-               width_tmp =    5.8616e+01 ; width_tmp_err  = 4.00e+00;
+            c0_tmp     = -1.0143e-01 ; c0_tmp_err    = 1.46e-02;
+            offset_tmp = 2.7718e+02 ; offset_tmp_err = 4.92e+01;
+            width_tmp  = 7.1891e+01 ; width_tmp_err  = 4.69e+00;
 
-            elif self.wtagger_cut==0.50:
+            if TString(label).Contains("herwig") and not TString(label).Contains("data"):
 
-                c0_tmp     = -1.0143e-01 ; c0_tmp_err    = 1.46e-02;
-                offset_tmp = 2.7718e+02 ; offset_tmp_err = 4.92e+01;
-                width_tmp  = 7.1891e+01 ; width_tmp_err  = 4.69e+00;
-
-                if TString(label).Contains("herwig") and not TString(label).Contains("data"):
-
-                 c0_tmp      = -1.0141e-01 ; c0_tmp_err     = 1.46e-02;
-                 offset_tmp  = 2.6730e+02 ; offset_tmp_err = 4.92e+01;
-                 width_tmp   = 7.1505e+01 ; width_tmp_err  = 4.69e+00;
+              c0_tmp      = -1.0141e-01 ; c0_tmp_err     = 1.46e-02;
+              offset_tmp  = 2.6730e+02 ; offset_tmp_err = 4.92e+01;
+              width_tmp   = 7.1505e+01 ; width_tmp_err  = 4.69e+00;
 
                                                                       
             rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,c0_tmp,c0_tmp-4e-2, c0_tmp+4e-2);
@@ -1098,7 +1019,7 @@ class doFit_wj_and_wlvj:
 
 
     ### Method for a single MC fit of the mj spectra giving: file name, label, model name
-    def fit_mj_single_MC(self,in_file_name, label, in_model_name, additioninformation=""):
+    def fit_mj_single_MC(self,in_file_name, label, in_model_name, isTTbarMC=0, additioninformation=""):
 
       ## import variable and dataset
       rrv_mass_j  = self.workspace4fit_.var("rrv_mass_j");
@@ -1131,36 +1052,37 @@ class doFit_wj_and_wlvj:
       self.draw_canvas_with_pull( mplot,mplot_pull,parameters_list,"plots_%s_%s_%s/m_j_fitting%s_wtaggercut%s/"%(options.additioninformation,self.channel,self.wtagger_label,
                                   additioninformation, self.wtagger_label),label+in_file_name+"_"+str(self.ca8_ungroomed_pt_min)+"_"+str(self.ca8_ungroomed_pt_max), in_model_name)
 
-      ## Set the variables in the workspace --> scaling to the lumi if the dataset is not   
-      self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").setVal( self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").getVal()*self.workspace4fit_.var("rrv_scale_to_lumi"+label+"_"+self.channel).getVal() )
-      self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").setError(self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").getError()*self.workspace4fit_.var("rrv_scale_to_lumi"+label+"_"+self.channel).getVal() )
+      if not isTTbarMC:
+       ## Set the variables in the workspace --> scaling to the lumi if the dataset is not   
+       self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").setVal( self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").getVal()*self.workspace4fit_.var("rrv_scale_to_lumi"+label+"_"+self.channel).getVal() )
+       self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").setError(self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").getError()*self.workspace4fit_.var("rrv_scale_to_lumi"+label+"_"+self.channel).getVal() )
       
-      if TString(label).Contains("ggH"):
+       if TString(label).Contains("ggH"):
          self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").setVal( self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").getVal() )
          self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").setError(self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").getError() )
 
-      self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").Print();
+       self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").Print();
 
-      ## cycle on the parameters --> set range and vals of gaussian mean and width, delta mean and scalesigma
-      par=parameters_list.createIterator();
-      par.Reset();
-      param=par.Next()
-      while (param):
-       if (TString(label).Contains("VV") or TString(label).Contains("STop") or TString(label).Contains("TTbar")) and (not (options.fitwtaggersim or options.fitwtagger)):
-        #param.Print();
-        if TString(param.GetName()).Contains("rrv_mean1_gaus"):
+       ## cycle on the parameters --> set range and vals of gaussian mean and width, delta mean and scalesigma
+       par=parameters_list.createIterator();
+       par.Reset();
+       param=par.Next()
+       while (param):
+        if (TString(label).Contains("VV") or TString(label).Contains("STop") or TString(label).Contains("TTbar")) and (not (options.fitwtaggersim or options.fitwtagger)):
+         #param.Print();
+         if TString(param.GetName()).Contains("rrv_mean1_gaus"):
           param.setRange(param.getMin()+self.mean_shift, param.getMax()+self.mean_shift);
           param.setVal(param.getVal()+self.mean_shift);
-        if TString(param.GetName()).Contains("rrv_deltamean_gaus"):
+         if TString(param.GetName()).Contains("rrv_deltamean_gaus"):
           param.setRange(param.getMin()-self.mean_shift, param.getMax()-self.mean_shift);
           param.setVal(param.getVal()-self.mean_shift);
-        if TString(param.GetName()).Contains("rrv_sigma1_gaus"):
+         if TString(param.GetName()).Contains("rrv_sigma1_gaus"):
           param.setVal(param.getVal()*self.sigma_scale);
           param.setRange(param.getMin()*self.sigma_scale, param.getMax()*self.sigma_scale);
-        if TString(param.GetName()).Contains("rrv_scalesigma_gaus"):
+         if TString(param.GetName()).Contains("rrv_scalesigma_gaus"):
           param.setRange(param.getMin()/self.sigma_scale, param.getMax()/self.sigma_scale);
           param.setVal(param.getVal()/self.sigma_scale);
-       param=par.Next()
+        param=par.Next()
                                                                                                                                                      
 
 
@@ -1226,7 +1148,6 @@ class doFit_wj_and_wlvj:
     def ScaleFactor_forPureWJet_TTbar_controlsample(self,in_file_name,label="",fit_or_not=1):
 
         print " ##############################  Pass: dataset   #################################### "
-
         rrv_mass_j        = self.workspace4fit_.var("rrv_mass_j");
         rdataset_data_mj  = self.workspace4fit_.data("rdataset_data"+label+"_"+self.channel+"_mj"); 
         rdataset_TTbar_mj = self.workspace4fit_.data("rdataset_TTbar"+label+"_"+self.channel+"_mj"); 
@@ -1234,7 +1155,6 @@ class doFit_wj_and_wlvj:
         rdataset_VV_mj    = self.workspace4fit_.data("rdataset_VV"+label+"_"+self.channel+"_mj"); 
         rdataset_WJets_mj = self.workspace4fit_.data("rdataset_WJets0"+label+"_"+self.channel+"_mj"); 
 
-        print " ################################# Pass: hist pdf  ################################# "
         self.change_dataset_to_histpdf(rrv_mass_j, rdataset_TTbar_mj);
         self.change_dataset_to_histpdf(rrv_mass_j, rdataset_STop_mj)
         self.change_dataset_to_histpdf(rrv_mass_j, rdataset_VV_mj)
@@ -1247,7 +1167,6 @@ class doFit_wj_and_wlvj:
         model_histpdf_VV       = self.workspace4fit_.pdf(rdataset_VV_mj.GetName()+"_histpdf")
         model_histpdf_WJets    = self.workspace4fit_.pdf(rdataset_WJets_mj.GetName()+"_histpdf")
          
-        print " ###############################  Pass: number for Normalization  ################################### "
         number_TTbar              = RooRealVar("rrv_number_TTbar"+label+"_"+self.channel ,"rrv_number_TTbar"+label+"_"+self.channel,rdataset_TTbar_mj.sumEntries());
         number_STop               = RooRealVar("rrv_number_STop"+label+"_"+self.channel ,"rrv_number_STop"+label+"_"+self.channel,rdataset_STop_mj.sumEntries());
         number_VV                 = RooRealVar("rrv_number_VV"+label+"_"+self.channel   ,"rrv_number_VV"+label+"_"+self.channel,rdataset_VV_mj.sumEntries());
@@ -1265,7 +1184,6 @@ class doFit_wj_and_wlvj:
         rdataset_VV_mj_fail    = self.workspace4fit_.data("rdataset_VV"+label+"_"+"failtau2tau1cut_"+self.channel+"_mj"); 
         rdataset_WJets_mj_fail = self.workspace4fit_.data("rdataset_WJets0"+label+"_"+"failtau2tau1cut_"+self.channel+"_mj"); 
 
-        print " ################################# Fail: hist pdf  ################################# "
         self.change_dataset_to_histpdf(rrv_mass_j, rdataset_TTbar_mj_fail);
         self.change_dataset_to_histpdf(rrv_mass_j, rdataset_STop_mj_fail)
         self.change_dataset_to_histpdf(rrv_mass_j, rdataset_VV_mj_fail)
@@ -1277,7 +1195,6 @@ class doFit_wj_and_wlvj:
         model_histpdf_VV_fail    = self.workspace4fit_.pdf(rdataset_VV_mj_fail.GetName()+"_histpdf")
         model_histpdf_WJets_fail = self.workspace4fit_.pdf(rdataset_WJets_mj_fail.GetName()+"_histpdf")
  
-        print " ###############################  Fail: number for Normalization  ################################### "
         number_TTbar_fail  = RooRealVar("rrv_number_TTbar_fail"+label+"_"+self.channel ,"rrv_number_TTbar_fail"+label+"_"+self.channel,rdataset_TTbar_mj_fail.sumEntries());
         number_STop_fail   = RooRealVar("rrv_number_STop_fail"+label+"_"+self.channel ,"rrv_number_STop_fail"+label+"_"+self.channel,rdataset_STop_mj_fail.sumEntries());
         number_VV_fail     = RooRealVar("rrv_number_VV_fail"+label+"_"+self.channel   ,"rrv_number_VV_fail"+label+"_"+self.channel,rdataset_VV_mj_fail.sumEntries());
@@ -1319,9 +1236,9 @@ class doFit_wj_and_wlvj:
         model_bkg_data_fail = self.make_Model("_bkg_data"+label+"_"+"failtau2tau1cut","ErfExp_ttbar_failtau2tau1cut","_mj",self.constrainslist_data); ## all the parameters contrained within the assigned error
 
         ### Model for matched events passing and failing the cut --> 2Gaus_ttbar and GausChebychev_ttbar_failtau2tau1cut
-        print " ###############################  Pass: Data ttbar  ################################### "
+        print " ###############################  Pass: Data ttbar  resonant component ################################### "
         model_ttbar_data    = self.make_Model_for_ttbar_controlsample("_ttbar_data"+label,"2Gaus_ttbar","_mj",self.constrainslist_data,label); ## No constraint
-        print " ###############################  Fail: Data ttbar  ################################### "
+        print " ###############################  Fail: Data ttbar  resonant component ################################### "
         model_ttbar_data_fail = self.make_Model_for_ttbar_controlsample("_ttbar_data"+label+"_"+"failtau2tau1cut","GausChebychev_ttbar_failtau2tau1cut","_mj",self.constrainslist_data,label); ## No Constraint
 
 
@@ -2108,6 +2025,230 @@ class doFit_wj_and_wlvj:
         rrv_number_dataset_signal_region_before_cut_mj.Print()
         rrv_number_dataset_signal_region_before_cut_error2_mj.Print()
         combData_p_f.Print("v");
+
+    ## To build the dataset to be fitted in case of mc ttbar matched truth analysis
+    def get_mj_and_mlvj_dataset_TTbar_controlsample_matched_with_truth(self,in_file_name, label, jet_mass="ttb_ca8_mass_pr"):
+
+        # read in tree
+        fileIn_name = TString(options.inPath+"/"+self.file_Directory+in_file_name);
+        fileIn = TFile(fileIn_name.Data());
+        treeIn = fileIn.Get("otree");
+        
+        rrv_mass_j = self.workspace4fit_.var("rrv_mass_j") 
+        rrv_weight = RooRealVar("rrv_weight","rrv_weight",0. ,10000000.) 
+
+        ### dataset of m_j : Passed matched dataset       
+        rdataset_mj_matched_pass  = RooDataSet("rdataset"+label+"_matched_pass_"+self.channel+"_mj","rdataset"+label+"_matched_pass_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+        rdataset4fit_mj_matched_pass = RooDataSet("rdataset4fit"+label+"_matched_pass_"+self.channel+"_mj","rdataset4fit"+label+"_matched_pass_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+
+        ### dataset of m_j : Passed unmatched dataset       
+        rdataset_mj_unmatched_pass  = RooDataSet("rdataset"+label+"_unmatched_pass_"+self.channel+"_mj","rdataset"+label+"_unmatched_pass_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+        rdataset4fit_mj_unmatched_pass = RooDataSet("rdataset4fit"+label+"_unmatched_pass_"+self.channel+"_mj","rdataset4fit"+label+"_unmatched_pass_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+
+        ### dataset of m_j : Fail matched dataset       
+        rdataset_mj_matched_fail  = RooDataSet("rdataset"+label+"_matched_fail_"+self.channel+"_mj","rdataset"+label+"_matched_fail_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+        rdataset4fit_mj_matched_fail = RooDataSet("rdataset4fit"+label+"_matched_fail_"+self.channel+"_mj","rdataset4fit"+label+"_matched_fail_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+
+        ### dataset of m_j : Fail unmatched dataset       
+        rdataset_mj_unmatched_fail  = RooDataSet("rdataset"+label+"_unmatched_fail_"+self.channel+"_mj","rdataset"+label+"_unmatched_fail_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+        rdataset4fit_mj_unmatched_fail = RooDataSet("rdataset4fit"+label+"_unmatched_fail_"+self.channel+"_mj","rdataset4fit"+label+"_unmatched_fail_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+
+        ### dataset of m_j : extremefail matched dataset       
+        rdataset_mj_extreme_matched  = RooDataSet("rdataset"+label+"_extreme_matched_"+self.channel+"_mj","rdataset"+label+"_extreme_matched_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+        rdataset4fit_mj_extreme_matched = RooDataSet("rdataset4fit"+label+"_extreme_matched_"+self.channel+"_mj","rdataset4fit"+label+"_extreme_matched_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+
+        ### dataset of m_j : Fail unmatched dataset       
+        rdataset_mj_extreme_unmatched  = RooDataSet("rdataset"+label+"_extreme_unmatched_"+self.channel+"_mj","rdataset"+label+"_extreme_unmatched_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+        rdataset4fit_mj_extreme_unmatched = RooDataSet("rdataset4fit"+label+"_extreme_unmatched_"+self.channel+"_mj","rdataset4fit"+label+"_extreme_unmatched_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
+                            
+        print "N entries: ", treeIn.GetEntries()
+
+        hnum_6region = TH1D("hnum_6region"+label+"_"+self.channel,"hnum_6region"+label+"_"+self.channel,5,0,6);# 0 pass matched, 1 pass unmatched, 2 fail matched, 3 fail unmatched, 4 extreme matched, 5 extreme unmatched
+        hnum_6region_error2 = TH1D("hnum_6region_error2"+label+"_"+self.channel,"hnum_6region_error2"+label+"_"+self.channel,4,-1.5,2.5);
+
+        for i in range(treeIn.GetEntries()):
+            if i % 100000 == 0: print "iEntry: ",i
+
+            treeIn.GetEntry(i);
+            if i==0: tmp_scale_to_lumi=treeIn.wSampleWeight 
+                
+            discriminantCut = 0; 
+            wtagger = getattr(treeIn,"ttb_ca8_tau2tau1");
+            
+            if wtagger < self.wtagger_cut:
+                discriminantCut=2;
+            elif wtagger > self.wtagger_cut and wtagger < 0.75:
+                discriminantCut=1;
+            elif wtagger > 0.75 :
+                iscriminantCut=0;
+                
+            tmp_jet_mass=getattr(treeIn, jet_mass);
+
+            tmp_event_weight = getattr(treeIn,"totalEventWeight");
+            tmp_event_weight4fit = getattr(treeIn,"eff_and_pu_Weight");
+            tmp_event_weight4fit = tmp_event_weight4fit*getattr(treeIn,"wSampleWeight")/tmp_scale_to_lumi
+
+            if not TString(label).Contains("data"):                   
+                  tmp_event_weight = tmp_event_weight*getattr(treeIn,"btag_weight");
+                  tmp_event_weight4fit = tmp_event_weight4fit*getattr(treeIn,"btag_weight");
+            else:
+                  tmp_event_weight = 1.;
+                  tmp_event_weight4fit = 1.;
+
+            ########## Generator level matching ##########
+          
+            if getattr(treeIn,"gen_W_jet_pt") > 1000. or getattr(treeIn,"gen_W_jet_pt") < 0. : continue ;
+
+            delta_eta = math.fabs(getattr(treeIn,"ttb_ca8_ungroomed_eta")-getattr(treeIn,"gen_W_jet_eta"));
+
+            delta_phi = 0.;
+            if(math.fabs(getattr(treeIn,"ttb_ca8_ungroomed_phi")-getattr(treeIn,"gen_W_jet_phi")) <= TMath.Pi() ):
+               delta_phi = math.fabs(getattr(treeIn,"ttb_ca8_ungroomed_phi")-getattr(treeIn,"gen_W_jet_phi"));
+            else:
+               delta_phi = 2*TMath.Pi() - math.fabs(getattr(treeIn,"ttb_ca8_ungroomed_phi")-getattr(treeIn,"gen_W_jet_phi"));
+
+            deltaR = TMath.Sqrt(delta_phi*delta_phi+delta_eta*delta_eta);
+
+            ### Cut for the HP matched 
+            if discriminantCut ==2 and getattr(treeIn,"mass_lvj") < self.mass_lvj_max and getattr(treeIn,"mass_lvj") > self.mass_lvj_min and (getattr(treeIn,"ttb_nak5_same_csvm") > 0 or getattr(treeIn,"ttb_nak5_oppoveto_csvm") > 0)  and getattr(treeIn,"isttbar") > 0 and getattr(treeIn,"v_pt") > self.vpt_cut and getattr(treeIn,"l_pt") >= self.lpt_cut and getattr(treeIn,"pfMET") > self.pfMET_cut and getattr(treeIn,"ttb_ca8_ungroomed_pt") > 200 and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and getattr(treeIn,"ttb_ca8_ungroomed_pt") > self.ca8_ungroomed_pt_min and getattr(treeIn,"ttb_ca8_ungroomed_pt") < self.ca8_ungroomed_pt_max and deltaR <= 0.5:
+
+                if TString(label).Contains("herwig") and not TString(label).Contains("data") :
+                   tmp_event_weight = tmp_event_weight*treeIn.event_weight
+                   tmp_event_weight4fit = tmp_event_weight4fit*treeIn.event_weight
+
+                rrv_mass_j.setVal(tmp_jet_mass);
+
+                rdataset_mj_matched_pass.add( RooArgSet(rrv_mass_j ),tmp_event_weight);
+                rdataset4fit_mj_matched_pass.add(RooArgSet( rrv_mass_j ),tmp_event_weight4fit);
+
+                hnum_6region.Fill(0,tmp_event_weight)
+                hnum_6region_error2.Fill(0,tmp_event_weight*tmp_event_weight)
+
+            ### Cut for the HP unmatched 
+            if discriminantCut ==2 and getattr(treeIn,"mass_lvj") < self.mass_lvj_max and getattr(treeIn,"mass_lvj") > self.mass_lvj_min and (getattr(treeIn,"ttb_nak5_same_csvm") > 0 or getattr(treeIn,"ttb_nak5_oppoveto_csvm") > 0)  and getattr(treeIn,"isttbar") > 0 and getattr(treeIn,"v_pt") > self.vpt_cut and getattr(treeIn,"l_pt") >= self.lpt_cut and getattr(treeIn,"pfMET") > self.pfMET_cut and getattr(treeIn,"ttb_ca8_ungroomed_pt") > 200 and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and getattr(treeIn,"ttb_ca8_ungroomed_pt") > self.ca8_ungroomed_pt_min and getattr(treeIn,"ttb_ca8_ungroomed_pt") < self.ca8_ungroomed_pt_max and deltaR > 0.5:
+
+
+                if TString(label).Contains("herwig") and not TString(label).Contains("data") :
+                   tmp_event_weight = tmp_event_weight*treeIn.event_weight
+                   tmp_event_weight4fit = tmp_event_weight4fit*treeIn.event_weight
+
+                rrv_mass_j.setVal(tmp_jet_mass);
+
+                rdataset_mj_unmatched_pass.add( RooArgSet(rrv_mass_j ),tmp_event_weight);
+                rdataset4fit_mj_unmatched_pass.add(RooArgSet( rrv_mass_j ),tmp_event_weight4fit);
+
+                hnum_6region.Fill(1,tmp_event_weight)
+                hnum_6region_error2.Fill(1,tmp_event_weight*tmp_event_weight)
+
+
+            ### 1-HP category matched 
+            if (discriminantCut==1 or discriminantCut==0) and getattr(treeIn,"mass_lvj") < self.mass_lvj_max and getattr(treeIn,"mass_lvj") > self.mass_lvj_min and (getattr(treeIn,"ttb_nak5_same_csvm") > 0 or getattr(treeIn,"ttb_nak5_oppoveto_csvm") > 0)  and getattr(treeIn,"isttbar") > 0 and getattr(treeIn,"v_pt") > self.vpt_cut and getattr(treeIn,"l_pt") >= self.lpt_cut and getattr(treeIn,"pfMET") > self.pfMET_cut and getattr(treeIn,"ttb_ca8_ungroomed_pt") > 200 and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and getattr(treeIn,"ttb_ca8_ungroomed_pt") > self.ca8_ungroomed_pt_min and getattr(treeIn,"ttb_ca8_ungroomed_pt") < self.ca8_ungroomed_pt_max and deltaR <= 0.5:
+
+                if TString(label).Contains("herwig") and not TString(label).Contains("data") :
+                   tmp_event_weight = tmp_event_weight*treeIn.event_weight;
+                   tmp_event_weight4fit = tmp_event_weight4fit*treeIn.event_weight;
+            
+                rrv_mass_j.setVal( tmp_jet_mass );
+
+                rdataset_mj_matched_fail.add( RooArgSet(rrv_mass_j ),tmp_event_weight);
+                rdataset4fit_mj_matched_fail.add(RooArgSet( rrv_mass_j ),tmp_event_weight4fit);
+
+                hnum_6region.Fill(2,tmp_event_weight)
+                hnum_6region_error2.Fill(2,tmp_event_weight*tmp_event_weight)
+
+            ### 1-HP category matched 
+            if (discriminantCut==1 or discriminantCut==0) and getattr(treeIn,"mass_lvj") < self.mass_lvj_max and getattr(treeIn,"mass_lvj") > self.mass_lvj_min and (getattr(treeIn,"ttb_nak5_same_csvm") > 0 or getattr(treeIn,"ttb_nak5_oppoveto_csvm") > 0)  and getattr(treeIn,"isttbar") > 0 and getattr(treeIn,"v_pt") > self.vpt_cut and getattr(treeIn,"l_pt") >= self.lpt_cut and getattr(treeIn,"pfMET") > self.pfMET_cut and getattr(treeIn,"ttb_ca8_ungroomed_pt") > 200 and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and getattr(treeIn,"ttb_ca8_ungroomed_pt") > self.ca8_ungroomed_pt_min and getattr(treeIn,"ttb_ca8_ungroomed_pt") < self.ca8_ungroomed_pt_max and deltaR > 0.5:
+
+                if TString(label).Contains("herwig") and not TString(label).Contains("data") :
+                   tmp_event_weight = tmp_event_weight*treeIn.event_weight;
+                   tmp_event_weight4fit = tmp_event_weight4fit*treeIn.event_weight;
+            
+                rrv_mass_j.setVal( tmp_jet_mass );
+
+                rdataset_mj_unmatched_fail.add( RooArgSet(rrv_mass_j ),tmp_event_weight);
+                rdataset4fit_mj_unmatched_fail.add(RooArgSet( rrv_mass_j ),tmp_event_weight4fit);
+
+                hnum_6region.Fill(3,tmp_event_weight)
+                hnum_6region_error2.Fill(3,tmp_event_weight*tmp_event_weight)
+
+
+            ### extreme fail category matched
+            if discriminantCut==0 and getattr(treeIn,"mass_lvj") < self.mass_lvj_max and getattr(treeIn,"mass_lvj") > self.mass_lvj_min and (getattr(treeIn,"ttb_nak5_same_csvm") > 0 or getattr(treeIn,"ttb_nak5_oppoveto_csvm") > 0)  and getattr(treeIn,"isttbar") > 0 and getattr(treeIn,"v_pt") > self.vpt_cut and getattr(treeIn,"l_pt") >= self.lpt_cut and getattr(treeIn,"pfMET") > self.pfMET_cut and getattr(treeIn,"ttb_ca8_ungroomed_pt") > 200 and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and getattr(treeIn,"ttb_ca8_ungroomed_pt") > self.ca8_ungroomed_pt_min and getattr(treeIn,"ttb_ca8_ungroomed_pt") < self.ca8_ungroomed_pt_max and deltaR <= 0.5:
+
+                if TString(label).Contains("herwig") and not TString(label).Contains("data") :
+                   tmp_event_weight = tmp_event_weight*treeIn.event_weight;
+                   Tmp_event_weight4fit = tmp_event_weight4fit*treeIn.event_weight;
+
+                rdataset_mj_extreme_matched.add( RooArgSet( rrv_mass_j ), tmp_event_weight );
+                rdataset4fit_mj_extreme_matched.add( RooArgSet( rrv_mass_j ), tmp_event_weight4fit );            
+
+                hnum_6region.Fill(4,tmp_event_weight)
+                hnum_6region_error2.Fill(4,tmp_event_weight*tmp_event_weight)
+
+                ### extreme fail category unmatched
+            if discriminantCut==0 and getattr(treeIn,"mass_lvj") < self.mass_lvj_max and getattr(treeIn,"mass_lvj") > self.mass_lvj_min and (getattr(treeIn,"ttb_nak5_same_csvm") > 0 or getattr(treeIn,"ttb_nak5_oppoveto_csvm") > 0)  and getattr(treeIn,"isttbar") > 0 and getattr(treeIn,"v_pt") > self.vpt_cut and getattr(treeIn,"l_pt") >= self.lpt_cut and getattr(treeIn,"pfMET") > self.pfMET_cut and getattr(treeIn,"ttb_ca8_ungroomed_pt") > 200 and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and getattr(treeIn,"ttb_ca8_ungroomed_pt") > self.ca8_ungroomed_pt_min and getattr(treeIn,"ttb_ca8_ungroomed_pt") < self.ca8_ungroomed_pt_max and deltaR > 0.5:
+
+                if TString(label).Contains("herwig") and not TString(label).Contains("data") :
+                   tmp_event_weight = tmp_event_weight*treeIn.event_weight;
+                   Tmp_event_weight4fit = tmp_event_weight4fit*treeIn.event_weight;
+
+                rdataset_mj_extreme_unmatched.add( RooArgSet( rrv_mass_j ), tmp_event_weight );
+                rdataset4fit_mj_extreme_unmatched.add( RooArgSet( rrv_mass_j ), tmp_event_weight4fit );            
+
+                hnum_6region.Fill(5,tmp_event_weight)
+                hnum_6region_error2.Fill(5,tmp_event_weight*tmp_event_weight)
+
+        rrv_scale_to_lumi = RooRealVar("rrv_scale_to_lumi"+label+"_"+self.channel,"rrv_scale_to_lumi"+label+"_"+self.channel,tmp_scale_to_lumi);
+        rrv_scale_to_lumi_failtau2tau1cut = RooRealVar("rrv_scale_to_lumi"+label+"_failtau2tau1cut_"+self.channel,"rrv_scale_to_lumi"+label+"_failtau2tau1cut_"+self.channel,tmp_scale_to_lumi);
+        rrv_scale_to_lumi_extremefailtau2tau1cut = RooRealVar("rrv_scale_to_lumi"+label+"_extremefailtau2tau1cut_"+self.channel,"rrv_scale_to_lumi"+label+"_extremefailtau2tau1cut_"+self.channel,tmp_scale_to_lumi);
+                
+        getattr(self.workspace4fit_,"import")(rrv_scale_to_lumi)
+        getattr(self.workspace4fit_,"import")(rrv_scale_to_lumi_failtau2tau1cut)
+        getattr(self.workspace4fit_,"import")(rrv_scale_to_lumi_extremefailtau2tau1cut)
+
+        #prepare m_j dataset
+        rrv_number_dataset_matched_pass = RooRealVar("rrv_number_dataset"+label+"_matched_pass_"+self.channel+"_mj","rrv_number_dataset"+label+"_matched_pass_"+self.channel+"_mj",hnum_6region.GetBinContent(1));
+        rrv_number_dataset_unmatched_pass = RooRealVar("rrv_number_dataset"+label+"_"+"_unmatched_pass_"+self.channel+"_mj","rrv_number_dataset"+label+"_unmatched_pass_"+self.channel+"_mj",hnum_6region.GetBinContent(2));
+        rrv_number_dataset_matched_fail = RooRealVar("rrv_number_dataset"+label+"_matched_fail_"+self.channel+"_mj","rrv_number_dataset"+label+"_matched_fail_"+self.channel+"_mj",hnum_6region.GetBinContent(3));
+        rrv_number_dataset_unmatched_fail = RooRealVar("rrv_number_dataset"+label+"_"+"_unmatched_fail_"+self.channel+"_mj","rrv_number_dataset"+label+"_unmatched_fail_"+self.channel+"_mj",hnum_6region.GetBinContent(4));
+        rrv_number_dataset_extreme_matched = RooRealVar("rrv_number_dataset"+label+"_extreme_matched_"+self.channel+"_mj","rrv_number_dataset"+label+"_extreme_matched"+self.channel+"_mj",hnum_6region.GetBinContent(5));
+        rrv_number_dataset_extreme_unmatched = RooRealVar("rrv_number_dataset"+label+"_"+"_extreme_unmatched_"+self.channel+"_mj","rrv_number_dataset"+label+"_extreme_unmatched_"+self.channel+"_mj",hnum_6region.GetBinContent(5));
+
+
+        getattr(self.workspace4fit_,"import")(rrv_number_dataset_matched_pass)
+        getattr(self.workspace4fit_,"import")(rrv_number_dataset_unmatched_pass)
+        getattr(self.workspace4fit_,"import")(rrv_number_dataset_matched_fail)
+        getattr(self.workspace4fit_,"import")(rrv_number_dataset_unmatched_fail)
+        getattr(self.workspace4fit_,"import")(rrv_number_dataset_extreme_matched)
+        getattr(self.workspace4fit_,"import")(rrv_number_dataset_extreme_unmatched)
+                                                        
+        
+        print "N_rdataset_mj: "
+        getattr(self.workspace4fit_,"import")(rdataset_mj_matched_pass)
+        getattr(self.workspace4fit_,"import")(rdataset4fit_mj_matched_pass)
+        getattr(self.workspace4fit_,"import")(rdataset_mj_matched_fail)
+        getattr(self.workspace4fit_,"import")(rdataset4fit_mj_matched_fail)
+        getattr(self.workspace4fit_,"import")(rdataset_mj_unmatched_pass)
+        getattr(self.workspace4fit_,"import")(rdataset4fit_mj_unmatched_pass)
+        getattr(self.workspace4fit_,"import")(rdataset_mj_unmatched_fail)
+        getattr(self.workspace4fit_,"import")(rdataset4fit_mj_unmatched_fail)
+        getattr(self.workspace4fit_,"import")(rdataset_mj_extreme_matched)
+        getattr(self.workspace4fit_,"import")(rdataset4fit_mj_extreme_matched)
+        getattr(self.workspace4fit_,"import")(rdataset_mj_extreme_unmatched)
+        getattr(self.workspace4fit_,"import")(rdataset4fit_mj_extreme_unmatched)
+
+        rdataset_mj_matched_pass.Print();
+        rdataset4fit_mj_matched_pass.Print();
+        rdataset_mj_unmatched_pass.Print();
+        rdataset4fit_mj_unmatched_pass.Print();
+        rdataset_mj_matched_fail.Print();
+        rdataset4fit_mj_matched_fail.Print();
+        rdataset_mj_unmatched_fail.Print();
+        rdataset4fit_mj_unmatched_fail.Print();
+        rdataset_mj_extreme_matched.Print();
+        rdataset4fit_mj_extreme_matched.Print();
+        rdataset_mj_extreme_unmatched.Print();
+        rdataset4fit_mj_extreme_unmatched.Print();
     
     ### in order to get the pull 
     def get_pull(self, rrv_x, mplot_orig):
@@ -2362,9 +2503,11 @@ class doFit_wj_and_wlvj:
 
 
     #### defines two different way to fit depending on pythia or herwig analysis 
-    def fit_TTbar_controlsample(self, isherwig=0):
+    def fit_TTbar_controlsample(self, isherwig=0, ttbarMC=0):
 
-     if isherwig ==0:
+     if ttbarMC ==0 :
+
+      if isherwig ==0:
 
         print "fit_TTbar_controlsample --> Pythia samples"
         rrv_mass_j = self.workspace4fit_.var("rrv_mass_j");
@@ -2391,7 +2534,7 @@ class doFit_wj_and_wlvj:
         self.get_mj_and_mlvj_dataset_TTbar_controlsample(self.file_WJets0_mc,"_WJets0");
 
         self.fit_mj_single_MC(self.file_WJets0_mc,"_WJets0","ErfExp","_TTbar_controlsample"); ## Erf*Exp pass sample
-        self.fit_mj_single_MC(self.file_WJets0_mc,"_WJets0_failtau2tau1cut","ExpGaus","_TTbar_controlsample"); ## Exp fail sample 
+        self.fit_mj_single_MC(self.file_WJets0_mc,"_WJets0_failtau2tau1cut","Exp","_TTbar_controlsample"); ## Exp fail sample 
         self.fit_mj_single_MC(self.file_WJets0_mc,"_WJets0_extremefailtau2tau1cut","Exp","_TTbar_controlsample"); ## Exp extreme fail 
 
 
@@ -2426,7 +2569,7 @@ class doFit_wj_and_wlvj:
         self.fit_mj_TTbar_controlsample(self.file_data);
         self.ScaleFactor_forPureWJet_TTbar_controlsample(self.file_data);
 
-     else:
+      else:
 
           print "###############################################"
           print "############# Single Top DataSet ##############"
@@ -2480,6 +2623,48 @@ class doFit_wj_and_wlvj:
           self.get_mj_and_mlvj_dataset_TTbar_controlsample(self.file_data,"_data_herwig");
           self.fit_mj_TTbar_controlsample(self.file_data,"_herwig"); 
           self.ScaleFactor_forPureWJet_TTbar_controlsample(self.file_data,"_herwig");
+
+     else :
+
+      if isherwig ==0:
+
+            print "#####################################################"
+            print "############# TTbar Powheg MC Analysis ##############"
+            print "#####################################################"
+            self.get_mj_and_mlvj_dataset_TTbar_controlsample_matched_with_truth(self.file_TTbar_mc,"_TTbar");
+
+            print "#####################  Print  Matched Pass  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_matched_pass","2Gaus","_TTbar_controlsample",ttbarMC);
+            print "#####################  Print  Matched Fail  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_matched_fail","GausChebychev","_TTbar_controlsample",ttbarMC);
+            print "#####################  Print  UnMatched Pass  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_unmatched_pass","ErfExp","_TTbar_controlsample",ttbarMC);
+            print "#####################  Print  UnMatched Fail  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_unmatched_fail","ErfExp","_TTbar_controlsample",ttbarMC);
+            print "#####################  Print  Extreme Matched  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_extreme_matched","Exp","_TTbar_controlsample",ttbarMC);
+            print "#####################  Print  Extrme UnMatched ################################"
+            self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_extreme_unmatched","Exp","_TTbar_controlsample",ttbarMC);
+
+      else:
+
+            print "#####################################################"
+            print "############# TTbar Powheg MC Analysis ##############"
+            print "#####################################################"
+            self.get_mj_and_mlvj_dataset_TTbar_controlsample_matched_with_truth(self.file_TTbar_herwig,"_TTbar_herwig");
+
+            print "#####################  Print Herwig Matched Pass  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_herwig,"_TTbar_herwig_matched_pass","2Gaus","_TTbar_controlsample");
+            print "#####################  Print Herwig Matched Fail  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_herwig,"_TTbar_herwig_matched_fail","GausChebychev","_TTbar_controlsample");
+            print "#####################  Print Herwig UnMatched Pass  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_herwig,"_TTbar_herwig_unmatched_pass","ErfExp","_TTbar_controlsample");
+            print "#####################  Print Herwig UnMatched Fail  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_herwig,"_TTbar_herwig_unmatched_fail","ErfExp","_TTbar_controlsample");
+            print "#####################  Print Herwig Extreme Matched  ################################"
+            self.fit_mj_single_MC(self.file_TTbar_herwig,"_TTbar_extreme_matched","Exp","_TTbar_controlsample");
+            print "#####################  Print Herwig Extrme UnMatched ################################"
+            self.fit_mj_single_MC(self.file_TTbar_herwig,"_TTbar_extreme_unmatched","Exp","_TTbar_controlsample");
 
 
 ### class for doing a simultaneous fit 
@@ -2719,28 +2904,49 @@ class doFit_wj_and_wlvj_simultaneous:
                                                                                     
                                                                       
 ### function to call single channel fits         
-def control_sample(channel="mu",isherwig=0):
+def control_sample(channel="mu",isherwig=0,ttbarMC=0):
 
     print "control sample "+channel;
 
-    if isherwig ==0:
+    if ttbarMC ==0 :
+
+     if isherwig ==0:
         ## create the object and do the single for pythia
         boostedW_fitter = doFit_wj_and_wlvj(channel,"ggH600",40,130) 
         boostedW_fitter.fit_TTbar_controlsample(isherwig);
 
-    elif isherwig ==1:
+     elif isherwig ==1:
         ## create the object and do the single for herwig
         boostedW_fitter_herwig=doFit_wj_and_wlvj(channel,"ggH600",40,130,"_herwig") 
         boostedW_fitter_herwig.fit_TTbar_controlsample(isherwig);
 
-    elif isherwig==2:
+     elif isherwig==2:
         ## do Pythia and herwig analysis at the same time  
         boostedW_fitter = doFit_wj_and_wlvj(channel,"ggH600",40,130) 
         boostedW_fitter.fit_TTbar_controlsample(0);
         boostedW_fitter_herwig = doFit_wj_and_wlvj(channel,"ggH600",40,130,"_herwig") 
         boostedW_fitter_herwig.fit_TTbar_controlsample(1);
 
-        
+    else:
+
+       if isherwig ==0:
+        ## create the object and do the single for pythia
+        boostedW_fitter = doFit_wj_and_wlvj(channel,"ggH600",40,130)
+        boostedW_fitter.fit_TTbar_controlsample(isherwig,ttbarMC);
+  
+       elif isherwig ==1:
+        ## create the object and do the single for herwig
+        boostedW_fitter_herwig=doFit_wj_and_wlvj(channel,"ggH600",40,130,"_herwig")
+        boostedW_fitter_herwig.fit_TTbar_controlsample(isherwig,ttbarMC);
+
+       elif isherwig==2:
+        ## do Pythia and herwig analysis at the same time
+        boostedW_fitter = doFit_wj_and_wlvj(channel,"ggH600",40,130)
+        boostedW_fitter.fit_TTbar_controlsample(0,ttbarMC);
+        boostedW_fitter_herwig = doFit_wj_and_wlvj(channel,"ggH600",40,130,"_herwig")
+        boostedW_fitter_herwig.fit_TTbar_controlsample(1,ttbarMC);
+                                                             
+                                       
 ### function to call simultaneous channel fits         
 def control_sample_simultaneous(isherwig=0):
 
@@ -2761,7 +2967,7 @@ if __name__ == '__main__':
 
     if options.fitwtagger:
         print 'fitwtagger for %s sample'%(channel)
-        control_sample(channel,options.herwig);
+        control_sample(channel,options.herwig,options.ttbarMC);
  
     if options.fitwtaggersim:
         print 'fitwtagger for el+mu sample'
