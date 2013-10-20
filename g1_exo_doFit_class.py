@@ -352,7 +352,9 @@ class doFit_wj_and_wlvj:
           self.shape_para_error_alpha = 1.4;
         else: self.shape_para_error_alpha = 2.;
 
-        self.shape_para_error_TTbar=2.;
+        self.shape_para_error_TTbar = 2.;
+        self.shape_para_error_VV    = 1.;
+        self.shape_para_error_STop  = 1.;
                                                                 
         # shape parameter uncertainty
         self.FloatingParams=RooArgList("floatpara_list");
@@ -3099,7 +3101,7 @@ class doFit_wj_and_wlvj:
         self.workspace4limit_.var("rate_TTbar_for_unbin").setError(self.workspace4limit_.var("rate_TTbar_for_unbin").getVal()*TMath.Sqrt( self.lumi_uncertainty*self.lumi_uncertainty + self.rrv_wtagger_eff_reweight_forT.getError()/self.rrv_wtagger_eff_reweight_forT.getVal()*self.rrv_wtagger_eff_reweight_forT.getError()/self.rrv_wtagger_eff_reweight_forT.getVal() ))
 
         ### Get the dataset for data into the signal region
-        getattr(self.workspace4limit_,"import")(self.workspace4fit_.data("rdataset_data_signal_region_%s_mlvj"%(self.channel)).Clone("data_obs_%s"%(self.channel)))
+        getattr(self.workspace4limit_,"import")(self.workspace4fit_.data("rdataset_data_signal_region_%s_mlvj"%(self.channel)).Clone("data_obs_%s_%s"%(self.channel,self.wtagger_label)))
 
         ### Take the corrected pdf from the alpha method for the WJets
         if mode=="sideband_correction_method1":
@@ -3113,15 +3115,9 @@ class doFit_wj_and_wlvj:
         ### Fix all the Pdf parameters 
         rrv_x = self.workspace4limit_.var("rrv_mass_lvj");
 
-        if not isTTbarFloating:
-            self.fix_Pdf(self.workspace4limit_.pdf("TTbar_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x) );
-            
-        if not isSTopFloating:
-            self.fix_Pdf(self.workspace4limit_.pdf("STop_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x));
-
-        if not isVVFloating:
-            self.fix_Pdf(self.workspace4limit_.pdf("VV_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x));
-
+        self.fix_Pdf(self.workspace4limit_.pdf("TTbar_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x) );            
+        self.fix_Pdf(self.workspace4limit_.pdf("STop_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x));
+        self.fix_Pdf(self.workspace4limit_.pdf("VV_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x));
         self.fix_Pdf(self.workspace4limit_.pdf("WJets_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x));
 
         params_list=[];
@@ -3175,7 +3171,7 @@ class doFit_wj_and_wlvj:
                 params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
                 params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
                 params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
-                if isTTbarFloating:
+                if isTTbarFloating !=0 :
                  self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)) );
                  self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)) );
                  self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)) );
@@ -3236,11 +3232,11 @@ class doFit_wj_and_wlvj:
                 params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
                 params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)));
 
-                if isTTbarFloating:
-                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)));
-                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig1"%(self.channel)));
-                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig2"%(self.channel)));
-                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig3"%(self.channel)));
+                if isTTbarFloating !=0 :
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig2"%(self.channel, self.wtagger_label)));
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)));
 
             if self.MODEL_4_mlvj=="Exp" or self.MODEL_4_mlvj=="Pow" :
 
@@ -3265,8 +3261,8 @@ class doFit_wj_and_wlvj:
                 self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(self.shape_para_error_TTbar);
                 params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
 
-                if isTTbarFloating:
-                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)));
+                if isTTbarFloating !=0 :
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel,self.wtagger_label)));
 
             if self.MODEL_4_mlvj=="ExpN" or self.MODEL_4_mlvj=="ExpTail" or self.MODEL_4_mlvj=="Pow2" :
 
@@ -3298,19 +3294,28 @@ class doFit_wj_and_wlvj:
                 self.FloatingParams.add(self.workspace4limit_.var("Deco_WJets0_sim_%s_%s_mlvj_eig3"%(self.channel, self.wtagger_label)) );
 
                 ### TTbar use exp
-                self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(self.shape_para_error_TTbar);
-                params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
-
-                if isTTbarFloating:
-                    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_mlvj_eig0"%(self.channel)));
+                if isTTbarFloating !=0:
+                    print "##################### TTbar will float in the limit procedure + final plot ######################";
+                    self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(self.shape_para_error_TTbar);
+                    params_list.append(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                    self.FloatingParams.add(self.workspace4limit_.var("Deco_TTbar_signal_region_%s_%s_mlvj_eig0"%(self.channel,self.wtagger_label)));
 
                 ### VV use ExpTail:
-                params_list.append(self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
-                params_list.append(self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                if isVVFloating !=0:
+                 print "##################### VV will float in the limit procedure + final plot ######################";
+                 self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(self.shape_para_error_VV);
+                 self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)).setError(self.shape_para_error_VV);                 
+                 params_list.append(self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                 params_list.append(self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig1"%(self.channel, self.wtagger_label)));
 
-                if isVVFloating:
-                 self.FloatingParams.add(self.workspace4limit_.var("Deco_VV_signal_region_%s_mlvj_eig0"%(self.channel)));
-                 self.FloatingParams.add(self.workspace4limit_.var("Deco_VV_signal_region_%s_mlvj_eig1"%(self.channel)));
+                ### STop use Exp:
+                if isSTopFloating!=0:
+                 print "##################### STop will float in the limit procedure + final plot ######################";
+                 self.workspace4limit_.var("Deco_STop_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)).setError(self.shape_para_error_STop);
+                 params_list.append(self.workspace4limit_.var("Deco_STop_signal_region_%s_%s_mlvj_eig0"%(self.channel, self.wtagger_label)));
+                 self.FloatingParams.add(self.workspace4limit_.var("Deco_VV_signal_region_%s_%s_mlvj_eig0"%(self.channel,self.wtagger_label)));
 
                                        
                 
@@ -3367,7 +3372,7 @@ class doFit_wj_and_wlvj:
         datacard_out.write( "\nbin 1 ")
 
         if mode == "unbin":
-            datacard_out.write( "\nobservation %0.2f "%(self.workspace4limit_.data("data_obs_%s"%(self.channel)).sumEntries()) )
+            datacard_out.write( "\nobservation %0.2f "%(self.workspace4limit_.data("data_obs_%s_%s"%(self.channel,self.wtagger_label)).sumEntries()) )
         if mode == "counting":
             datacard_out.write( "\nobservation %0.2f "%(self.workspace4limit_.var("observation_for_counting").getVal()) )
             
@@ -3442,7 +3447,7 @@ class doFit_wj_and_wlvj:
             for ipar in params_list:
                 print "Name %s",ipar.GetName();
                 if TString(ipar.GetName()).Contains("Deco_TTbar_signal_region"):
-                    datacard_out.write( "\n#%s param %0.1f %0.1f "%( ipar.GetName(), ipar.getVal(), ipar.getError() ) )
+                    datacard_out.write( "\n%s param %0.1f %0.1f "%( ipar.GetName(), ipar.getVal(), ipar.getError() ) )
                 else:
                     datacard_out.write( "\n%s param %0.1f %0.1f "%( ipar.GetName(), ipar.getVal(), ipar.getError() ) )
         if mode == "counting":
@@ -3467,7 +3472,7 @@ class doFit_wj_and_wlvj:
             param=par.Next()
         print "---------------------------------------------";
 
-        workspace.data("data_obs_%s"%(self.channel)).Print()
+        workspace.data("data_obs_%s_%s"%(self.channel,self.wtagger_label)).Print()
 
         print "----------- Pdf in the Workspace -------------";
         pdfs_workspace = workspace.allPdfs();
@@ -3480,7 +3485,7 @@ class doFit_wj_and_wlvj:
         print "----------------------------------------------";
 
         rrv_x = workspace.var("rrv_mass_lvj")
-        data_obs = workspace.data("data_obs_%s"%(self.channel))
+        data_obs = workspace.data("data_obs_%s_%s"%(self.channel,self.wtagger_label))
         model_pdf_signal = workspace.pdf("%s_%s_%s"%(self.signal_sample,self.channel,self.wtagger_label))
         model_pdf_WJets  = workspace.pdf("WJets_%s_%s"%(self.channel,self.wtagger_label))
         model_pdf_VV     = workspace.pdf("VV_%s_%s"%(self.channel,self.wtagger_label))
@@ -4065,7 +4070,7 @@ objName ==objName_before ):
         self.fit_mlvj_in_Mj_sideband("_WJets0","_sb_lo",self.MODEL_4_mlvj,1)
 
         ### Prepare the workspace and datacards     
-        self.prepare_limit("sideband_correction_method1")
+        self.prepare_limit("sideband_correction_method1",1,1,1)
         ### finale plot and check of the workspace
         self.read_workspace(1)
 
@@ -4080,7 +4085,7 @@ objName ==objName_before ):
         #### fit sb lo with just one parametrization
         self.fit_mlvj_in_Mj_sideband("_WJets0","_sb_lo", self.MODEL_4_mlvj,1)
         #### prepare limit 
-        self.prepare_limit("sideband_correction_method1")
+        self.prepare_limit("sideband_correction_method1",1,1,1)
         #### read the workspace
         self.read_workspace(1)
 
