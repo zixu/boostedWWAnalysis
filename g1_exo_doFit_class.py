@@ -35,6 +35,7 @@ parser.add_option('--cprime', action="store",type="int",dest="cprime",default=10
 parser.add_option('--BRnew', action="store",type="int",dest="BRnew",default=0)
 
 parser.add_option('--closuretest', action='store',type="int", dest='closuretest', default=0, help='closure test; 0: no test; 1: A1->A2; 2: A->B')
+parser.add_option('--fitsignal', action='store',type="int", dest='fitsignal', default=0, help='fit only signal lineshape with a chosen model')
 
 parser.add_option('--inPath', action="store",type="string",dest="inPath",default="./")
 
@@ -75,12 +76,18 @@ class doFit_wj_and_wlvj:
         ### Set the mj binning for plots
         self.BinWidth_mj=5.;
 
-        ### Set the binning for mlvj plots as a function of the model            
-        if self.MODEL_4_mlvj=="ErfPowExp_v1" or self.MODEL_4_mlvj=="ErfPow2_v1" or self.MODEL_4_mlvj=="ErfExp_v1":
+        ### Set the binning for mlvj plots as a function of the model
+        if not options.fitsignal:
+         if self.MODEL_4_mlvj=="ErfPowExp_v1" or self.MODEL_4_mlvj=="ErfPow2_v1" or self.MODEL_4_mlvj=="ErfExp_v1":
             self.BinWidth_mlvj=50.;
-        else:
+         else:
             self.BinWidth_mlvj=100.;
-
+        else:
+         if self.MODEL_4_mlvj=="ErfPowExp_v1" or self.MODEL_4_mlvj=="ErfPow2_v1" or self.MODEL_4_mlvj=="ErfExp_v1":
+            self.BinWidth_mlvj=10.;
+         else:
+            self.BinWidth_mlvj=10.;
+            
         #narrow the BinWidth_mj and BinWidth_mlvj by a factor of 5. Because Higgs-Combination-Tools will generate a binned sample, so need the bin width narrow. So, as a easy selution, we will increase the bin-width by a factor of 5 when ploting m_j m_WW
         self.narrow_factor=10.;
 
@@ -1049,11 +1056,11 @@ class doFit_wj_and_wlvj:
                     rrv_mean_CB   = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1000, 900,1100);
                     rrv_sigma_CB  = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 50,20 ,120);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,4,1,5);
-                    rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 2.,0.5,10);
+                    rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 20.,0.,40);
                     rrv_alpha2_CB = RooRealVar("rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2.,0.5,10.);
-                    rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2.,0.5,10);
+                    rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.,40);
                          
-                        
+              
             elif label_tstring.Contains("M1100") and label_tstring.Contains("BulkG_WW") and not label_tstring.Contains("M1100_W") :
                     rrv_mean_CB   = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1100,1000,1200);
                     rrv_sigma_CB  = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 50,20 ,120);
@@ -1386,8 +1393,32 @@ class doFit_wj_and_wlvj:
         ## levelled exp for W+jets bkg fit
         if in_model_name == "ExpTail":
             print "########### ExpTai = levelled exp funtion for W+jets mlvj ############"
-            rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 170,50,300);
-            rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-3,0,1e3);
+            label_tstring=TString(label);
+            if self.wtagger_label == "LP":
+             rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 170,10,400);
+             rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-3,0,1e3);
+            else:
+                if self.channel == "el" :
+                 if ismc == 1 and label_tstring.Contains("sb_lo"):
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 139,30,255);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 2e-2,0.2e-2,4.5e-2);                     
+                 elif ismc == 1 and label_tstring.Contains("signal_region"):
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 162,68,275);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 1.6e-2,0.2e-2,4.5e-2);
+                 elif ismc == 0 :  
+                     rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 170,75,255);
+                     rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 8e-3,0,1.2e-1);
+                if self.channel == "mu" :
+                 if ismc == 1 and label_tstring.Contains("sb_lo"):
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 99,10,255);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-2,0.2e-2,7.5e-2);                        
+                 elif ismc == 1 and label_tstring.Contains("signal_region"):
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 110,20,242);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 2.9e-2,0.2e-02,7.5e-2);
+                 elif ismc == 0 :  
+                     rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 170,20,360);
+                     rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 8e-3,0.,7e-1);    
+                    
             model_pdf     = ROOT.RooExpTailPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_s_ExpTail, rrv_a_ExpTail);
 
         ## sum of two exponential 
@@ -2846,11 +2877,17 @@ class doFit_wj_and_wlvj:
         ### plot on the same canvas
         correct_factor_pdf_deco.plotOn(mplot, RooFit.LineColor(kBlack),RooFit.Name("#alpha_invisible") );
 
-        if label=="_WJets0" or label=="_WJets01": ## add also the plot of alternate ps and function on the canvas
+        if label=="_WJets0" : ## add also the plot of alternate ps and function on the canvas
             if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)):
                 self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha_invisible: Alternate PS") );
             if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)):
                 self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets01_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha_invisible: Alternate Function") );
+
+        elif label=="_WJets01" : ## add also the plot of alternate ps and function on the canvas
+            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)):
+                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets1_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kMagenta), RooFit.LineStyle(3),RooFit.Name("#alpha_invisible: Alternate PS") );
+            if self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets0_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)):
+                self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets0_sim_%s_%s_mlvj"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha_invisible: Alternate Function") );
 
         ### Add the legend
         leg=self.legend4Plot(mplot,1,0, -0.01, -0.14, 0.01, -0.06, 0.);
@@ -2880,7 +2917,7 @@ class doFit_wj_and_wlvj:
         #axis_alpha.RotateTitle(1);
         mplot.addObject(axis_alpha);
 
-        self.draw_canvas(mplot,"plots_%s_%s_%s_%s_g1/other/"%(options.additioninformation, self.channel,self.PS_model,self.wtagger_label),"correction_pdf%s_%s_%s_M_lvj_signal_region_to_sideband"%(label,self.PS_model,self.MODEL_4_mlvj),0,1);
+        self.draw_canvas(mplot,"plots_%s_%s_%s_%s_g1/other/"%(options.additioninformation, self.channel,self.PS_model,self.wtagger_label),"correction_pdf%s_%s_%s_M_lvj_signal_region_to_sideband"%(label,self.PS_model,mlvj_model),0,1);
 
         correct_factor_pdf_deco.getParameters(rdataset_WJets_sb_lo_mlvj).Print("v");
 
@@ -3937,7 +3974,7 @@ objName ==objName_before ):
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_dataset_signal_region_data_%s_mlvj"%(self.channel)).clone("observation_for_counting"))
  
     #### Define the steps to fit signal distribution in the mj and mlvj spectra
-    def fit_Signal(self):
+    def fit_Signal(self,model_narrow="CB_v1",model_width="BWCB"):
         print "############# fit_Signal #################"
         ### Build the dataset
         self.get_mj_and_mlvj_dataset(self.file_signal,"_%s"%(self.signal_sample), "mJJNoKinFit")# to get the shape of m_lvj
@@ -3949,9 +3986,9 @@ objName ==objName_before ):
             TString(self.file_signal).Contains("BulkG_WW_inclusive_M1500_W450") or TString(self.file_signal).Contains("BulkG_WW_inclusive_M1500_W75") or
             TString(self.file_signal).Contains("BulkG_WW_inclusive_M2100_W105") or TString(self.file_signal).Contains("BulkG_WW_inclusive_M2100_W315") or
             TString(self.file_signal).Contains("BulkG_WW_inclusive_M2100_W450")):
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","BWCB", 0, 0, 0, 0);            
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region",model_width, 0, 0, 0, 0);            
         else:
-           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region","CB_v1", 0, 0, 0, 0);
+           self.fit_mlvj_model_single_MC(self.file_signal,"_%s"%(self.signal_sample),"_signal_region",model_narrow, 0, 0, 0, 0);
         print "________________________________________________________________________"
 
     ##### Define the steps to fit WJets MC in the mj and mlvj spectra
@@ -4089,6 +4126,12 @@ objName ==objName_before ):
         #### read the workspace
         self.read_workspace(1)
 
+   ###### Analysis fitting just signal lineshape in mlvj
+    def fit_signal_only(self):
+        #### fit signal MC samples 
+        self.fit_AllSamples_Mj_and_Mlvj()
+        
+
 ### funtion to run the analysis without systematics
 def pre_limit_sb_correction_without_systermatic( channel, signal_sample, in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700,
                                                  in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1"):
@@ -4099,6 +4142,7 @@ def pre_limit_sb_correction_without_systermatic( channel, signal_sample, in_mlvj
 
 
 ### funtion to run the complete alpha analysis
+
 def pre_limit_sb_correction(method, channel, signal_sample="BulkG_c0p2_M1000", in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700,
                             in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1"): 
 
@@ -4107,6 +4151,15 @@ def pre_limit_sb_correction(method, channel, signal_sample="BulkG_c0p2_M1000", i
     boostedW_fitter=doFit_wj_and_wlvj(channel, signal_sample, in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter);
     getattr(boostedW_fitter,"analysis_sideband_correction_%s"%(method) )();
 
+### funtion to run just signal lineshape fit
+def pre_fitsignal_only(channel, signal_sample="BulkG_c0p2_M1000", in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700,
+                       in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model_narrow="CB_v1", fit_model_width="BWCB"): 
+
+    print "#################### pre_fitsignal_only: channel %s, signal %s, max and min signal region %f-%f, max and min mJ %f-%f, max and min mlvj %f-%f, fit model narrow %s, fit model width %s  ######################"%(channel,signal_sample,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model_narrow, fit_model_width);
+    
+    boostedW_fitter=doFit_wj_and_wlvj(channel, signal_sample, in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max);
+    boostedW_fitter.fit_Signal(fit_model_narrow,fit_model_width);
+                               
 ### funtion to run the analysis without systematic
 def pre_limit_simple(channel):
     print "######################### pre_limit_simple for %s sampel"%(channel)
@@ -4127,11 +4180,16 @@ if __name__ == '__main__':
         print '################# check workspace for %s sample'%(channel);
         check_workspace(channel,"BulkG_c0p2_M2000");
 
-    if options.simple and ( not options.multi) and ( not options.check):
+    if options.simple and ( not options.multi) and ( not options.check) and ( not options.fitsignal):
         print '################# simple mode for %s sample'%(channel)
         pre_limit_simple(channel);
 
     ### real function called by the command line parsing some arguments as argv
-    if options.multi:
+    if options.multi  and ( not options.fitsignal):
         print '################# multi mode for %s sample'%(channel)
         pre_limit_sb_correction("method1",sys.argv[1],sys.argv[2],int(sys.argv[3]),int(sys.argv[4]),int(sys.argv[5]),int(sys.argv[6]),int(sys.argv[7]),int(sys.argv[8]), sys.argv[9], sys.argv[10] )
+
+    ### only fit signal lineshape
+    if options.fitsignal :
+        pre_fitsignal_only(sys.argv[1],sys.argv[2],int(sys.argv[3]),int(sys.argv[4]),int(sys.argv[5]),int(sys.argv[6]),int(sys.argv[7]),int(sys.argv[8]),sys.argv[9],sys.argv[10])
+
