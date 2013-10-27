@@ -27,7 +27,7 @@ parser.add_option('-m','--mass',     help='test signal yield for this mass', typ
 parser.add_option('-n','--nexp',     help='number of toys', type=int, default=1000)
 parser.add_option('-g','--fgen',     help='function to generate toys Exp,ExpTail,Pow2,ExpN)', type="string", default="ExpN")
 parser.add_option('-r','--fres',     help='function to fit toys (Exp,ExpTail,Pow2,ExpN)',     type="string", default="ExpN")
-parser.add_option('-s','--storeplot',     help='store the plot of the generated and fitted data for each toy',     type=int, default=0)
+parser.add_option('-s','--storeplot',help='in case of more than 10 toys just 1/3 stored, more than 100 1/10',     type=int, default=0)
 
 (options, args) = parser.parse_args()
 
@@ -59,7 +59,7 @@ class doBiasStudy_mlvj:
         nbins_mj=int((in_mj_max-in_mj_min)/self.BinWidth_mj);
         in_mj_max=in_mj_min+nbins_mj*self.BinWidth_mj;
 
-        self.BinWidth_mlvj=50.;
+        self.BinWidth_mlvj=100.;
         self.in_mlvj_min = in_mlvj_min;
         self.nbins_mlvj=int((in_mlvj_max-in_mlvj_min)/self.BinWidth_mlvj);
         self.in_mlvj_max=in_mlvj_min+self.nbins_mlvj*self.BinWidth_mlvj;
@@ -209,7 +209,7 @@ class doBiasStudy_mlvj:
       
         #For the statistics box:
         self.tdrStyle.SetOptFile(0);
-        self.tdrStyle.SetOptStat(0); #To display the mean and RMS:
+        self.tdrStyle.SetOptStat(1111); #To display the mean and RMS:
         self.tdrStyle.SetStatColor(kWhite);
         self.tdrStyle.SetStatFont(42);
         self.tdrStyle.SetStatFontSize(0.025);
@@ -878,7 +878,7 @@ class doBiasStudy_mlvj:
         mplot_pull = self.get_pull(rrv_mass_lvj,mplot);
         parameters_list = model.getParameters(rdataset);
         
-        self.draw_canvas_with_pull( mplot, mplot_pull,parameters_list,"plots_%s_%s_%s_g1/m_lvj_fitting_%s/"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen),in_file_name,"m_lvj"+in_range+mlvj_model, show_constant_parameter, logy);
+        self.draw_canvas_with_pull( mplot, mplot_pull,parameters_list,"plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres),in_file_name,"m_lvj"+in_range+mlvj_model, show_constant_parameter, logy);
 
          
         ## if the shape parameters has to be decorrelated
@@ -916,7 +916,7 @@ class doBiasStudy_mlvj:
             leg = self.legend4Plot(mplot_deco,0); ## add the legend
             mplot_deco.addObject(leg);
 
-            self.draw_canvas( mplot_deco, "plots_%s_%s_%s_%s_g1/other/"%(options.additioninformation, self.channel, self.wtagger_label, options.fgen), "m_lvj"+label+in_range+in_range+mlvj_model+"_deco",0,logy);
+            self.draw_canvas( mplot_deco, "plots_%s_%s_%s_g1/other_%s_%s/"%(options.additioninformation, self.channel, self.wtagger_label, options.fgen,options.fres), "m_lvj"+label+in_range+in_range+mlvj_model+"_deco",0,logy);
 
 
     ##### Method used to cycle on the events and for the dataset to be fitted
@@ -1444,13 +1444,12 @@ class doBiasStudy_mlvj:
      
      ## create module for chi2 evaluation
      chi2_mc = RooChi2MCSModule();
-     mc_wjet.addModule(chi2_mc)
+     mc_wjet.addModule(chi2_mc);
 
      ## generate and fit storing the generated distribution for each toy
      mc_wjet.generateAndFit(options.nexp,int(numevents_mc),1);
 
-     generatedDataHisto_wjet    = []; ## distribution of generated toy according to bkg only hypothesis
-     generatedData_wjet         = []; ## distribution of generated toy according to bkg only hypothesis -> RooAbsData
+     generatedData_wjet         = []; ## distribution of generated toy according to bkg only hypothesis
      fittedPdf_wjet             = []; ## fitted pdf signal + bkg
      fitResults_wjet            = [];
      parameterHisto_wjet        = []; ## histo of the parameters of the fitted pdf
@@ -1462,7 +1461,6 @@ class doBiasStudy_mlvj:
      for iToy in range(options.nexp): ## loop on the toy
 
          generatedData_wjet.append(mc_wjet.genData(iToy)); ## take the generated dataset ad store them
-         generatedDataHisto_wjet.append(ROOT.RooAbsData.createHistogram(generatedData_wjet[len(generatedData_wjet)-1],"generatedData_wjet_iToy_%d"%iToy,self.workspace4bias_.var("rrv_mass_lvj"),RooFit.Binning(self.nbins_mlvj,self.in_mlvj_min,self.in_mlvj_max)));
        
          parset  = mc_wjet.fitParams(iToy); ## get the parameters of the fit
          parlist = RooArgList(parset);
@@ -1491,13 +1489,20 @@ class doBiasStudy_mlvj:
               if iToy == 0 : ## create parameter histo and pull
 
                if not TString(parlist.at(ipar).GetName()).Contains("signal_region"):
-                parameterHisto_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName(),"",100,-math.fabs(parlist.at(ipar).getVal()*2),math.fabs(parlist.at(ipar).getVal()*2)));
-                parameterHistoError_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_error","",100,-math.fabs(parlist.at(ipar).getError()*2),math.fabs(parlist.at(ipar).getError()*2)));
+                 if not TString(parlist.at(ipar).GetName()).Contains("number"):  
+                  parameterHisto_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName(),"",100,-math.fabs(parlist.at(ipar).getVal()*2),math.fabs(parlist.at(ipar).getVal()*2)));
+                 else:
+                  parameterHisto_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName(),"",50,math.fabs(parlist.at(ipar).getVal())/2,math.fabs(parlist.at(ipar).getVal())*2));
+                 parameterHistoError_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_error","",100,0.,math.fabs(parlist.at(ipar).getError()*2)));
+                 parameterHistoPull_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_pull","",50,-5,5));
                else:
                 parameterHisto_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName(),"",100,-25,25));
-                parameterHistoError_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_error","",100,-math.fabs(parlist.at(ipar).getError()*2),math.fabs(parlist.at(ipar).getError()*2)));
-                   
-               parameterHistoPull_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_pull","",50,-5,5));
+                parameterHisto_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_fraction","",100,-5,5));                
+                parameterHistoError_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_error","",100,0.,math.fabs(parlist.at(ipar).getError()*2)));
+                parameterHistoError_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_fraction__error","",100,0.,math.fabs(parlist.at(ipar).getError()*2)));
+                parameterHistoPull_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_pull","",50,-5,5));
+                parameterHistoPull_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_fraction_pull","",50,-5,5));
+                 
 
               if not TString(parlist.at(ipar).GetName()).Contains("signal_region"): ## fill pulls and parameters histo
                parameterHisto_wjet[iparNotConstant].Fill(parlist.at(ipar).getVal());
@@ -1510,16 +1515,19 @@ class doBiasStudy_mlvj:
                iGenerated = iGenerated +1 ;
               else:
                 ### fill with the fraction of the fitted signal events (positive or negative) divided by what is given by mc -> signal strentght in a only bkg generation  
-                parameterHisto_wjet[iparNotConstant].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());
-                parameterHistoError_wjet[iparNotConstant].Fill(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());  
-                parameterHistoPull_wjet[iparNotConstant].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()/(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()));
+                parameterHisto_wjet[iparNotConstant].Fill(parlist.at(ipar).getVal());
+                parameterHisto_wjet[iparNotConstant+1].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());
+                parameterHistoError_wjet[iparNotConstant].Fill(parlist.at(ipar).getError());  
+                parameterHistoError_wjet[iparNotConstant+1].Fill(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());  
+                parameterHistoPull_wjet[iparNotConstant].Fill(parlist.at(ipar).getVal()/parlist.at(ipar).getError());
+                parameterHistoPull_wjet[iparNotConstant+1].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()/(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()));
                     
               iparNotConstant = iparNotConstant+1;
 
          ## fill chi2, NNLL
          if iToy == 0:
-             nLLdistribution_wjet.append(ROOT.TH1F("","chi2distribution_wjet",50,-math.fabs(parlist.find("NLL").getVal())*5,math.fabs(parlist.find("NLL").getVal())*5));
-             chi2distribution_wjet.append(ROOT.TH1F("chi2distribution_wjet","chi2distribution_wjet",50,0.,math.fabs(parlist.find("chi2red").getVal()*5)));
+             chi2distribution_wjet.append(ROOT.TH1F("chi2distribution_wjet","",50,0.,math.fabs(parlist.find("chi2red").getVal()*5)));
+             nLLdistribution_wjet.append(ROOT.TH1F("nLLdistribution_wjet","",50,math.fabs(parlist.find("NLL").getVal())*0.5,math.fabs(parlist.find("NLL").getVal())*5));
      
          chi2distribution_wjet[0].Fill(parlist.find("chi2red").getVal());
          nLLdistribution_wjet[0].Fill(parlist.find("NLL").getVal());
@@ -1533,56 +1541,65 @@ class doBiasStudy_mlvj:
      canvas_nLL_wjet               = [];
      
      ### print the canvas of the single jobs
-     for iObj in range(len(generatedDataHisto_wjet)):
-      canvas_generatedToys_wjet.append(ROOT.TCanvas("canvas_generatedToys_wjet_%d"%iObj,""));
-      canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].cd();
-      ROOT.SetOwnership(canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1], False);
-      pad1 = ROOT.TPad("pad1_%d"%iObj,"pad1_%d"%iObj,0.,0.24,0.99,1. );
-      ROOT.SetOwnership(pad1, False);
-      pad1.Draw();
-      pad2 = ROOT.TPad("pad2_%d"%iObj,"pad2_%d"%iObj,0.,0.,0.99,0.24 );
-      ROOT.SetOwnership(pad2, False);
-      pad2.Draw();
-      pad1.cd();
-      mplot = self.workspace4bias_.var("rrv_mass_lvj").frame(RooFit.Title("frame_generatedToys_%d"%iObj), RooFit.Bins(self.workspace4bias_.var("rrv_mass_lvj").getBins()));      
-      generatedData_wjet[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
-      draw_error_band_extendPdf(generatedData_wjet[iObj], fittedPdf_wjet[iObj], fitResults_wjet[iObj],mplot,2,"L");
-      generatedData_wjet[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
-      fittedPdf_wjet[iObj].plotOn(mplot);
-      mplot.GetXaxis().SetTitleOffset(1.1);
-      mplot.GetYaxis().SetTitleOffset(1.3);
-      mplot.GetXaxis().SetTitleSize(0.05);
-      mplot.GetYaxis().SetTitleSize(0.05);
-      mplot.GetXaxis().SetLabelSize(0.045);
-      mplot.GetYaxis().SetLabelSize(0.045);
-      mplot.Draw();
-      banner = self.banner4Plot() ;
-      banner.Draw();
+     if options.storeplot :
+      for iObj in range(len(generatedData_wjet)):
+       storethisPlot = 0;
+
+       if options.nexp <= 10 :
+           storethisPlot = 1;
+       elif options.nexp <= 100 and iObj%3 == 0:
+           storethisPlot = 1;
+       elif options.nexp > 100 and iObj%10 == 0:
+           storethisPlot = 1;
+            
+       if storethisPlot == 1:
+           
+        canvas_generatedToys_wjet.append(ROOT.TCanvas("canvas_generatedToys_wjet_%d"%iObj,""));
+        canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].cd();
+        ROOT.SetOwnership(canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1], False);
+        pad1 = ROOT.TPad("pad1_%d"%iObj,"pad1_%d"%iObj,0.,0.24,0.99,1. );
+        ROOT.SetOwnership(pad1, False);
+        pad1.Draw();
+        pad2 = ROOT.TPad("pad2_%d"%iObj,"pad2_%d"%iObj,0.,0.,0.99,0.24 );
+        ROOT.SetOwnership(pad2, False);
+        pad2.Draw();
+        pad1.cd();
+        mplot = self.workspace4bias_.var("rrv_mass_lvj").frame(RooFit.Title("frame_generatedToys_%d"%iObj), RooFit.Bins(self.workspace4bias_.var("rrv_mass_lvj").getBins()));      
+        generatedData_wjet[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
+        draw_error_band_extendPdf(generatedData_wjet[iObj], fittedPdf_wjet[iObj], fitResults_wjet[iObj],mplot,2,"L");
+        generatedData_wjet[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
+        fittedPdf_wjet[iObj].plotOn(mplot);
+        mplot.GetXaxis().SetTitleOffset(1.1);
+        mplot.GetYaxis().SetTitleOffset(1.3);
+        mplot.GetXaxis().SetTitleSize(0.05);
+        mplot.GetYaxis().SetTitleSize(0.05);
+        mplot.GetXaxis().SetLabelSize(0.045);
+        mplot.GetYaxis().SetLabelSize(0.045);
+        mplot.Draw();
+        banner = self.banner4Plot() ;
+        banner.Draw();
                                 
-      pad2.cd();
-      mplot_pull = self.get_pull(self.workspace4bias_.var("rrv_mass_lvj"), mplot);
-      mplot_pull.Draw();
-      mplot_pull.GetXaxis().SetLabelSize(0.15);
-      mplot_pull.GetYaxis().SetLabelSize(0.15);
-      mplot_pull.GetYaxis().SetTitleSize(0.15);
-      mplot_pull.GetYaxis().SetNdivisions(205);
+        pad2.cd();
+        mplot_pull = self.get_pull(self.workspace4bias_.var("rrv_mass_lvj"), mplot);
+        mplot_pull.Draw();
+        mplot_pull.GetXaxis().SetLabelSize(0.15);
+        mplot_pull.GetYaxis().SetLabelSize(0.15);
+        mplot_pull.GetYaxis().SetTitleSize(0.15);
+        mplot_pull.GetYaxis().SetNdivisions(205);
 
+        if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+         os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
 
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+        canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
+        canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
 
-      if optioms.storeplot:          
-       canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
-       canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
+        pad1.SetLogy();
+        pad1.Update();
+        mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*100);
+        canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].Update()
 
-      pad1.SetLogy();
-      pad1.Update();
-      mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*100);
-      canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].Update()
-
-      if options.storeplot :
-       canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s_log.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
-       canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s_log.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
+        canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
+        canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_wjet[len(canvas_generatedToys_wjet)-1].GetName()));
         
 
      ### print plots of the parameters
@@ -1597,20 +1614,20 @@ class doBiasStudy_mlvj:
       parameterHisto_wjet[ipar].GetXaxis().SetLabelSize(0.035);
       parameterHisto_wjet[ipar].GetYaxis().SetLabelSize(0.035);
       parameterHisto_wjet[ipar].GetXaxis().SetTitle(parameterHisto_wjet[ipar].GetName());
+      Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHisto_wjet[ipar].GetXaxis().GetXmin(),parameterHisto_wjet[ipar].GetXaxis().GetXmax());
       Gaussian.SetLineColor(kBlue);
       Gaussian.SetLineWidth(2);
-      Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHisto_wjet[ipar].GetXaxis().GetXmin(),parameterHisto_wjet[ipar].GetXaxis().GetXmax());
-      parameterHisto_wjet[ipar].Fit(Gaussian,"MS");
+      parameterHisto_wjet[ipar].Fit(Gaussian,"MSQ");
       parameterHisto_wjet[ipar].Draw("E");
       
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
         
-      canvas_parameters_wjet[len(canvas_parameters_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_wjet[len(canvas_parameters_wjet)-1].GetName()));
-      canvas_parameters_wjet[len(canvas_parameters_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_wjet[len(canvas_parameters_wjet)-1].GetName()));
+      canvas_parameters_wjet[len(canvas_parameters_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_wjet[len(canvas_parameters_wjet)-1].GetName()));
+      canvas_parameters_wjet[len(canvas_parameters_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_wjet[len(canvas_parameters_wjet)-1].GetName()));
 
      ### print the parameters error distribution 
-     for ipar in range(len(parameterHistoerror_wjet)):
+     for ipar in range(len(parameterHistoError_wjet)):
       canvas_parameters_err_wjet.append(ROOT.TCanvas("canvas_parameterHistoError_wjet_%s"%parameterHistoError_wjet[ipar].GetName(),""));
       canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].cd();
       ROOT.SetOwnership(canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1], False);
@@ -1624,14 +1641,14 @@ class doBiasStudy_mlvj:
       Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHistoError_wjet[ipar].GetXaxis().GetXmin(),parameterHistoError_wjet[ipar].GetXaxis().GetXmax());
       Gaussian.SetLineColor(kBlue);
       Gaussian.SetLineWidth(2);
-      parameterHistoError_wjet[ipar].Fit(Gaussian,"MS");
+      parameterHistoError_wjet[ipar].Fit(Gaussian,"MSQ");
       parameterHistoError_wjet[ipar].Draw("E");
       
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
         
-      canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].GetName()));
-      canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].GetName()));
+      canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].GetName()));
+      canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_err_wjet[len(canvas_parameters_err_wjet)-1].GetName()));
 
      ## print pulls of each parameter
      for ipar in range(len(parameterHistoPull_wjet)):
@@ -1648,14 +1665,14 @@ class doBiasStudy_mlvj:
       Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHistoPull_wjet[ipar].GetXaxis().GetXmin(),parameterHistoPull_wjet[ipar].GetXaxis().GetXmax());
       Gaussian.SetLineColor(kBlue);
       Gaussian.SetLineWidth(2);
-      parameterHistoPull_wjet[ipar].Fit(Gaussian,"MS");
+      parameterHistoPull_wjet[ipar].Fit(Gaussian,"MSQ");
       parameterHistoPull_wjet[ipar].Draw("E");
       
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
         
-      canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].GetName()));
-      canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].GetName()));
+      canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].GetName()));
+      canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_pull_wjet[len(canvas_parameters_pull_wjet)-1].GetName()));
 
      ## print chi2
      canvas_chi2_wjet.append(ROOT.TCanvas("canvas_chi2_wjet_%s"%chi2distribution_wjet[0].GetName(),""));
@@ -1671,14 +1688,14 @@ class doBiasStudy_mlvj:
      Gaussian = ROOT.TF1("GaussianChi","gaus",chi2distribution_wjet[0].GetXaxis().GetXmin(),chi2distribution_wjet[0].GetXaxis().GetXmax());
      Gaussian.SetLineColor(kBlue);
      Gaussian.SetLineWidth(2);
-     chi2distribution_wjet[0].Fit(Gaussian,"MS");
+     chi2distribution_wjet[0].Fit(Gaussian,"MSQ");
      chi2distribution_wjet[0].Draw("E");
       
-     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
         
-     canvas_chi2_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_chi2_wjet[0].GetName()));
-     canvas_chi2_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_chi2_wjet[0].GetName()));
+     canvas_chi2_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_chi2_wjet[0].GetName()));
+     canvas_chi2_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_chi2_wjet[0].GetName()));
 
      ## print -log(l)
      canvas_nLL_wjet.append(ROOT.TCanvas("canvas_nLL_wjet_%s"%nLLdistribution_wjet[0].GetName(),""));
@@ -1694,23 +1711,23 @@ class doBiasStudy_mlvj:
      Gaussian = ROOT.TF1("GaussianChi","gaus",nLLdistribution_wjet[0].GetXaxis().GetXmin(),nLLdistribution_wjet[0].GetXaxis().GetXmax());
      Gaussian.SetLineColor(kBlue);
      Gaussian.SetLineWidth(2);
-     nLLdistribution_wjet[0].Fit(Gaussian,"MS");
+     nLLdistribution_wjet[0].Fit(Gaussian,"MSQ");
      nLLdistribution_wjet[0].Draw("E");
       
-     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
         
-     canvas_nLL_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_nLL_wjet[0].GetName()));
-     canvas_nLL_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_nLL_wjet[0].GetName()));
+     canvas_nLL_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_nLL_wjet[0].GetName()));
+     canvas_nLL_wjet[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_nLL_wjet[0].GetName()));
 
      ############### Make the Data analysis --> make the Entended pdf for the bkg
      constrainslist_bkg_data = [];
-     model_bkg_data    = self.make_Model("_data_sb_lo_fit",options.fres,"_mlvj",constrainslist_data_wjet,1);
+     model_bkg_data    = self.make_Model("_data_sb_lo_fit",options.fres,"_mlvj",constrainslist_bkg_data,1);
      model_bkg_data.Print();
 
 
      ##### Total model for Data
-     model_Total_data    = RooAddPdf("model_Total_background_data","model_Total_backgroun_data",RooArgList(modified_signal_model_mc,model_bkg_data);
+     model_Total_data    = RooAddPdf("model_Total_background_data","model_Total_backgroun_data",RooArgList(modified_signal_model_mc,model_bkg_data));
 
      model_Total_data.Print();
      getattr(self.workspace4bias_,"import")(model_Total_data);
@@ -1732,7 +1749,7 @@ class doBiasStudy_mlvj:
                             RooFit.Silence());
 
 
-     mc_data.Print();
+     data_wjet.Print();
      
      ## create module for chi2 evaluation
      chi2_data = RooChi2MCSModule();
@@ -1741,7 +1758,6 @@ class doBiasStudy_mlvj:
      ## generate and fit storing the generated distribution for each toy
      data_wjet.generateAndFit(options.nexp,int(numevents_data),1);
 
-     generatedDataHisto_data    = []; ## distribution of generated toy according to bkg only hypothesis
      generatedData_data         = []; ## distribution of generated toy according to bkg only hypothesis -> RooAbsData
      fittedPdf_data             = []; ## fitted pdf signal + bkg
      fitResults_data            = [];
@@ -1754,11 +1770,9 @@ class doBiasStudy_mlvj:
      for iToy in range(options.nexp): ## loop on the toy
 
          generatedData_data.append(data_wjet.genData(iToy)); ## take the generated dataset ad store them
-         generatedDataHisto_data.append(ROOT.RooAbsData.createHistogram(generatedData_data[len(generatedData_data)-1],"generatedData_data_iToy_%d"%iToy,self.workspace4bias_.var("rrv_mass_lvj"),RooFit.Binning(self.nbins_mlvj,self.in_mlvj_min,self.in_mlvj_max)));
        
          parset  = data_wjet.fitParams(iToy); ## get the parameters of the fit
          parlist = RooArgList(parset);
- 
          fittedPdf_data.append(model_Total_data.Clone("model_Total_data_toy_%d"%iToy)); ## clone the pdf and take the list to re-buil the pdf shape for plotting reason
          fitResults_data.append(data_wjet.fitResult(iToy));
          
@@ -1783,13 +1797,20 @@ class doBiasStudy_mlvj:
               if iToy == 0 : ## create parameter histo and pull
 
                if not TString(parlist.at(ipar).GetName()).Contains("signal_region"):
-                parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName(),"",100,-math.fabs(parlist.at(ipar).getVal()*2),math.fabs(parlist.at(ipar).getVal()*2)));
-                parameterHistoError_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_error","",100,-math.fabs(parlist.at(ipar).getError()*2),math.fabs(parlist.at(ipar).getError()*2)));
+                if TString(parlist.at(ipar).GetName()).Contains("number"):   
+                 parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data","",100,math.fabs(parlist.at(ipar).getVal())*0.5,math.fabs(parlist.at(ipar).getVal())*2));
+                else:
+                 parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data","",100,-math.fabs(parlist.at(ipar).getVal())*2,math.fabs(parlist.at(ipar).getVal())*2));
+                parameterHistoError_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_error","",100,0.,math.fabs(parlist.at(ipar).getError()*2)));
+                parameterHistoPull_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_pull","",50,-5,5));
                else:
-                parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName(),"",100,-25,25));
-                parameterHistoError_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_error","",100,-math.fabs(parlist.at(ipar).getError()*2),math.fabs(parlist.at(ipar).getError()*2)));
-                   
-               parameterHistoPull_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_pull","",50,-5,5));
+                parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data","",100,-25,25));
+                parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_fraction","",100,-5,5));
+                parameterHistoError_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_error","",100,-math.fabs(parlist.at(ipar).getError()*2),math.fabs(parlist.at(ipar).getError()*2)));
+                parameterHistoError_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_fraction_error","",100,-math.fabs(parlist.at(ipar).getError()*2),math.fabs(parlist.at(ipar).getError()*2)));
+                parameterHistoPull_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_pull","",50,-5,5));
+                parameterHistoPull_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_fraction_pull","",50,-5,5));
+                  
 
               if not TString(parlist.at(ipar).GetName()).Contains("signal_region"): ## fill pulls and parameters histo
                parameterHisto_data[iparNotConstant].Fill(parlist.at(ipar).getVal());
@@ -1802,16 +1823,19 @@ class doBiasStudy_mlvj:
                iGenerated = iGenerated +1 ;
               else:
                 ### fill with the fraction of the fitted signal events (positive or negative) divided by what is given by mc -> signal strentght in a only bkg generation  
-                parameterHisto_data[iparNotConstant].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());
-                parameterHistoError_data[iparNotConstant].Fill(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());  
-                parameterHistoPull_data[iparNotConstant].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()/(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()));
+                parameterHisto_data[iparNotConstant].Fill(parlist.at(ipar).getVal());
+                parameterHisto_data[iparNotConstant+1].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());
+                parameterHistoError_data[iparNotConstant].Fill(parlist.at(ipar).getError());  
+                parameterHistoError_data[iparNotConstant+1].Fill(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());  
+                parameterHistoPull_data[iparNotConstant].Fill(parlist.at(ipar).getVal()/parlist.at(ipar).getError());
+                parameterHistoPull_data[iparNotConstant+1].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()/(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()));
                     
               iparNotConstant = iparNotConstant+1;
 
          ## fill chi2, NNLL
          if iToy == 0:
-             nLLdistribution_data.append(ROOT.TH1F("","chi2distribution_data",50,-math.fabs(parlist.find("NLL").getVal())*5,math.fabs(parlist.find("NLL").getVal())*5));
-             chi2distribution_data.append(ROOT.TH1F("chi2distribution_data","chi2distribution_data",50,0.,math.fabs(parlist.find("chi2red").getVal()*5)));
+             nLLdistribution_data.append(ROOT.TH1F("nLLdistribution_data","",50,math.fabs(parlist.find("NLL").getVal())*0.5,math.fabs(parlist.find("NLL").getVal())*2));
+             chi2distribution_data.append(ROOT.TH1F("chi2distribution_data","",50,0.,parlist.find("chi2red").getVal()*5));
      
          chi2distribution_data[0].Fill(parlist.find("chi2red").getVal());
          nLLdistribution_data[0].Fill(parlist.find("NLL").getVal());
@@ -1825,56 +1849,66 @@ class doBiasStudy_mlvj:
      canvas_nLL_data               = [];
      
      ### print the canvas of the single jobs
-     for iObj in range(len(generatedDataHisto_data)):
-      canvas_generatedToys_data.append(ROOT.TCanvas("canvas_generatedToys_data_%d"%iObj,""));
-      canvas_generatedToys_data[len(canvas_generatedToys_data)-1].cd();
-      ROOT.SetOwnership(canvas_generatedToys_data[len(canvas_generatedToys_data)-1], False);
-      pad1 = ROOT.TPad("pad1_%d"%iObj,"pad1_%d"%iObj,0.,0.24,0.99,1. );
-      ROOT.SetOwnership(pad1, False);
-      pad1.Draw();
-      pad2 = ROOT.TPad("pad2_%d"%iObj,"pad2_%d"%iObj,0.,0.,0.99,0.24 );
-      ROOT.SetOwnership(pad2, False);
-      pad2.Draw();
-      pad1.cd();
-      mplot = self.workspace4bias_.var("rrv_mass_lvj").frame(RooFit.Title("frame_generatedToys_%d"%iObj), RooFit.Bins(self.workspace4bias_.var("rrv_mass_lvj").getBins()));      
-      generatedData_data[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
-      draw_error_band_extendPdf(generatedData_data[iObj], fittedPdf_data[iObj], fitResults_data[iObj],mplot,2,"L");
-      generatedData_data[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
-      fittedPdf_data[iObj].plotOn(mplot);
-      mplot.GetXaxis().SetTitleOffset(1.1);
-      mplot.GetYaxis().SetTitleOffset(1.3);
-      mplot.GetXaxis().SetTitleSize(0.05);
-      mplot.GetYaxis().SetTitleSize(0.05);
-      mplot.GetXaxis().SetLabelSize(0.045);
-      mplot.GetYaxis().SetLabelSize(0.045);
-      mplot.Draw();
-      banner = self.banner4Plot() ;
-      banner.Draw();
+     if options.storeplot :
+         
+      for iObj in range(len(generatedData_data)):
+       storethisPlot = 0;
+
+       if options.nexp <= 10 :
+           storethisPlot = 1;
+       elif options.nexp <= 100 and iObj%3 == 0:
+           storethisPlot = 1;
+       elif options.nexp > 100 and iObj%10 == 0:
+           storethisPlot = 1;
+            
+       if storethisPlot == 1:
+        canvas_generatedToys_data.append(ROOT.TCanvas("canvas_generatedToys_data_%d"%iObj,""));
+        canvas_generatedToys_data[len(canvas_generatedToys_data)-1].cd();
+        ROOT.SetOwnership(canvas_generatedToys_data[len(canvas_generatedToys_data)-1], False);
+        pad1 = ROOT.TPad("pad1_%d"%iObj,"pad1_%d"%iObj,0.,0.24,0.99,1. );
+        ROOT.SetOwnership(pad1, False);
+        pad1.Draw();
+        pad2 = ROOT.TPad("pad2_%d"%iObj,"pad2_%d"%iObj,0.,0.,0.99,0.24 );
+        ROOT.SetOwnership(pad2, False);
+        pad2.Draw();
+        pad1.cd();
+        mplot = self.workspace4bias_.var("rrv_mass_lvj").frame(RooFit.Title("frame_generatedToys_%d"%iObj), RooFit.Bins(self.workspace4bias_.var("rrv_mass_lvj").getBins()));      
+        generatedData_data[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
+        draw_error_band_extendPdf(generatedData_data[iObj], fittedPdf_data[iObj], fitResults_data[iObj],mplot,2,"L");
+        generatedData_data[iObj].plotOn(mplot,RooFit.MarkerSize(1.5), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
+        fittedPdf_data[iObj].plotOn(mplot);
+        mplot.GetXaxis().SetTitleOffset(1.1);
+        mplot.GetYaxis().SetTitleOffset(1.3);
+        mplot.GetXaxis().SetTitleSize(0.05);
+        mplot.GetYaxis().SetTitleSize(0.05);
+        mplot.GetXaxis().SetLabelSize(0.045);
+        mplot.GetYaxis().SetLabelSize(0.045);
+        mplot.Draw();
+        banner = self.banner4Plot() ;
+        banner.Draw();
                                 
-      pad2.cd();
-      mplot_pull = self.get_pull(self.workspace4bias_.var("rrv_mass_lvj"), mplot);
-      mplot_pull.Draw();
-      mplot_pull.GetXaxis().SetLabelSize(0.15);
-      mplot_pull.GetYaxis().SetLabelSize(0.15);
-      mplot_pull.GetYaxis().SetTitleSize(0.15);
-      mplot_pull.GetYaxis().SetNdivisions(205);
+        pad2.cd();
+        mplot_pull = self.get_pull(self.workspace4bias_.var("rrv_mass_lvj"), mplot);
+        mplot_pull.Draw();
+        mplot_pull.GetXaxis().SetLabelSize(0.15);
+        mplot_pull.GetYaxis().SetLabelSize(0.15);
+        mplot_pull.GetYaxis().SetTitleSize(0.15);
+        mplot_pull.GetYaxis().SetNdivisions(205);
 
 
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+        if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+         os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
 
-      if options.storeplot :
-       canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
-       canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
+        canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
+        canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
 
-      pad1.SetLogy();
-      pad1.Update();
-      mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*100);
-      canvas_generatedToys_data[len(canvas_generatedToys_data)-1].Update()
+        pad1.SetLogy();
+        pad1.Update();
+        mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*100);
+        canvas_generatedToys_data[len(canvas_generatedToys_data)-1].Update()
 
-      if options.storeplot :  
-       canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s_log.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
-       canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s_log.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
+        canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s_log.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
+        canvas_generatedToys_data[len(canvas_generatedToys_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s_log.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_generatedToys_data[len(canvas_generatedToys_data)-1].GetName()));
         
 
      ### print plots of the parameters
@@ -1889,20 +1923,20 @@ class doBiasStudy_mlvj:
       parameterHisto_data[ipar].GetXaxis().SetLabelSize(0.035);
       parameterHisto_data[ipar].GetYaxis().SetLabelSize(0.035);
       parameterHisto_data[ipar].GetXaxis().SetTitle(parameterHisto_data[ipar].GetName());
+      Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHisto_data[ipar].GetXaxis().GetXmin(),parameterHisto_data[ipar].GetXaxis().GetXmax());
       Gaussian.SetLineColor(kBlue);
       Gaussian.SetLineWidth(2);
-      Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHisto_data[ipar].GetXaxis().GetXmin(),parameterHisto_data[ipar].GetXaxis().GetXmax());
-      parameterHisto_data[ipar].Fit(Gaussian,"MS");
+      parameterHisto_data[ipar].Fit(Gaussian,"MSQ");
       parameterHisto_data[ipar].Draw("E");
       
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
 
-       canvas_parameters_data[len(canvas_parameters_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_data[len(canvas_parameters_data)-1].GetName()));
-       canvas_parameters_data[len(canvas_parameters_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_data[len(canvas_parameters_data)-1].GetName()));
+      canvas_parameters_data[len(canvas_parameters_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_data[len(canvas_parameters_data)-1].GetName()));
+      canvas_parameters_data[len(canvas_parameters_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_data[len(canvas_parameters_data)-1].GetName()));
 
      ### print the parameters error distribution 
-     for ipar in range(len(parameterHistoerror_data)):
+     for ipar in range(len(parameterHistoError_data)):
       canvas_parameters_err_data.append(ROOT.TCanvas("canvas_parameterHistoError_data_%s"%parameterHistoError_data[ipar].GetName(),""));
       canvas_parameters_err_data[len(canvas_parameters_err_data)-1].cd();
       ROOT.SetOwnership(canvas_parameters_err_data[len(canvas_parameters_err_data)-1], False);
@@ -1916,14 +1950,14 @@ class doBiasStudy_mlvj:
       Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHistoError_data[ipar].GetXaxis().GetXmin(),parameterHistoError_data[ipar].GetXaxis().GetXmax());
       Gaussian.SetLineColor(kBlue);
       Gaussian.SetLineWidth(2);
-      parameterHistoError_data[ipar].Fit(Gaussian,"MS");
+      parameterHistoError_data[ipar].Fit(Gaussian,"MSQ");
       parameterHistoError_data[ipar].Draw("E");
       
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
 
-       canvas_parameters_err_data[len(canvas_parameters_err_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_err_data[len(canvas_parameters_err_data)-1].GetName()));
-       canvas_parameters_err_data[len(canvas_parameters_err_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_err_data[len(canvas_parameters_err_data)-1].GetName()));
+      canvas_parameters_err_data[len(canvas_parameters_err_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_err_data[len(canvas_parameters_err_data)-1].GetName()));
+      canvas_parameters_err_data[len(canvas_parameters_err_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_err_data[len(canvas_parameters_err_data)-1].GetName()));
 
      ## print pulls of each parameter
      for ipar in range(len(parameterHistoPull_data)):
@@ -1940,14 +1974,14 @@ class doBiasStudy_mlvj:
       Gaussian = ROOT.TF1("Gaussian%d"%ipar,"gaus",parameterHistoPull_data[ipar].GetXaxis().GetXmin(),parameterHistoPull_data[ipar].GetXaxis().GetXmax());
       Gaussian.SetLineColor(kBlue);
       Gaussian.SetLineWidth(2);
-      parameterHistoPull_data[ipar].Fit(Gaussian,"MS");
+      parameterHistoPull_data[ipar].Fit(Gaussian,"MSQ");
       parameterHistoPull_data[ipar].Draw("E");
       
-      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+      if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
 
-       canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].GetName()));
-       canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].GetName()));
+      canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].GetName()));
+      canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_parameters_pull_data[len(canvas_parameters_pull_data)-1].GetName()));
 
      ## print chi2
      canvas_chi2_data.append(ROOT.TCanvas("canvas_chi2_data_%s"%chi2distribution_data[0].GetName(),""));
@@ -1963,14 +1997,14 @@ class doBiasStudy_mlvj:
      Gaussian = ROOT.TF1("GaussianChi","gaus",chi2distribution_data[0].GetXaxis().GetXmin(),chi2distribution_data[0].GetXaxis().GetXmax());
      Gaussian.SetLineColor(kBlue);
      Gaussian.SetLineWidth(2);
-     chi2distribution_data[0].Fit(Gaussian,"MS");
+     chi2distribution_data[0].Fit(Gaussian,"MSQ");
      chi2distribution_data[0].Draw("E");
       
-     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
         
-     canvas_chi2_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_chi2_data[0].GetName()));
-     canvas_chi2_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_chi2_data[0].GetName()));
+     canvas_chi2_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_chi2_data[0].GetName()));
+     canvas_chi2_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_chi2_data[0].GetName()));
 
      ## print -log(l)
      canvas_nLL_data.append(ROOT.TCanvas("canvas_nLL_data_%s"%nLLdistribution_data[0].GetName(),""));
@@ -1986,16 +2020,14 @@ class doBiasStudy_mlvj:
      Gaussian = ROOT.TF1("GaussianChi","gaus",nLLdistribution_data[0].GetXaxis().GetXmin(),nLLdistribution_data[0].GetXaxis().GetXmax());
      Gaussian.SetLineColor(kBlue);
      Gaussian.SetLineWidth(2);
-     nLLdistribution_data[0].Fit(Gaussian,"MS");
+     nLLdistribution_data[0].Fit(Gaussian,"MSQ");
      nLLdistribution_data[0].Draw("E");
       
-     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys")):
-        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,"toys"));
+     if not os.path.isdir("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys")):
+        os.system("mkdir plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/%s"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,"toys"));
         
-     canvas_nLL_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_nLL_data[0].GetName()));
-     canvas_nLL_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,canvas_nLL_data[0].GetName()));
-
-
+     canvas_nLL_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.pdf"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_nLL_data[0].GetName()));
+     canvas_nLL_data[0].SaveAs("plots_%s_%s_%s_g1/m_lvj_fitting_%s_%s/toys/%s.png"%(options.additioninformation, self.channel,self.wtagger_label,options.fgen,options.fres,canvas_nLL_data[0].GetName()));
 
 
 
