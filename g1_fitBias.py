@@ -1609,8 +1609,8 @@ class doBiasStudy_mlvj:
                           RooArgSet(self.workspace4bias_.var("rrv_mass_lvj")),
                           RooFit.FitModel(model_Total_mc),
                           RooFit.FitOptions(RooFit.Save(kTRUE),RooFit.SumW2Error(kTRUE),RooFit.Minimizer("Minuit2"),RooFit.Extended(kTRUE)),
-                          RooFit.Extended(kTRUE));
-#                          RooFit.Silence());
+                          RooFit.Extended(kTRUE),
+                          RooFit.Silence());
 
 
      mc_wjet.Print();
@@ -1940,8 +1940,8 @@ class doBiasStudy_mlvj:
                             RooArgSet(self.workspace4bias_.var("rrv_mass_lvj")),
                             RooFit.FitModel(model_Total_data),
                             RooFit.FitOptions(RooFit.Save(kTRUE),RooFit.SumW2Error(kTRUE),RooFit.Minimizer("Minuit2"),RooFit.Extended(kTRUE)),
-                            RooFit.Extended(kTRUE));
-#                            RooFit.Silence());
+                            RooFit.Extended(kTRUE),
+                            RooFit.Silence());
 
 
      data_wjet.Print();
@@ -2019,14 +2019,16 @@ class doBiasStudy_mlvj:
                 parameterHistoPull_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_fraction_pull","",50,-5,5));
                  
               if not TString(parlist.at(ipar).GetName()).Contains("signal_region"): ## fill pulls and parameters histo
-               parameterHisto_data[iparNotConstant].Fill(parlist.at(ipar).getVal());
                parameterHistoError_data[iparNotConstant].Fill(parlist.at(ipar).getError());
-
-               if not TString(parlist.at(ipar).GetName()).Contains("number") and options.fgen == options.fres:
-                parameterHistoPull_data[iPull].Fill((parlist.at(ipar).getVal()-parameters_generated.at(iGenerated).getVal())/parlist.at(ipar).getError());
-                iPull = iPull +1;
+               
+               if not TString(parlist.at(ipar).GetName()).Contains("number") :
+                parameterHisto_data[iparNotConstant].Fill(parlist.at(ipar).getVal());
+                if  options.fgen == options.fres:                                            
+                 parameterHistoPull_data[iPull].Fill((parlist.at(ipar).getVal()-parameters_generated.at(iGenerated).getVal())/parlist.at(ipar).getError());
+                 iPull = iPull +1;
                elif TString(parlist.at(ipar).GetName()).Contains("number"):
-                parameterHistoPull_data[iPull].Fill((parlist.at(ipar).getVal()-parlist.find("ngen").getVal())/parlist.at(ipar).getError());
+                parameterHisto_data[iparNotConstant].Fill(parlist.at(ipar).getVal()+self.workspace4bias_.var("rrv_number_VV_sb_lo_%s_mlvj"%(self.channel)).getVal()+self.workspace4bias_.var("rrv_number_TTbar_sb_lo_%s_mlvj"%(self.channel)).getVal()+self.workspace4bias_.var("rrv_number_STop_sb_lo_%s_mlvj"%(self.channel)).getVal());
+                parameterHistoPull_data[iPull].Fill((parlist.at(ipar).getVal()+self.workspace4bias_.var("rrv_number_VV_sb_lo_%s_mlvj"%(self.channel)).getVal()+self.workspace4bias_.var("rrv_number_TTbar_sb_lo_%s_mlvj"%(self.channel)).getVal()+self.workspace4bias_.var("rrv_number_STop_sb_lo_%s_mlvj"%(self.channel)).getVal()-parlist.find("ngen").getVal())/parlist.at(ipar).getError());
                 iPull = iPull +1;                
                iGenerated = iGenerated +1 ;
               else:
