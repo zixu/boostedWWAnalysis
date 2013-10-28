@@ -760,7 +760,6 @@ Double_t RooAlpha4ExpNPdf::evaluate() const {
 
 ///////////////////////////////////////////////RooExpTailPdf.cxx
 Double_t ExpTail(Double_t x, Double_t s, Double_t a){
-    if( a<1e-6){a=1e-6;}
     return TMath::Exp( -x/(s+a*x) ); 
 }
  
