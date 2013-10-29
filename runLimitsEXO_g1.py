@@ -45,6 +45,7 @@ parser.add_option('--closuretest', action='store',type="int", dest='closuretest'
 parser.add_option('--batchMode', action='store_true', dest='batchMode', default=False, help='no X11 windows')
 parser.add_option('--limitMode', action='store',type="int", dest='limitMode', default=0, help='limit Mode; 0: Asymptotic ; 1: ProfileLikelihood ; 2: FullCLs ; 3: MaxLikelihoodFit')
 parser.add_option('--isReReco', action='store',type="int", dest='isReReco', default=0, help='limit Mode; 0: Old signal samples ; 1: New signal Samples')
+parser.add_option('--noSys', action='store',type="int", dest='noSys', help='run limit without systematic')
 
 
 (options, args) = parser.parse_args()
@@ -401,10 +402,10 @@ def doULPlot( suffix ):
     leg2.Draw();
     banner.Draw();
 
-    can_SM.SaveAs("~/limitFigs_ExpN_rereco/Lim%s.png"%(suffix));
-    can_SM.SaveAs("~/limitFigs_ExpN_rereco/Lim%s.pdf"%(suffix));
-    can_SM.SaveAs("~/limitFigs_ExpN_rereco/Lim%s.root"%(suffix));
-    can_SM.SaveAs("~/limitFigs_ExpN_rereco/Lim%s.C"%(suffix));
+    can_SM.SaveAs("~/LimitResult/Limit_ExpTail/Lim%s.png"%(suffix));
+    can_SM.SaveAs("~/LimitResult/Limit_ExpTail/Lim%s.pdf"%(suffix));
+    can_SM.SaveAs("~/LimitResult/Limit_ExpTail/Lim%s.root"%(suffix));
+    can_SM.SaveAs("~/LimitResult/Limit_ExpTail/Lim%s.C"%(suffix));
 
 
 #################
@@ -420,8 +421,8 @@ if __name__ == '__main__':
 
     ### Set the working directory
         
-    if (options.computeLimits or options.plotLimits) and options.limitMode == 2 : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco");
-    elif (options.computeLimits or options.plotLimits) : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco");
+    if (options.computeLimits or options.plotLimits) and options.limitMode == 2 : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_v2");
+    elif (options.computeLimits or options.plotLimits) : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_v2");
 
     
     ### put in functionality to test just one mass point or just one cprime
@@ -487,10 +488,11 @@ if __name__ == '__main__':
                 print "##############################################";
                 
                 time.sleep(0.3);
-                if options.isReReco == 0:
+                if options.isReReco == 0 :
                  command = "python g1_exo_doFit_class.py %s BulkG_WW_lvjj_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d --fitSignal 1"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo_sig[i], mhi_sig[i], shape_sig_narrow[i], shape_sig_width[i], cprime[j], os.getcwd(), options.category,options.closuretest);
-                else : 
+                elif options.isReReco == 1 : 
                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d --fitSignal 1"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo_sig[i], mhi_sig[i], shape_sig_narrow[i], shape_sig_width[i], cprime[j], os.getcwd(), options.category,options.closuretest);
+                    
 
                 print command ;
 
@@ -512,7 +514,7 @@ if __name__ == '__main__':
             time.sleep(0.3);
 
             ### combine different categories HP and LP
-            if options.isReReco == 0:
+            if options.isReReco == 0 :
              combineCmmd = "combineCards.py wwlvj_BulkG_WW_lvjj_c0p2_M%03d_el_10_00_HP_unbin.txt wwlvj_BulkG_WW_lvjj_c0p2_M%03d_mu_10_00_HP_unbin.txt wwlvj_BulkG_WW_lvjj_c0p2_M%03d_el_10_00_LP_unbin.txt wwlvj_BulkG_WW_lvjj_c0p2_M%03d_mu_10_00_LP_unbin.txt > wwlvj_BulkG_WW_lvjj_c0p2_M%03d_em_10_00_unbin.txt"%(mass[i],mass[i],mass[i],mass[i],mass[i]);
             else : 
              combineCmmd = "combineCards.py wwlvj_BulkG_WW_inclusive_c0p2_M%03d_el_10_00_HP_unbin.txt wwlvj_BulkG_WW_inclusive_c0p2_M%03d_mu_10_00_HP_unbin.txt wwlvj_BulkG_WW_inclusive_c0p2_M%03d_el_10_00_LP_unbin.txt wwlvj_BulkG_WW_inclusive_c0p2_M%03d_mu_10_00_LP_unbin.txt > wwlvj_BulkG_WW_inclusive_c0p2_M%03d_em_10_00_unbin.txt"%(mass[i],mass[i],mass[i],mass[i],mass[i]);
@@ -524,10 +526,14 @@ if __name__ == '__main__':
             if options.limitMode==0:
 
              ## ele HP
-             if options.isReReco == 0:
+             if options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
-             else: 
+             elif options.isReReco == 0 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+             elif options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+             elif options.isReReco == 0 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
 
              if options.batchMode:
               fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"HP");
@@ -539,10 +545,14 @@ if __name__ == '__main__':
 
 
              ## mu HP
-             if options.isReReco == 0:
+             if options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
-             else : 
+             elif options.isReReco == 0 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+             elif options.isReReco == 1 and not  options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+             elif options.isReReco == 1 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
 
              if options.batchMode:
               fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"HP");
@@ -554,10 +564,14 @@ if __name__ == '__main__':
 
 
              ## ele LP
-             if options.isReReco == 0:
+             if options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
-             else: 
+             elif options.isReReco == 0 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+             elif options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
+             elif options.isReReco == 1 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
 
              if options.batchMode:
               fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"LP");
@@ -568,10 +582,14 @@ if __name__ == '__main__':
              time.sleep(0.1);
 
              ## mu LP
-             if options.isReReco == 0:
+             if options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
-             else: 
+             elif options.isReReco == 0 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");              
+             elif options.isReReco == 1 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
+             elif options.isReReco == 1 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s_LP -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt -v 2"%(mass[i],mass[i],"mu",mass[i],"mu");
 
              if options.batchMode:
               fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"LP");
@@ -582,10 +600,14 @@ if __name__ == '__main__':
              time.sleep(0.1);
 
              ## cmobined
-             if options.isReReco == 0:
+             if options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
-             else : 
+             elif options.isReReco == 0 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
+             elif options.isReReco == 1 and not  options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
+             elif options.isReReco == 1 and options.noSys:
+              runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -S 0 -m %03d -n _lim_%03d_%s -d wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_unbin.txt -v 2"%(mass[i],mass[i],"em",mass[i],"em");
               
              if options.batchMode:
               fn = "combineScript_Asymptotic_%s_%03d%s_%02d_%02d"%("em",mass[i],"em",cprime[0],BRnew[0]);
@@ -1020,10 +1042,10 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();
-        can.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_HP.pdf","pdf");
-        can.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_HP.png","png");
-        can.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_HP.root","root");
-        can.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_HP.C","C");
+        can.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_HP.pdf","pdf");
+        can.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_HP.png","png");
+        can.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_HP.root","root");
+        can.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_HP.C","C");
 
         can2 = ROOT.TCanvas("can2","can2",800,800);
         hrl2 = can2.DrawFrame(799,1e-3,2500,0.6);
@@ -1043,10 +1065,10 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();
-        can2.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_HP.pdf","pdf");
-        can2.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_HP.png","png");
-        can2.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_HP.root","root");
-        can2.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_HP.C","C");
+        can2.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_HP.pdf","pdf");
+        can2.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_HP.png","png");
+        can2.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_HP.root","root");
+        can2.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_HP.C","C");
 
         can3 = ROOT.TCanvas("can3","can3",800,800);
         hrl3 = can3.DrawFrame(799,1e-3,2500,0.6);
@@ -1066,10 +1088,10 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();
-        can3.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_LP.pdf","pdf");
-        can3.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_LP.png","png");
-        can3.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_LP.root","root");
-        can3.SaveAs("~/limitFigs_ExpN_rereco/pvals_el_LP.C","C");
+        can3.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_LP.pdf","pdf");
+        can3.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_LP.png","png");
+        can3.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_LP.root","root");
+        can3.SaveAs("~/LimitResult/Limit_ExpTail/pvals_el_LP.C","C");
 
         can4 = ROOT.TCanvas("can4","can4",800,800);
         hrl4 = can4.DrawFrame(799,1e-3,2500,0.6);
@@ -1089,10 +1111,10 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();
-        can4.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_LP.pdf","pdf");
-        can4.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_LP.png","png");
-        can4.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_LP.root","root");
-        can4.SaveAs("~/limitFigs_ExpN_rereco/pvals_mu_LP.C","C");
+        can4.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_LP.pdf","pdf");
+        can4.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_LP.png","png");
+        can4.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_LP.root","root");
+        can4.SaveAs("~/LimitResult/Limit_ExpTail/pvals_mu_LP.C","C");
 
         can5 = ROOT.TCanvas("can5","can5",800,800);
         hrl5 = can5.DrawFrame(799,1e-3,2500,0.6);
@@ -1112,10 +1134,10 @@ if __name__ == '__main__':
         ban2s.Draw();
         ban3s.Draw();
         ban4s.Draw();
-        can5.SaveAs("~/limitFigs_ExpN_rereco/pvals_em.pdf","pdf");
-        can5.SaveAs("~/limitFigs_ExpN_rereco/pvals_em.png","png");
-        can5.SaveAs("~/limitFigs_ExpN_rereco/pvals_em.root","root");
-        can5.SaveAs("~/limitFigs_ExpN_rereco/pvals_em.C","C");
+        can5.SaveAs("~/LimitResult/Limit_ExpTail/pvals_em.pdf","pdf");
+        can5.SaveAs("~/LimitResult/Limit_ExpTail/pvals_em.png","png");
+        can5.SaveAs("~/LimitResult/Limit_ExpTail/pvals_em.root","root");
+        can5.SaveAs("~/LimitResult/Limit_ExpTail/pvals_em.C","C");
 
 
         doULPlot("_el_HP");
