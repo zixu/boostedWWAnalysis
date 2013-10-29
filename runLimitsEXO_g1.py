@@ -421,8 +421,8 @@ if __name__ == '__main__':
 
     ### Set the working directory
         
-    if (options.computeLimits or options.plotLimits) and options.limitMode == 2 : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_v2");
-    elif (options.computeLimits or options.plotLimits) : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_v2");
+    if (options.computeLimits or options.plotLimits) and options.limitMode == 2 : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco");
+    elif (options.computeLimits or options.plotLimits) : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco");
 
     
     ### put in functionality to test just one mass point or just one cprime
@@ -526,6 +526,7 @@ if __name__ == '__main__':
             if options.limitMode==0:
 
              ## ele HP
+             runCmmd2 = "";   
              if options.isReReco == 0 and not options.noSys:
               runCmmd2 = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -H ProfileLikelihood -m %03d -n _lim_%03d_%s_HP -d wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -v 2"%(mass[i],mass[i],"el",mass[i],"el");
              elif options.isReReco == 0 and options.noSys:
