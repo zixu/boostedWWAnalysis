@@ -101,7 +101,7 @@ class doBiasStudy_mlvj:
 
                                                                            
         ## set the signal sample
-        self.file_Directory = "AnaSigTree/";
+        self.file_Directory = "AnaSigTree_new/";
         
         self.signal_sample = in_signal_sample;
 
@@ -1574,7 +1574,7 @@ class doBiasStudy_mlvj:
      self.clone_Model(model_signal,"_%s"%self.signal_sample,"_signal_region","_mlvj");
      self.fix_Model("_%s"%self.signal_sample,"_signal_region","_mlvj","_fit",1);
       
-     rrv_number_signal_signal_fit_mc = RooRealVar("rrv_number_signal_region_fit_mc","rrv_number_signal_region_fit_mc",0,-self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()*200.,self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()*200);
+     rrv_number_signal_signal_fit_mc = RooRealVar("rrv_number_signal_region_fit_mc","rrv_number_signal_region_fit_mc",0,-self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()*300.,self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()*300);
      rrv_number_signal_signal_fit_mc.setVal(self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());
      rrv_number_signal_signal_fit_mc.setError(self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getError());
      rrv_number_signal_signal_fit_mc.Print();
@@ -1585,7 +1585,7 @@ class doBiasStudy_mlvj:
      getattr(self.workspace4bias_,"import")(modified_signal_model_mc);
 
      ############### Make the MC analysis --> make the Entended pdf for the bkg
-     if options.skipMC :
+     if options.skipMC == 0 :
       constrainslist_bkg_wjet = [];
       model_bkg_wjet    = self.make_Model("_WJets0_sb_lo_fit",options.fres,"_mlvj",constrainslist_bkg_wjet,1);
       model_bkg_wjet.Print();
@@ -1687,9 +1687,7 @@ class doBiasStudy_mlvj:
                 parameterHisto_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName(),"",100,-25,25));
                 parameterHisto_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_fraction","",100,-100,100));                
                 parameterHistoError_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_error","",100,0.,math.fabs(parlist.at(ipar).getError()*10)));
-                parameterHistoError_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_fraction__error","",100,0.,math.fabs(parlist.at(ipar).getError()*10)));
                 parameterHistoPull_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_pull","",35,-3,3)); 
-                parameterHistoPull_wjet.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_fraction_pull","",35,-3,3));
                  
 
               if not TString(parlist.at(ipar).GetName()).Contains("signal_region"): ## fill pulls and parameters histo
@@ -1708,10 +1706,7 @@ class doBiasStudy_mlvj:
                 parameterHisto_wjet[iparNotConstant].Fill(parlist.at(ipar).getVal());
                 parameterHisto_wjet[iparNotConstant+1].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());
                 parameterHistoError_wjet[iparNotConstant].Fill(parlist.at(ipar).getError());  
-                parameterHistoError_wjet[iparNotConstant+1].Fill(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());  
                 parameterHistoPull_wjet[iPull].Fill(parlist.at(ipar).getVal()/parlist.at(ipar).getError());
-                iPull = iPull +1;
-                parameterHistoPull_wjet[iPull].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()/(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()));
                 iPull = iPull +1;
                     
               iparNotConstant = iparNotConstant+1;
@@ -1754,7 +1749,7 @@ class doBiasStudy_mlvj:
         wjet_binned   = generatedData_wjet[iObj].binnedClone();
         ChiSquare = fittedPdf_wjet[iObj].createChi2(wjet_binned,RooFit.Extended(kTRUE),RooFit.SumW2Error(kTRUE));
         if len (chi2distribution_wjet_frame) ==0:
-         chi2distribution_wjet_frame.append(ROOT.TH1F("chi2distribution_wjet_frame","",50,0.,(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize())*4)));
+         chi2distribution_wjet_frame.append(ROOT.TH1F("chi2distribution_wjet_frame","",50,(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize())*0.5),(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize())*4)));
          
         chi2distribution_wjet_frame[0].Fill(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize()));
 
@@ -2019,8 +2014,8 @@ class doBiasStudy_mlvj:
          if not param : continue ;
          parameters = RooArgList(param); 
 
-         param_generated       = generation_model_wjet.getParameters(self.workspace4bias_.data("rdataset4bias%s%s_%s%s"%("_Wdata","_sb_lo",self.channel,"_mlvj"))); ### parameters used in the generation
-         if not parameters_generated : continue ;
+         param_generated       = generation_model_data.getParameters(self.workspace4bias_.data("rdataset4bias%s%s_%s%s"%("_Wdata","_sb_lo",self.channel,"_mlvj"))); ### parameters used in the generation
+         if not param_generated : continue ;
          parameters_generated = RooArgList(param_generated);
 
          iparNotConstant = 0;
@@ -2055,9 +2050,7 @@ class doBiasStudy_mlvj:
                 parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data","",100,-50,50));
                 parameterHisto_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_fraction","",100,-100,100));                
                 parameterHistoError_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_error","",100,0.,math.fabs(parlist.at(ipar).getError()*10)));
-                parameterHistoError_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_fraction__error","",100,0.,math.fabs(parlist.at(ipar).getError()*10)));
                 parameterHistoPull_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_pull","",50,-3,3)); 
-                parameterHistoPull_data.append(ROOT.TH1F(parlist.at(ipar).GetName()+"_data_fraction_pull","",50,-3,3));
                  
               if not TString(parlist.at(ipar).GetName()).Contains("signal_region"): ## fill pulls and parameters histo
                parameterHistoError_data[iparNotConstant].Fill(parlist.at(ipar).getError());
@@ -2077,10 +2070,8 @@ class doBiasStudy_mlvj:
                 parameterHisto_data[iparNotConstant].Fill(parlist.at(ipar).getVal());
                 parameterHisto_data[iparNotConstant+1].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());
                 parameterHistoError_data[iparNotConstant].Fill(parlist.at(ipar).getError());  
-                parameterHistoError_data[iparNotConstant+1].Fill(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal());  
+
                 parameterHistoPull_data[iPull].Fill(parlist.at(ipar).getVal()/parlist.at(ipar).getError());
-                iPull = iPull +1;
-                parameterHistoPull_data[iPull].Fill(parlist.at(ipar).getVal()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()/(parlist.at(ipar).getError()/self.workspace4bias_.var("rrv_number_"+self.signal_sample+"_signal_region_"+self.channel+"_mlvj").getVal()));
                 iPull = iPull +1;
                     
               iparNotConstant = iparNotConstant+1;
@@ -2123,7 +2114,7 @@ class doBiasStudy_mlvj:
         data_binned   = generatedData_data[iObj].binnedClone();
         ChiSquare = fittedPdf_data[iObj].createChi2(data_binned,RooFit.Extended(kTRUE),RooFit.SumW2Error(kTRUE));
         if len (chi2distribution_data_frame) ==0:
-         chi2distribution_data_frame.append(ROOT.TH1F("chi2distribution_data_frame","",50,0.,(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize())*4)));
+         chi2distribution_data_frame.append(ROOT.TH1F("chi2distribution_data_frame","",50,(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize())*0.5),(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize())*4)));
          
         chi2distribution_data_frame[0].Fill(ChiSquare.getVal()/(self.workspace4bias_.var("rrv_mass_lvj").getBins()-parameters.getSize()));
         
