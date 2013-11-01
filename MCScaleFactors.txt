@@ -3,32 +3,27 @@
 # ----------------
 
 ## ggH signal 
-#ggH600 0.000433954 50
-#ggH700 0.000196223 50
-#ggH800 9.60845e-05 50
-B#ggH900 5.10878e-05 50
-#ggH1000 2.90798e-05 50
-
 ggH600 0.000650932 1.0
 ggH700 0.000294334 1.0
 ggH800 0.000144127 1.0
 ggH900 7.66317e-05 1.0
 ggH1000 4.36197e-05 1.0
 
+## vbf signal 
 vbfH600 1.1906e-04 1.0
 vbfH700 8.2116e-05 1.0
 vbfH800 5.8929e-05 1.0
 vbfH900 4.2695e-05 1.0
 vbfH1000 3.3087e-05 1.0
 
-# from AN of EXO-12-024
+## from AN of EXO-12-024
 rsg1000_kMpl01_py 1.41799999999999999e-02 1.0
 rsg1000_kMpl01_hw 6.06666666666666674e-02 1.0
 rsg1500_kMpl01_py 1.09933333333333346e-03 1.0
 rsg1500_kMpl01_hw 4.54666666666666674e-03 1.0
 rsg2000_kMpl01_py 1.36100000000000001e-04 1.0
 
-# from EXO Twiki https://twiki.cern.ch/twiki/bin/view/CMS/ExoDiBosonResonancesSignalMCProduction
+## from EXO Twiki https://twiki.cern.ch/twiki/bin/view/CMS/ExoDiBosonResonancesSignalMCProduction
 BulkG_c0p2_M600   0.000306441 1.0
 BulkG_c0p2_M700   0.00055716  1.0
 BulkG_c0p2_M800   0.000239849 1.0
@@ -50,30 +45,52 @@ BulkG_c0p2_M2300  0.000000061 1.0
 BulkG_c0p2_M2400  0.000000039 1.0
 BulkG_c0p2_M2500  0.000000026 1.0
 
-#######
-# SM background
-WW 6.00536653738132503e-03
-WZ 3.32091133166744455e-03
-ZZ 8.55418768712285600e-04
-####WJet Pt100##################
-WJets_Pythia 3.32283007705589037e-02
-####WJet Pt100##################
-WJets_Pythia180 3.52100485201239065e-03
-####WJet Herwig++##################
-WJets_Herwig 2.24477956923949673e-02
-#WJets 2.33527765844721985e-02
-ZJets 1.15028469111922146e-01
-sch 1.45791099434145893e-02
-sch_bar 1.25737636989726662e-02
-tWch 2.23044741569511581e-02
-tWch_bar 2.24942244558829496e-02
-tch 1.50070764751570346e-02
-tch_bar 1.58650427477633922e-02
-TTbar 3.26669069814839105e-02
-TTbar_matchDn 4.11188943471357329e-02
-TTbar_matchUp 4.15875501614955470e-02
-TTbar_scaleDn 4.18023823591596455e-02
-TTbar_scaleUp 4.49540951091209340e-02
-TTbar_Powheg 1.03892467096051520e-02
-# systematics
+### SM Diboson background
+WW  0.005483564 #(NLO 54.83 pb xs)
+WZ  0.003320906 #(NLO 33.21 pb xs
+ZZ  0.001801445 #(NLO 17.65 pb xs
+
+##### Wjets inclusive #######
+WJets_Pythia         0.492871535 #(NNLO 37509 pb xs, LO value from madgraph 30400.0 pb xs  -> k-factor = 1.233)
+WJets_Pythia_matchDn 1.713474935 #(NNLO rescaled value 36607 pb xs)
+WJets_Pythia_matchUp 1.7804836   #(NNLO rescaled value 37347,57 pb xs)
+WJets_Pythia_scaleUp 1.900497108 #(NNLO rescaled value 39456 pb xs)
+WJets_Pythia_scaleDn 1.977704803 #(NNLO rescaled value 41058.9  pb xs)
+
+##### WJet Pt100##################
+WJets_Pythia100 0.03046937 #(NNLO rescaled value 272.86 pb xs)
+
+#### WJet Pt100##################
+WJets_Pythia180 0.002975061 #(NNLO rescaled value 28.9755 pb xs)
+
+#### WJet Herwig++##################
+WJets_Herwig 0.020583747
+
+#### Exclusive samples WJets ####
+W1Jets_Pythia  0.285265521    #(Take the from the latest production: 6601.5 pb xs)  
+W2Jets_Pythia  0.061985751    #(Take the from the latest production: 2110.3 pb xs)  
+W3Jets_Pythia  0.040773505    #(Take the from the latest production: 633.6 pb xs)  
+W4Jets_Pythia  0.019716497    #(Take the from the latest production: 263.862 pb xs)  
+
+#### ZJets 
+ZJets 1.15028469111922146e-01  #(3503 pb xs)
+
+#### Single Top
+sch      1.45791099434145893e-02 #(3.79 pb xs)
+sch_bar  1.25737636989726662e-02 #(1.75 pb xs)
+tWch     2.23044741569511581e-02 #(11.2 pb xs)
+tWch_bar 2.24942244558829496e-02 #(11.2 pb xs)
+tch      1.50070764751570346e-02 #(56.4 pb xs)
+tch_bar  1.58650427477633922e-02 #(30.7 pb xs)
+
+#### TTbar Madgraph
+TTbar 0.035500993 #(NNLO xs 245.8 pb)
+TTbar_matchDn 0.043294239  #(NNLO xs 245.8 pb)
+TTbar_matchUp 0.0459585    #(NNLO xs 245.8 pb)
+TTbar_scaleDn 0.045626224  #(NNLO xs 245.8 pb)
+TTbar_scaleUp 0.049109851  #(NNLO xs 245.8 pb)
+
+#### TTbar Powheg
+TTbar_Powheg 0.011339746  #(NNLO xs 245.8 pb)
+
 
