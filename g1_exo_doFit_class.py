@@ -159,7 +159,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("signal_region",self.mlvj_signal_min,self.mlvj_signal_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-        self.file_Directory="AnaSigTree/";
+        self.file_Directory="AnaSigTree_new/";
 
         self.PS_model= options.psmodel
         
