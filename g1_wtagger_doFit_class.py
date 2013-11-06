@@ -1057,31 +1057,6 @@ paraName.Contains("rrv_p1_User1_WJets") or paraName.Contains("rrv_p1_User1_WJets
             self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").setError(self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").getError())
       self.workspace4fit_.var("rrv_number"+label+"_"+self.channel+"_mj").Print();
 
-      #correct the mean and sigma from the ttbar contral sample
-      par=parameters_list.createIterator();
-      par.Reset();
-      param=par.Next()
-      while (param):
-            if (TString(label).Contains("VV") or TString(label).Contains("STop") or TString(label).Contains("TTbar")) and (not (options.fitwtaggersim or options.fitwtagger)):
-                #param.Print();
-                if TString(param.GetName()).Contains("rrv_mean1_gaus"):
-                    param.setRange(param.getMin()+self.mean_shift, param.getMax()+self.mean_shift);
-                    param.setVal(param.getVal()+self.mean_shift);
-                    #param.Print(); raw_input("mean"+label);
-                if TString(param.GetName()).Contains("rrv_deltamean_gaus"):
-                    param.setRange(param.getMin()-self.mean_shift, param.getMax()-self.mean_shift);
-                    param.setVal(param.getVal()-self.mean_shift);
-                    #param.Print(); raw_input("mean"+label);
-                if TString(param.GetName()).Contains("rrv_sigma1_gaus"):
-                    param.setVal(param.getVal()*self.sigma_scale);
-                    param.setRange(param.getMin()*self.sigma_scale, param.getMax()*self.sigma_scale);
-                    #param.Print(); raw_input("sigma"+label);
-                if TString(param.GetName()).Contains("rrv_scalesigma_gaus"):
-                    param.setRange(param.getMin()/self.sigma_scale, param.getMax()/self.sigma_scale);
-                    param.setVal(param.getVal()/self.sigma_scale);
-                    #param.Print(); raw_input("sigma"+label);
-            param=par.Next()
-                                       
 
     ############# ---------------------------------------------------
     def fit_mj_TTbar_controlsample(self,in_file_name):
