@@ -574,10 +574,11 @@ class sampleWrapperClass:
              self.numberJetBin3_[0] = getattr(self.InputTree_, "numberJetBin")[2];
              self.numberJetBin4_[0] = getattr(self.InputTree_, "numberJetBin")[3];
 
-             self.numberJetBinGen_[0] = getattr(self.InputTree_, "numberJetBinGen")[0];
-             self.numberJetBinGen2_[0] = getattr(self.InputTree_, "numberJetBinGen")[1];
-             self.numberJetBinGen3_[0] = getattr(self.InputTree_, "numberJetBinGen")[2];
-             self.numberJetBinGen4_[0] = getattr(self.InputTree_, "numberJetBinGen")[3];
+             if not self.IsData_:
+              self.numberJetBinGen_[0] = getattr(self.InputTree_, "numberJetBinGen")[0];
+              self.numberJetBinGen2_[0] = getattr(self.InputTree_, "numberJetBinGen")[1];
+              self.numberJetBinGen3_[0] = getattr(self.InputTree_, "numberJetBinGen")[2];
+              self.numberJetBinGen4_[0] = getattr(self.InputTree_, "numberJetBinGen")[3];
 
              if self.Label_ == "TTbar_mcatnlo" :
               self.event_weight_[0] = getattr( self.InputTree_, "event_weight" )/math.fabs(getattr( self.InputTree_, "event_weight" )) ;
@@ -636,14 +637,14 @@ class sampleWrapperClass:
                 self.genHpt_[0]   = getattr(self.InputTree_,"W_H_pt_gen");
                
                 if self.isVBF_:
-                 self.genTagQuark1E_ = getattr(self.InputTree_,"W_TagQuark_E")[0];
-                 self.genTagQuark1eta_  = getattr(self.InputTree_,"W_TagQuark_eta")[0];
-                 self.genTagQuark1phi_  = getattr(self.InputTree_,"W_TagQuark_phi")[0];
-                 self.genTagQuark1pt_   = getattr(self.InputTree_,"W_TagQuark_pt")[0];
-                 self.genTagQuark2E_ = getattr(self.InputTree_,"W_TagQuark_E")[1];
-                 self.genTagQuark2eta_  = getattr(self.InputTree_,"W_TagQuark_eta")[1];
-                 self.genTagQuark2phi_  = getattr(self.InputTree_,"W_TagQuark_phi")[1];
-                 self.genTagQuark2pt_   = getattr(self.InputTree_,"W_TagQuark_pt")[1];
+                 self.genTagQuark1E_[0]    = getattr(self.InputTree_,"W_TagQuark_E")[0];
+                 self.genTagQuark1eta_[0]  = getattr(self.InputTree_,"W_TagQuark_eta")[0];
+                 self.genTagQuark1phi_[0]  = getattr(self.InputTree_,"W_TagQuark_phi")[0];
+                 self.genTagQuark1pt_[0]   = getattr(self.InputTree_,"W_TagQuark_pt")[0];
+                 self.genTagQuark2E_[0]    = getattr(self.InputTree_,"W_TagQuark_E")[1];
+                 self.genTagQuark2eta_[0]  = getattr(self.InputTree_,"W_TagQuark_eta")[1];
+                 self.genTagQuark2phi_[0]  = getattr(self.InputTree_,"W_TagQuark_phi")[1];
+                 self.genTagQuark2pt_[0]   = getattr(self.InputTree_,"W_TagQuark_pt")[1];
                                                              
 
                 for i in range(len(self.cprimeVals)): ## run over the possible value of the new couplig constant and BR
@@ -891,7 +892,7 @@ class sampleWrapperClass:
 
               self.vbf_maxpt_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxpt_j1_bDiscriminatorCSV");
 
-              if self.numberJetBinGen_[0] ==1 and not self.IsData:
+              if self.numberJetBinGen_[0] ==1 and not self.IsData_:
 
                self.vbf_maxpt_j1_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxpt_j1_m_gen");                               
                self.vbf_maxpt_j1_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxpt_j1_pt_gen");                               
@@ -930,7 +931,7 @@ class sampleWrapperClass:
               self.vbf_maxpt_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxpt_j1_bDiscriminatorCSV");
               self.vbf_maxpt_j2_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxpt_j2_bDiscriminatorCSV");                                
 
-              if not self.IsData and self.numberJetBinGen_[0]>= 2:
+              if not self.IsData_ and self.numberJetBinGen_[0]>= 2:
                   
                self.vbf_maxpt_jj_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxpt_jj_m_gen");                               
                self.vbf_maxpt_jj_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxpt_jj_pt_gen");                               
@@ -1039,10 +1040,11 @@ class sampleWrapperClass:
               self.vbf_maxDeta_j2_isPileUpMedium_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j2_isPileUpMedium");                               
               self.vbf_maxDeta_j2_isPileUpMedium_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j2_isPileUpMedium");                               
 
-              self.vbf_maxDeta_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j1_bDiscriminatorCSV");                                
-              self.vbf_maxDeta_j2_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j2_bDiscriminatorCSV");                                
+              self.vbf_maxDeta_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j1_bDiscriminatorCSV");
+              if self.Channel_ == "mu":
+               self.vbf_maxDeta_j2_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j2_bDiscriminatorCSV");                                
 
-              if not self.IsData and self.numberJetBinGen_[0]>= 2:
+              if not self.IsData_ and self.numberJetBinGen_[0]>= 2:
                   
                self.vbf_maxDeta_jj_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxDeta_jj_m_gen");                               
                self.vbf_maxDeta_jj_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxDeta_jj_pt_gen");                               
@@ -1152,7 +1154,7 @@ class sampleWrapperClass:
               self.vbf_maxMjj_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxMjj_j1_bDiscriminatorCSV");                                
               self.vbf_maxMjj_j2_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxMjj_j2_bDiscriminatorCSV");                                
 
-              if not self.IsData and self.numberJetBinGen_[0]>= 2:
+              if not self.IsData_ and self.numberJetBinGen_[0]>= 2:
                   
                self.vbf_maxMjj_jj_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxMjj_jj_m_gen");                               
                self.vbf_maxMjj_jj_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxMjj_jj_pt_gen");                               
