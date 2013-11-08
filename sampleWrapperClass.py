@@ -568,7 +568,16 @@ class sampleWrapperClass:
 
              self.issignal_[0] = signallike;
              self.isttbar_[0]  = ttbarlike;
+
              self.numberJetBin_[0] = getattr(self.InputTree_, "numberJetBin")[0];
+             self.numberJetBin2_[0] = getattr(self.InputTree_, "numberJetBin")[1];
+             self.numberJetBin3_[0] = getattr(self.InputTree_, "numberJetBin")[2];
+             self.numberJetBin4_[0] = getattr(self.InputTree_, "numberJetBin")[3];
+
+             self.numberJetBinGen_[0] = getattr(self.InputTree_, "numberJetBinGen")[0];
+             self.numberJetBinGen2_[0] = getattr(self.InputTree_, "numberJetBinGen")[1];
+             self.numberJetBinGen3_[0] = getattr(self.InputTree_, "numberJetBinGen")[2];
+             self.numberJetBinGen4_[0] = getattr(self.InputTree_, "numberJetBinGen")[3];
 
              if self.Label_ == "TTbar_mcatnlo" :
               self.event_weight_[0] = getattr( self.InputTree_, "event_weight" )/math.fabs(getattr( self.InputTree_, "event_weight" )) ;
@@ -867,7 +876,33 @@ class sampleWrapperClass:
              self.pfMET_Phi_[0] = getattr( self.InputTree_, "event_met_pfmetPhi" );        
 
              ######## VBF jet Stuff
+             if self.numberJetBin_[0] ==1 :
+
+ 
+              self.vbf_maxpt_j1_m_[0]     = getattr(self.InputTree_, "vbf_maxpt_j1_m");                               
+              self.vbf_maxpt_j1_pt_[0]    = getattr(self.InputTree_, "vbf_maxpt_j1_pt");                               
+              self.vbf_maxpt_j1_eta_[0]   = getattr(self.InputTree_, "vbf_maxpt_j1_eta");                               
+              self.vbf_maxpt_j1_phi_[0]   = getattr(self.InputTree_, "vbf_maxpt_j1_phi");                               
+ 
+              self.vbf_maxpt_j1_QGLikelihood_[0] = getattr(self.InputTree_, "vbf_maxpt_j1_QGLikelihood");                                
+ 
+              self.vbf_maxpt_j1_isPileUpMedium_[0]  = getattr(self.InputTree_, "vbf_maxpt_j1_isPileUpMedium");                               
+              self.vbf_maxpt_j1_isPileUpTight_[0]   = getattr(self.InputTree_, "vbf_maxpt_j1_isPileUpTight");                               
+
+              self.vbf_maxpt_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxpt_j1_bDiscriminatorCSV");
+
+              if self.numberJetBinGen_[0] ==1 and not self.IsData:
+
+               self.vbf_maxpt_j1_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxpt_j1_m_gen");                               
+               self.vbf_maxpt_j1_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxpt_j1_pt_gen");                               
+               self.vbf_maxpt_j1_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_j1_eta_gen");                               
+               self.vbf_maxpt_j1_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_j1_phi_gen");                               
+
+               self.vbf_maxpt_j1_bDiscriminatorCSV_gen_[0]  = getattr(self.InputTree_, "vbf_maxpt_j1_bDiscriminatorCSV_gen");
+
+                  
              if self.numberJetBin_[0] >=2 :
+
               self.vbf_maxpt_jj_m_[0]     = getattr(self.InputTree_, "vbf_maxpt_jj_m");                               
               self.vbf_maxpt_jj_pt_[0]    = getattr(self.InputTree_, "vbf_maxpt_jj_pt");                               
               self.vbf_maxpt_jj_eta_[0]   = getattr(self.InputTree_, "vbf_maxpt_jj_eta");                               
@@ -894,6 +929,26 @@ class sampleWrapperClass:
 
               self.vbf_maxpt_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxpt_j1_bDiscriminatorCSV");
               self.vbf_maxpt_j2_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxpt_j2_bDiscriminatorCSV");                                
+
+              if not self.IsData and self.numberJetBinGen_[0]>= 2:
+                  
+               self.vbf_maxpt_jj_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxpt_jj_m_gen");                               
+               self.vbf_maxpt_jj_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxpt_jj_pt_gen");                               
+               self.vbf_maxpt_jj_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_jj_eta_gen");                               
+               self.vbf_maxpt_jj_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_jj_phi_gen");                               
+
+               self.vbf_maxpt_j1_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxpt_j1_m_gen");                               
+               self.vbf_maxpt_j1_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxpt_j1_pt_gen");                               
+               self.vbf_maxpt_j1_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_j1_eta_gen");                               
+               self.vbf_maxpt_j1_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_j1_phi_gen");                               
+ 
+               self.vbf_maxpt_j2_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxpt_j2_m_gen");                               
+               self.vbf_maxpt_j2_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxpt_j2_pt_gen");                               
+               self.vbf_maxpt_j2_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_j2_eta_gen");                               
+               self.vbf_maxpt_j2_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxpt_j2_phi_gen");                               
+ 
+               self.vbf_maxpt_j1_bDiscriminatorCSV_gen_[0]  = getattr(self.InputTree_, "vbf_maxpt_j1_bDiscriminatorCSV_gen");
+               self.vbf_maxpt_j2_bDiscriminatorCSV_gen_[0]  = getattr(self.InputTree_, "vbf_maxpt_j2_bDiscriminatorCSV_gen");                                
 
               ### scaling jets
               j_jecfactorAK5_up_ = array('f',[0.]);
@@ -959,6 +1014,7 @@ class sampleWrapperClass:
               self.vbf_maxpt_j2_pt_dn_[0]  = vbf_maxpt_j2_dn.Pt();                              
               self.vbf_maxpt_j2_eta_dn_[0] = vbf_maxpt_j2_dn.Eta();                                
 
+
               self.vbf_maxDeta_jj_m_[0]     = getattr(self.InputTree_, "vbf_maxDeta_jj_m");                               
               self.vbf_maxDeta_jj_pt_[0]    = getattr(self.InputTree_, "vbf_maxDeta_jj_pt");                               
               self.vbf_maxDeta_jj_eta_[0]   = getattr(self.InputTree_, "vbf_maxDeta_jj_eta");                               
@@ -985,6 +1041,26 @@ class sampleWrapperClass:
 
               self.vbf_maxDeta_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j1_bDiscriminatorCSV");                                
               self.vbf_maxDeta_j2_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j2_bDiscriminatorCSV");                                
+
+              if not self.IsData and self.numberJetBinGen_[0]>= 2:
+                  
+               self.vbf_maxDeta_jj_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxDeta_jj_m_gen");                               
+               self.vbf_maxDeta_jj_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxDeta_jj_pt_gen");                               
+               self.vbf_maxDeta_jj_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxDeta_jj_eta_gen");                               
+               self.vbf_maxDeta_jj_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxDeta_jj_phi_gen");                               
+
+               self.vbf_maxDeta_j1_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxDeta_j1_m_gen");                               
+               self.vbf_maxDeta_j1_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxDeta_j1_pt_gen");                               
+               self.vbf_maxDeta_j1_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxDeta_j1_eta_gen");                               
+               self.vbf_maxDeta_j1_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxDeta_j1_phi_gen");                               
+ 
+               self.vbf_maxDeta_j2_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxDeta_j2_m_gen");                               
+               self.vbf_maxDeta_j2_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxDeta_j2_pt_gen");                               
+               self.vbf_maxDeta_j2_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxDeta_j2_eta_gen");                               
+               self.vbf_maxDeta_j2_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxDeta_j2_phi_gen");                               
+ 
+               self.vbf_maxDeta_j1_bDiscriminatorCSV_gen_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j1_bDiscriminatorCSV_gen");
+               self.vbf_maxDeta_j2_bDiscriminatorCSV_gen_[0]  = getattr(self.InputTree_, "vbf_maxDeta_j2_bDiscriminatorCSV_gen");                                
 
               ### scaling jets
               self.jecUncAK5_.setJetEta( getattr( self.InputTree_, "vbf_maxDeta_j1_eta" ));
@@ -1076,6 +1152,25 @@ class sampleWrapperClass:
               self.vbf_maxMjj_j1_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxMjj_j1_bDiscriminatorCSV");                                
               self.vbf_maxMjj_j2_bDiscriminatorCSV_[0]  = getattr(self.InputTree_, "vbf_maxMjj_j2_bDiscriminatorCSV");                                
 
+              if not self.IsData and self.numberJetBinGen_[0]>= 2:
+                  
+               self.vbf_maxMjj_jj_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxMjj_jj_m_gen");                               
+               self.vbf_maxMjj_jj_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxMjj_jj_pt_gen");                               
+               self.vbf_maxMjj_jj_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxMjj_jj_eta_gen");                               
+               self.vbf_maxMjj_jj_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxMjj_jj_phi_gen");                               
+
+               self.vbf_maxMjj_j1_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxMjj_j1_m_gen");                               
+               self.vbf_maxMjj_j1_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxMjj_j1_pt_gen");                               
+               self.vbf_maxMjj_j1_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxMjj_j1_eta_gen");                               
+               self.vbf_maxMjj_j1_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxMjj_j1_phi_gen");                               
+ 
+               self.vbf_maxMjj_j2_m_gen_[0]     = getattr(self.InputTree_, "vbf_maxMjj_j2_m_gen");                               
+               self.vbf_maxMjj_j2_pt_gen_[0]    = getattr(self.InputTree_, "vbf_maxMjj_j2_pt_gen");                               
+               self.vbf_maxMjj_j2_eta_gen_[0]   = getattr(self.InputTree_, "vbf_maxMjj_j2_eta_gen");                               
+               self.vbf_maxMjj_j2_phi_gen_[0]   = getattr(self.InputTree_, "vbf_maxMjj_j2_phi_gen");                               
+ 
+               self.vbf_maxMjj_j1_bDiscriminatorCSV_gen_[0]  = getattr(self.InputTree_, "vbf_maxMjj_j1_bDiscriminatorCSV_gen");
+               self.vbf_maxMjj_j2_bDiscriminatorCSV_gen_[0]  = getattr(self.InputTree_, "vbf_maxMjj_j2_bDiscriminatorCSV_gen");                                
               ### scaling jets
               self.jecUncAK5_.setJetEta( getattr( self.InputTree_, "vbf_maxMjj_j1_eta" ));
               self.jecUncAK5_.setJetPt( getattr( self.InputTree_, "vbf_maxMjj_j1_pt" ));                        
@@ -1252,7 +1347,17 @@ class sampleWrapperClass:
 
         self.issignal_     = array( 'i', [ 0 ] );             
         self.numberJetBin_ = array( 'i', [ 0 ] );
-        
+        self.numberJetBin2_ = array( 'i', [ 0 ] );
+        self.numberJetBin2_ = array( 'i', [ 0 ] );
+        self.numberJetBin3_ = array( 'i', [ 0 ] );
+        self.numberJetBin4_ = array( 'i', [ 0 ] );
+
+        self.numberJetBinGen_ = array( 'i', [ 0 ] );
+        self.numberJetBinGen2_ = array( 'i', [ 0 ] );
+        self.numberJetBinGen2_ = array( 'i', [ 0 ] );
+        self.numberJetBinGen3_ = array( 'i', [ 0 ] );
+        self.numberJetBinGen4_ = array( 'i', [ 0 ] );
+
         ### Leptonic W, Lepton and Nueutrino
         
         self.l_pt_     = array( 'f', [ 0. ] );
@@ -1399,6 +1504,16 @@ class sampleWrapperClass:
         self.vbf_maxpt_j1_eta_ = array( 'f', [ 0. ] );                                
         self.vbf_maxpt_j1_phi_ = array( 'f', [ 0. ] );                                
 
+        self.vbf_maxpt_jj_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_jj_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_jj_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_jj_phi_gen_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxpt_j1_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_j1_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_j1_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_j1_phi_gen_ = array( 'f', [ 0. ] );                                
+
         self.vbf_maxpt_j1_m_up_   = array( 'f', [ 0. ] );                                
         self.vbf_maxpt_j1_pt_up_  = array( 'f', [ 0. ] );                                
         self.vbf_maxpt_j1_eta_up_ = array( 'f', [ 0. ] );                                
@@ -1413,6 +1528,11 @@ class sampleWrapperClass:
         self.vbf_maxpt_j2_pt_  = array( 'f', [ 0. ] );                                
         self.vbf_maxpt_j2_eta_ = array( 'f', [ 0. ] );                                
         self.vbf_maxpt_j2_phi_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxpt_j2_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_j2_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_j2_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_j2_phi_gen_ = array( 'f', [ 0. ] );                                
 
         self.vbf_maxpt_j2_m_up_   = array( 'f', [ 0. ] );                                
         self.vbf_maxpt_j2_pt_up_  = array( 'f', [ 0. ] );                                
@@ -1435,6 +1555,9 @@ class sampleWrapperClass:
         self.vbf_maxpt_j1_bDiscriminatorCSV_ = array( 'f', [ 0. ] );                                
         self.vbf_maxpt_j2_bDiscriminatorCSV_ = array( 'f', [ 0. ] );                                
 
+        self.vbf_maxpt_j1_bDiscriminatorCSV_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxpt_j2_bDiscriminatorCSV_gen_ = array( 'f', [ 0. ] );                                
+
         self.vbf_maxDeta_jj_m_   = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_jj_pt_  = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_jj_eta_ = array( 'f', [ 0. ] );                                
@@ -1444,6 +1567,16 @@ class sampleWrapperClass:
         self.vbf_maxDeta_j1_pt_  = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_j1_eta_ = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_j1_phi_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxDeta_jj_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_jj_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_jj_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_jj_phi_gen_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxDeta_j1_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_j1_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_j1_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_j1_phi_gen_ = array( 'f', [ 0. ] );                                
 
         self.vbf_maxDeta_j1_m_up_   = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_j1_pt_up_  = array( 'f', [ 0. ] );                                
@@ -1459,6 +1592,11 @@ class sampleWrapperClass:
         self.vbf_maxDeta_j2_pt_  = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_j2_eta_ = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_j2_phi_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxDeta_j2_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_j2_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_j2_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_j2_phi_gen_ = array( 'f', [ 0. ] );                                
 
         self.vbf_maxDeta_j2_m_up_   = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_j2_pt_up_  = array( 'f', [ 0. ] );                                
@@ -1481,6 +1619,9 @@ class sampleWrapperClass:
         self.vbf_maxDeta_j1_bDiscriminatorCSV_ = array( 'f', [ 0. ] );                                
         self.vbf_maxDeta_j2_bDiscriminatorCSV_ = array( 'f', [ 0. ] );                                
 
+        self.vbf_maxDeta_j1_bDiscriminatorCSV_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxDeta_j2_bDiscriminatorCSV_gen_ = array( 'f', [ 0. ] );                                
+
         self.vbf_maxMjj_jj_m_   = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_jj_pt_  = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_jj_eta_ = array( 'f', [ 0. ] );                                
@@ -1490,6 +1631,16 @@ class sampleWrapperClass:
         self.vbf_maxMjj_j1_pt_  = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_j1_eta_ = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_j1_phi_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxMjj_jj_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_jj_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_jj_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_jj_phi_gen_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxMjj_j1_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_j1_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_j1_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_j1_phi_gen_ = array( 'f', [ 0. ] );                                
 
         self.vbf_maxMjj_j1_m_up_   = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_j1_pt_up_  = array( 'f', [ 0. ] );                                
@@ -1505,6 +1656,11 @@ class sampleWrapperClass:
         self.vbf_maxMjj_j2_pt_  = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_j2_eta_ = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_j2_phi_ = array( 'f', [ 0. ] );                                
+
+        self.vbf_maxMjj_j2_m_gen_   = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_j2_pt_gen_  = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_j2_eta_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_j2_phi_gen_ = array( 'f', [ 0. ] );                                
 
         self.vbf_maxMjj_j2_m_up_   = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_j2_pt_up_  = array( 'f', [ 0. ] );                                
@@ -1526,7 +1682,10 @@ class sampleWrapperClass:
 
         self.vbf_maxMjj_j1_bDiscriminatorCSV_ = array( 'f', [ 0. ] );                                
         self.vbf_maxMjj_j2_bDiscriminatorCSV_ = array( 'f', [ 0. ] );                                
-        
+
+        self.vbf_maxMjj_j1_bDiscriminatorCSV_gen_ = array( 'f', [ 0. ] );                                
+        self.vbf_maxMjj_j2_bDiscriminatorCSV_gen_ = array( 'f', [ 0. ] );                                
+
         ###### btag counters
         self.nbjets_csvl_veto_ = array( 'f', [ 0. ] );
         self.nbjets_csvm_veto_ = array( 'f', [ 0. ] );
@@ -1642,6 +1801,14 @@ class sampleWrapperClass:
 
         self.otree.Branch("issignal", self.issignal_ , "issignal/I");
         self.otree.Branch("numberJetBin", self.numberJetBin_ , "numberJetBin/I");
+        self.otree.Branch("numberJetBin2", self.numberJetBin2_ , "numberJetBin2/I");
+        self.otree.Branch("numberJetBin3", self.numberJetBin3_ , "numberJetBin3/I");
+        self.otree.Branch("numberJetBin4", self.numberJetBin4_ , "numberJetBin4/I");
+
+        self.otree.Branch("numberJetBinGen", self.numberJetBinGen_ , "numberJetBinGen/I");
+        self.otree.Branch("numberJetBinGen2", self.numberJetBinGen2_ , "numberJetBinGen2/I");
+        self.otree.Branch("numberJetBinGen3", self.numberJetBinGen3_ , "numberJetBinGen3/I");
+        self.otree.Branch("numberJetBinGen4", self.numberJetBinGen4_ , "numberJetBinGen4/I");
 
         self.otree.Branch("totalEventWeight",  self.totalEventWeight_ , "totalEventWeight/F"); ## total xs * pile Up * trigger * lepton ID
         self.otree.Branch("eff_and_pu_Weight", self.eff_and_pu_Weight_ , "eff_and_pu_Weight/F"); ## product of pileUp, trigger and lepton ID
@@ -1815,6 +1982,21 @@ class sampleWrapperClass:
         self.otree.Branch("vbf_maxpt_j2_eta", self.vbf_maxpt_j2_eta_ , "vbf_maxpt_j2_eta/F");
         self.otree.Branch("vbf_maxpt_j2_phi", self.vbf_maxpt_j2_phi_ , "vbf_maxpt_j2_phi/F");
 
+        self.otree.Branch("vbf_maxpt_jj_m_gen", self.vbf_maxpt_jj_m_gen_ , "vbf_maxpt_jj_m_gen/F");
+        self.otree.Branch("vbf_maxpt_jj_pt_gen", self.vbf_maxpt_jj_pt_gen_ , "vbf_maxpt_jj_pt_gen/F");
+        self.otree.Branch("vbf_maxpt_jj_eta_gen", self.vbf_maxpt_jj_eta_gen_ , "vbf_maxpt_jj_eta_gen/F");
+        self.otree.Branch("vbf_maxpt_jj_phi_gen", self.vbf_maxpt_jj_phi_gen_ , "vbf_maxpt_jj_phi_gen/F");
+
+        self.otree.Branch("vbf_maxpt_j1_m_gen", self.vbf_maxpt_j1_m_gen_ , "vbf_maxpt_j1_m_gen/F");
+        self.otree.Branch("vbf_maxpt_j1_pt_gen", self.vbf_maxpt_j1_pt_gen_ , "vbf_maxpt_j1_pt_gen/F");
+        self.otree.Branch("vbf_maxpt_j1_eta_gen", self.vbf_maxpt_j1_eta_gen_ , "vbf_maxpt_j1_eta_gen/F");
+        self.otree.Branch("vbf_maxpt_j1_phi_gen", self.vbf_maxpt_j1_phi_gen_ , "vbf_maxpt_j1_phi_gen/F");
+
+        self.otree.Branch("vbf_maxpt_j2_m_gen", self.vbf_maxpt_j2_m_gen_ , "vbf_maxpt_j2_m_gen/F");
+        self.otree.Branch("vbf_maxpt_j2_pt_gen", self.vbf_maxpt_j2_pt_gen_ , "vbf_maxpt_j2_pt_gen/F");
+        self.otree.Branch("vbf_maxpt_j2_eta_gen", self.vbf_maxpt_j2_eta_gen_ , "vbf_maxpt_j2_eta_gen/F");
+        self.otree.Branch("vbf_maxpt_j2_phi_gen", self.vbf_maxpt_j2_phi_gen_ , "vbf_maxpt_j2_phi_gen/F");
+
         self.otree.Branch("vbf_maxpt_j1_m_up", self.vbf_maxpt_j1_m_up_ , "vbf_maxpt_j1_m_up/F");
         self.otree.Branch("vbf_maxpt_j1_pt_up", self.vbf_maxpt_j1_pt_up_ , "vbf_maxpt_j1_pt_up/F");
         self.otree.Branch("vbf_maxpt_j1_eta_up", self.vbf_maxpt_j1_eta_up_ , "vbf_maxpt_j1_eta_up/F");
@@ -1847,6 +2029,9 @@ class sampleWrapperClass:
         self.otree.Branch("vbf_maxpt_j1_bDiscriminatorCSV", self.vbf_maxpt_j1_bDiscriminatorCSV_ , "vbf_maxpt_j1_bDiscriminatorCSV/F");
         self.otree.Branch("vbf_maxpt_j2_bDiscriminatorCSV", self.vbf_maxpt_j2_bDiscriminatorCSV_ , "vbf_maxpt_j2_bDiscriminatorCSV/F");
 
+        self.otree.Branch("vbf_maxpt_j1_bDiscriminatorCSV_gen", self.vbf_maxpt_j1_bDiscriminatorCSV_gen_ , "vbf_maxpt_j1_bDiscriminatorCSV_gen/F");
+        self.otree.Branch("vbf_maxpt_j2_bDiscriminatorCSV_gen", self.vbf_maxpt_j2_bDiscriminatorCSV_gen_ , "vbf_maxpt_j2_bDiscriminatorCSV_gen/F");
+
         self.otree.Branch("vbf_maxDeta_jj_m", self.vbf_maxDeta_jj_m_ , "vbf_maxDeta_jj_m/F");
         self.otree.Branch("vbf_maxDeta_jj_pt", self.vbf_maxDeta_jj_pt_ , "vbf_maxDeta_jj_pt/F");
         self.otree.Branch("vbf_maxDeta_jj_eta", self.vbf_maxDeta_jj_eta_ , "vbf_maxDeta_jj_eta/F");
@@ -1861,6 +2046,22 @@ class sampleWrapperClass:
         self.otree.Branch("vbf_maxDeta_j2_pt", self.vbf_maxDeta_j2_pt_ , "vbf_maxDeta_j2_pt/F");
         self.otree.Branch("vbf_maxDeta_j2_eta", self.vbf_maxDeta_j2_eta_ , "vbf_maxDeta_j2_eta/F");
         self.otree.Branch("vbf_maxDeta_j2_phi", self.vbf_maxDeta_j2_phi_ , "vbf_maxDeta_j2_phi/F");
+
+
+        self.otree.Branch("vbf_maxDeta_jj_m_gen", self.vbf_maxDeta_jj_m_gen_ , "vbf_maxDeta_jj_m_gen/F");
+        self.otree.Branch("vbf_maxDeta_jj_pt_gen", self.vbf_maxDeta_jj_pt_gen_ , "vbf_maxDeta_jj_pt_gen/F");
+        self.otree.Branch("vbf_maxDeta_jj_eta_gen", self.vbf_maxDeta_jj_eta_gen_ , "vbf_maxDeta_jj_eta_gen/F");
+        self.otree.Branch("vbf_maxDeta_jj_phi_gen", self.vbf_maxDeta_jj_phi_gen_ , "vbf_maxDeta_jj_phi_gen/F");
+
+        self.otree.Branch("vbf_maxDeta_j1_m_gen", self.vbf_maxDeta_j1_m_gen_ , "vbf_maxDeta_j1_m_gen/F");
+        self.otree.Branch("vbf_maxDeta_j1_pt_gen", self.vbf_maxDeta_j1_pt_gen_ , "vbf_maxDeta_j1_pt_gen/F");
+        self.otree.Branch("vbf_maxDeta_j1_eta_gen", self.vbf_maxDeta_j1_eta_gen_ , "vbf_maxDeta_j1_eta_gen/F");
+        self.otree.Branch("vbf_maxDeta_j1_phi_gen", self.vbf_maxDeta_j1_phi_gen_ , "vbf_maxDeta_j1_phi_gen/F");
+
+        self.otree.Branch("vbf_maxDeta_j2_m_gen", self.vbf_maxDeta_j2_m_gen_ , "vbf_maxDeta_j2_m_gen/F");
+        self.otree.Branch("vbf_maxDeta_j2_pt_gen", self.vbf_maxDeta_j2_pt_gen_ , "vbf_maxDeta_j2_pt_gen/F");
+        self.otree.Branch("vbf_maxDeta_j2_eta_gen", self.vbf_maxDeta_j2_eta_gen_ , "vbf_maxDeta_j2_eta_gen/F");
+        self.otree.Branch("vbf_maxDeta_j2_phi_gen", self.vbf_maxDeta_j2_phi_gen_ , "vbf_maxDeta_j2_phi_gen/F");
 
         self.otree.Branch("vbf_maxDeta_j1_m_up", self.vbf_maxDeta_j1_m_up_ , "vbf_maxDeta_j1_m_up/F");
         self.otree.Branch("vbf_maxDeta_j1_pt_up", self.vbf_maxDeta_j1_pt_up_ , "vbf_maxDeta_j1_pt_up/F");
@@ -1894,6 +2095,9 @@ class sampleWrapperClass:
         self.otree.Branch("vbf_maxDeta_j1_bDiscriminatorCSV", self.vbf_maxDeta_j1_bDiscriminatorCSV_ , "vbf_maxDeta_j1_bDiscriminatorCSV/F");
         self.otree.Branch("vbf_maxDeta_j2_bDiscriminatorCSV", self.vbf_maxDeta_j2_bDiscriminatorCSV_ , "vbf_maxDeta_j2_bDiscriminatorCSV/F");
 
+        self.otree.Branch("vbf_maxDeta_j1_bDiscriminatorCSV_gen", self.vbf_maxDeta_j1_bDiscriminatorCSV_gen_ , "vbf_maxDeta_j1_bDiscriminatorCSV_gen/F");
+        self.otree.Branch("vbf_maxDeta_j2_bDiscriminatorCSV_gen", self.vbf_maxDeta_j2_bDiscriminatorCSV_gen_ , "vbf_maxDeta_j2_bDiscriminatorCSV_gen/F");
+
         self.otree.Branch("vbf_maxMjj_jj_m", self.vbf_maxMjj_jj_m_ , "vbf_maxMjj_jj_m/F");
         self.otree.Branch("vbf_maxMjj_jj_pt", self.vbf_maxMjj_jj_pt_ , "vbf_maxMjj_jj_pt/F");
         self.otree.Branch("vbf_maxMjj_jj_eta", self.vbf_maxMjj_jj_eta_ , "vbf_maxMjj_jj_eta/F");
@@ -1908,6 +2112,21 @@ class sampleWrapperClass:
         self.otree.Branch("vbf_maxMjj_j2_pt", self.vbf_maxMjj_j2_pt_ , "vbf_maxMjj_j2_pt/F");
         self.otree.Branch("vbf_maxMjj_j2_eta", self.vbf_maxMjj_j2_eta_ , "vbf_maxMjj_j2_eta/F");
         self.otree.Branch("vbf_maxMjj_j2_phi", self.vbf_maxMjj_j2_phi_ , "vbf_maxMjj_j2_phi/F");
+
+        self.otree.Branch("vbf_maxMjj_jj_m_gen", self.vbf_maxMjj_jj_m_gen_ , "vbf_maxMjj_jj_m_gen/F");
+        self.otree.Branch("vbf_maxMjj_jj_pt_gen", self.vbf_maxMjj_jj_pt_gen_ , "vbf_maxMjj_jj_pt_gen/F");
+        self.otree.Branch("vbf_maxMjj_jj_eta_gen", self.vbf_maxMjj_jj_eta_gen_ , "vbf_maxMjj_jj_eta_gen/F");
+        self.otree.Branch("vbf_maxMjj_jj_phi_gen", self.vbf_maxMjj_jj_phi_gen_ , "vbf_maxMjj_jj_phi_gen/F");
+
+        self.otree.Branch("vbf_maxMjj_j1_m_gen", self.vbf_maxMjj_j1_m_gen_ , "vbf_maxMjj_j1_m_gen/F");
+        self.otree.Branch("vbf_maxMjj_j1_pt_gen", self.vbf_maxMjj_j1_pt_gen_ , "vbf_maxMjj_j1_pt_gen/F");
+        self.otree.Branch("vbf_maxMjj_j1_eta_gen", self.vbf_maxMjj_j1_eta_gen_ , "vbf_maxMjj_j1_eta_gen/F");
+        self.otree.Branch("vbf_maxMjj_j1_phi_gen", self.vbf_maxMjj_j1_phi_gen_ , "vbf_maxMjj_j1_phi_gen/F");
+
+        self.otree.Branch("vbf_maxMjj_j2_m_gen", self.vbf_maxMjj_j2_m_gen_ , "vbf_maxMjj_j2_m_gen/F");
+        self.otree.Branch("vbf_maxMjj_j2_pt_gen", self.vbf_maxMjj_j2_pt_gen_ , "vbf_maxMjj_j2_pt_gen/F");
+        self.otree.Branch("vbf_maxMjj_j2_eta_gen", self.vbf_maxMjj_j2_eta_gen_ , "vbf_maxMjj_j2_eta_gen/F");
+        self.otree.Branch("vbf_maxMjj_j2_phi_gen", self.vbf_maxMjj_j2_phi_gen_ , "vbf_maxMjj_j2_phi_gen/F");
 
         self.otree.Branch("vbf_maxMjj_j1_m_up", self.vbf_maxMjj_j1_m_up_ , "vbf_maxMjj_j1_m_up/F");
         self.otree.Branch("vbf_maxMjj_j1_pt_up", self.vbf_maxMjj_j1_pt_up_ , "vbf_maxMjj_j1_pt_up/F");
@@ -1940,7 +2159,10 @@ class sampleWrapperClass:
 
         self.otree.Branch("vbf_maxMjj_j1_bDiscriminatorCSV", self.vbf_maxMjj_j1_bDiscriminatorCSV_ , "vbf_maxMjj_j1_bDiscriminatorCSV/F");
         self.otree.Branch("vbf_maxMjj_j2_bDiscriminatorCSV", self.vbf_maxMjj_j2_bDiscriminatorCSV_ , "vbf_maxMjj_j2_bDiscriminatorCSV/F");
-        
+
+        self.otree.Branch("vbf_maxMjj_j1_bDiscriminatorCSV_gen", self.vbf_maxMjj_j1_bDiscriminatorCSV_gen_ , "vbf_maxMjj_j1_bDiscriminatorCSV_gen/F");
+        self.otree.Branch("vbf_maxMjj_j2_bDiscriminatorCSV_gen", self.vbf_maxMjj_j2_bDiscriminatorCSV_gen_ , "vbf_maxMjj_j2_bDiscriminatorCSV_gen/F");
+
         ###### btag counters
 
         self.otree.Branch("nbjets_csvl_veto", self.nbjets_csvl_veto_ , "nbjets_csvl_veto/F");
