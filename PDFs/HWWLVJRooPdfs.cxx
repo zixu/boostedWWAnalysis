@@ -6,8 +6,7 @@
 
 #include "Riostream.h" 
 
-//#include "../interface/HWWLVJRooPdfs.h"
-#include "HWWLVJRooPdfs.h" 
+#include "HWWLVJRooPdfs.h"
 #include "RooAbsReal.h" 
 #include "RooAbsCategory.h" 
 #include "RooExponential.h" 
@@ -940,9 +939,9 @@ Double_t RooAnaExpNPdf::analyticalIntegral(Int_t code, const char* rangeName) co
 } 
 
 
-RooDoubleCB::RooDoubleCB(){}
+RooDoubleCrystalBall::RooDoubleCrystalBall(){}
 
-RooDoubleCB::RooDoubleCB(const char *name, const char *title, 
+RooDoubleCrystalBall::RooDoubleCrystalBall(const char *name, const char *title, 
 			 RooAbsReal& _x,
 			 RooAbsReal& _mean,
 			 RooAbsReal& _width,
@@ -961,7 +960,7 @@ RooDoubleCB::RooDoubleCB(const char *name, const char *title,
   n2("n2","n2",this,_n2){} 
 
 
-RooDoubleCB::RooDoubleCB(const RooDoubleCB& other, const char* name) :  
+RooDoubleCrystalBall::RooDoubleCrystalBall(const RooDoubleCrystalBall& other, const char* name) :  
   RooAbsPdf(other,name), 
   x("x",this,other.x),
   mean("mean",this,other.mean),
@@ -971,7 +970,7 @@ RooDoubleCB::RooDoubleCB(const RooDoubleCB& other, const char* name) :
   alpha2("alpha2",this,other.alpha2),
   n2("n2",this,other.n2){} 
 
-double RooDoubleCB::evaluate() const { 
+double RooDoubleCrystalBall::evaluate() const { 
   double t = (x-mean)/width;
   if(t>-alpha1 && t<alpha2){
     return exp(-0.5*t*t);
@@ -990,12 +989,12 @@ double RooDoubleCB::evaluate() const {
    
 } 
 
-Int_t RooDoubleCB::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* range) const {
+Int_t RooDoubleCrystalBall::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* range) const {
   if (matchArgs(allVars,analVars,x)) return 1;
   return 0;
 }
 
-Double_t RooDoubleCB::analyticalIntegral(Int_t code, const char* rangeName) const {
+Double_t RooDoubleCrystalBall::analyticalIntegral(Int_t code, const char* rangeName) const {
   assert(code==1) ;
  
   double central=0;
