@@ -312,6 +312,7 @@ def doULPlot( suffix ):
     for i in range( len(mass)-1, -1, -1 ):
         curFile = "higgsCombine_lim_%03d%s.Asymptotic.mH%03d.root"%(mass[i],suffix,mass[i]);
         sf = xsDict[mass[i]];
+        sf2 = xsDict2[mass[i]];
         curAsymLimits = getAsymLimits(curFile);
         xbins_env.append( mass[i] );
         ybins_2s.append( curAsymLimits[5]*sf2 );
@@ -621,10 +622,10 @@ if __name__ == '__main__':
              ## mu HP
              if options.isReReco == 0:   
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(mass[i],mass[i],"mu",mass[i],"mu");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -t -1 --expectSignal=6.25 --toysFreq"%(mass[i],mass[i],"mu",mass[i],"mu");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt -t -1 --expectSignal=1 --toysFreq"%(mass[i],mass[i],"mu",mass[i],"mu");
              else: 
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_HP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(mass[i],mass[i],"mu",mass[i],"mu");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt -t -1 --expectSignal=6.25 --toysFreq"%(mass[i],mass[i],"mu",mass[i],"mu");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt -t -1 --expectSignal=1 --toysFreq"%(mass[i],mass[i],"mu",mass[i],"mu");
               
              if options.batchMode:
               fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"HP");
@@ -639,10 +640,10 @@ if __name__ == '__main__':
              
              if options.isReReco == 0:
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(mass[i],mass[i],"mu",mass[i],"mu");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"mu",mass[i],"mu");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"mu",mass[i],"mu");
              else: 
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_LP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(mass[i],mass[i],"mu",mass[i],"mu");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"mu",mass[i],"mu");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"mu",mass[i],"mu");
 
              if options.batchMode:
               fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("mu",mass[i],"",cprime[0],BRnew[0],"LP");
@@ -656,10 +657,10 @@ if __name__ == '__main__':
              runCmmd ="";
              if options.isReReco == 0:
               runCmmd = "combine -M ProfileLikelihood  --signif --pvalue -m %03d -n _pval_obs_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(mass[i],mass[i],"el",mass[i],"el");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_HP_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
              else: 
               runCmmd = "combine -M ProfileLikelihood  --signif --pvalue -m %03d -n _pval_obs_%03d_%s_HP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt\n"%(mass[i],mass[i],"el",mass[i],"el");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_HP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_HP_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
               
              if options.batchMode:
               fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"HP");
@@ -673,10 +674,10 @@ if __name__ == '__main__':
              runCmmd ="";
              if options.isReReco == 0 :
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(mass[i],mass[i],"el",mass[i],"el");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
              else: 
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s_LP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt\n"%(mass[i],mass[i],"el",mass[i],"el");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s_LP wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_LP_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"el",mass[i],"el");
              
              if options.batchMode:
               fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d_%s"%("el",mass[i],"",cprime[0],BRnew[0],"LP");
@@ -690,10 +691,10 @@ if __name__ == '__main__':
              runCmmd ="";
              if options.isReReco == 0 :
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt\n"%(mass[i],mass[i],"em",mass[i],"em");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"em",mass[i],"em");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s wwlvj_BulkG_WW_lvjj_c0p2_M%03d_%s_10_00_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"em",mass[i],"em");
              else: 
               runCmmd = "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_obs_%03d_%s wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_unbin.txt\n"%(mass[i],mass[i],"em",mass[i],"em");
-              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_unbin.txt --expectSignal=6.25 --toysFreq -t -1"%(mass[i],mass[i],"em",mass[i],"em");
+              runCmmd += "combine -M ProfileLikelihood --signif --pvalue -m %03d -n _pval_exp_%03d_%s wwlvj_BulkG_WW_inclusive_c0p2_M%03d_%s_10_00_unbin.txt --expectSignal=1 --toysFreq -t -1"%(mass[i],mass[i],"em",mass[i],"em");
               
              if options.batchMode:
               fn = "combineScript_ProfileLikelihood_%s_%03d%s_%02d_%02d"%("em",mass[i],"",cprime[0],BRnew[0]);
