@@ -312,44 +312,64 @@ class doFit_wj_and_wlvj:
         label_tstring=TString(self.signal_sample);
         if label_tstring.Contains("600") and (not label_tstring.Contains("1600")):
             self.signal_jet_energy_scale_uncertainty = 0.01 ;
+            self.xs_rescale = 0.32298/0.052087 ;            
         if label_tstring.Contains("700") and (not label_tstring.Contains("1700")):
             self.signal_jet_energy_scale_uncertainty = 0.011 ;
+            self.xs_rescale = 0.11827/0.019006 ;            
         if label_tstring.Contains("800") and (not label_tstring.Contains("1800")):
             self.signal_jet_energy_scale_uncertainty = 0.011 ;
+            self.xs_rescale = 0.04931/0.0079064 ;            
         if label_tstring.Contains("900") and (not label_tstring.Contains("1900")):
             self.signal_jet_energy_scale_uncertainty = 0.011 ;
+            self.xs_rescale = 0.022506/0.0036364 ;            
         if label_tstring.Contains("1000"):
             self.signal_jet_energy_scale_uncertainty = 0.011 ;
+            self.xs_rescale = 0.011035/0.0017742;            
         if label_tstring.Contains("1100"):
             self.signal_jet_energy_scale_uncertainty = 0.014 ;
+            self.xs_rescale = 0.0056883/0.00091785;            
         if label_tstring.Contains("1200"):
             self.signal_jet_energy_scale_uncertainty = 0.014 ;
+            self.xs_rescale = 0.0030626/0.00049262;            
         if label_tstring.Contains("1300"):
             self.signal_jet_energy_scale_uncertainty = 0.014 ;
+            self.xs_rescale = 0.0017003/0.00027418;            
         if label_tstring.Contains("1400"):
             self.signal_jet_energy_scale_uncertainty = 0.014 ;
+            self.xs_rescale = 0.00097456/0.00015697;            
         if label_tstring.Contains("1500"):
             self.signal_jet_energy_scale_uncertainty = 0.015 ;
+            self.xs_rescale = 0.00056979/9.2073e-05;            
         if label_tstring.Contains("1600"):
             self.signal_jet_energy_scale_uncertainty = 0.015 ;
+            self.xs_rescale = 0.00034149/5.4715e-05;            
         if label_tstring.Contains("1700"):
             self.signal_jet_energy_scale_uncertainty = 0.016 ;
+            self.xs_rescale = 0.00020677/3.3199e-05;            
         if label_tstring.Contains("1800"):
             self.signal_jet_energy_scale_uncertainty = 0.016 ;
+            self.xs_rescale = 0.000127/2.0367e-05;            
         if label_tstring.Contains("1900"):
             self.signal_jet_energy_scale_uncertainty = 0.018 ;
+            self.xs_rescale = 7.9677e-05/1.2723e-05;            
         if label_tstring.Contains("2000"):
             self.signal_jet_energy_scale_uncertainty = 0.018 ;
+            self.xs_rescale = 5.0345e-05/8.0046e-06;            
         if label_tstring.Contains("2100"):
             self.signal_jet_energy_scale_uncertainty = 0.02 ;
+            self.xs_rescale = 3.198e-05/5.0566e-06;            
         if label_tstring.Contains("2200"):
             self.signal_jet_energy_scale_uncertainty = 0.02 ;
+            self.xs_rescale = 2.0502e-05/3.2608e-06;            
         if label_tstring.Contains("2300"):
             self.signal_jet_energy_scale_uncertainty = 0.023 ;
+            self.xs_rescale = 1.324e-05/2.0938e-06;            
         if label_tstring.Contains("2400"):
             self.signal_jet_energy_scale_uncertainty = 0.026 ;
+            self.xs_rescale = 8.6099e-06/1.3566e-06;            
         if label_tstring.Contains("2500"):
             self.signal_jet_energy_scale_uncertainty = 0.03 ;
+            self.xs_rescale = 5.6338e-06/8.8518e-07;            
 
         #### sigma and mean signal systematic inflation
         self.mean_signal_uncertainty_jet_scale  = 0.013 ;
@@ -3584,15 +3604,15 @@ class doFit_wj_and_wlvj:
         ### rates for the different process
         if mode == "unbin":
             if TString(self.signal_sample).Contains("BulkG_WW"):                    
-             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_BulkWW_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
+             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_BulkWW_xww_for_unbin").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
             else:
-             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_%s_xww_for_unbin"%(self.signal_sample)).getVal(), self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
+             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_%s_xww_for_unbin"%(self.signal_sample)).getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
                 
         if mode == "counting":
             if TString(self.signal_sample).Contains("BulkG_WW"):                    
-             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_BulkWW_xww_for_counting").getVal(), self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
+             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_BulkWW_xww_for_counting").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
             else : 
-             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_%s_xww_for_counting"%(self.signal_sample)).getVal(), self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
+             datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_%s_xww_for_counting"%(self.signal_sample)).getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
 
         datacard_out.write( "\n-------------------------------- " )
 
