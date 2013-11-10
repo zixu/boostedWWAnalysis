@@ -302,10 +302,10 @@ def doULPlot( suffix ):
         curAsymLimits = getAsymLimits(curFile);
         xbins.append( mass[i] );
         xbins_env.append( mass[i] );
-        ybins_exp.append( curAsymLimits[3]*sf );
-        ybins_obs.append( curAsymLimits[0]*sf );
-        ybins_2s.append( curAsymLimits[1]*sf );
-        ybins_1s.append( curAsymLimits[2]*sf );
+        ybins_exp.append( curAsymLimits[3]*sf2 );
+        ybins_obs.append( curAsymLimits[0]*sf2 );
+        ybins_2s.append( curAsymLimits[1]*sf2 );
+        ybins_1s.append( curAsymLimits[2]*sf2 );
         ybins_xs_02.append(sf);
         ybins_xs_05.append(sf2);
     
@@ -314,8 +314,8 @@ def doULPlot( suffix ):
         sf = xsDict[mass[i]];
         curAsymLimits = getAsymLimits(curFile);
         xbins_env.append( mass[i] );
-        ybins_2s.append( curAsymLimits[5]*sf );
-        ybins_1s.append( curAsymLimits[4]*sf );
+        ybins_2s.append( curAsymLimits[5]*sf2 );
+        ybins_1s.append( curAsymLimits[4]*sf2 );
     
     
     curGraph_exp = ROOT.TGraph(nPoints,xbins,ybins_exp);
@@ -421,8 +421,8 @@ if __name__ == '__main__':
 
     ### Set the working directory
         
-    if (options.computeLimits or options.plotLimits) and options.limitMode == 2 : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco");
-    elif (options.computeLimits or options.plotLimits) : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco");
+    if (options.computeLimits or options.plotLimits) and options.limitMode == 2 : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco_c0p5");
+    elif (options.computeLimits or options.plotLimits) : os.chdir("cards_em_EXO_allCat_v2_ExpTail_g1_rereco_c0p5");
 
     
     ### put in functionality to test just one mass point or just one cprime
