@@ -801,10 +801,10 @@ private:
 };
 
 ///// Double Crystal Ball function 
-class RooDoubleCB : public RooAbsPdf {
+class RooDoubleCrystalBall : public RooAbsPdf {
  public:
-  RooDoubleCB();
-  RooDoubleCB(const char *name, const char *title,
+  RooDoubleCrystalBall();
+  RooDoubleCrystalBall(const char *name, const char *title,
 	      RooAbsReal& _x,
 	      RooAbsReal& _mean,
 	      RooAbsReal& _width,
@@ -814,11 +814,11 @@ class RooDoubleCB : public RooAbsPdf {
 	      RooAbsReal& _n2
 	      );
 
-  RooDoubleCB(const RooDoubleCB& other, const char* name=0) ;
+  RooDoubleCrystalBall(const RooDoubleCrystalBall& other, const char* name=0) ;
 
-  virtual TObject* clone(const char* newname) const { return new RooDoubleCB(*this,newname); }
+  virtual TObject* clone(const char* newname) const { return new RooDoubleCrystalBall(*this,newname); }
 
-  inline virtual ~RooDoubleCB() { }
+  inline virtual ~RooDoubleCrystalBall() { }
 
   Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* rangeName=0) const ;
 
@@ -838,7 +838,7 @@ class RooDoubleCB : public RooAbsPdf {
 
  private:
 
-  ClassDef(RooDoubleCB,1)
+  ClassDef(RooDoubleCrystalBall,1)
 };
 
 
