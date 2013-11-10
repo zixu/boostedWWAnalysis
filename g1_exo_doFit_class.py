@@ -353,8 +353,10 @@ class doFit_wj_and_wlvj:
 
         #### sigma and mean signal systematic inflation
         self.mean_signal_uncertainty_jet_scale  = 0.013 ;
+        self.mean_signal_uncertainty_lep_scale  = 0.001 ;
         self.sigma_signal_uncertainty_jet_scale = 0.033 ;
         self.sigma_signal_uncertainty_jet_res   = 0.030 ;
+        self.sigma_signal_uncertainty_lep_scale = 0.005 ;
 
         #### Set systematic on the Wjets shape   and TTbar due to PS, fitting function etc..
         self.shape_para_error_WJets0 = 1.4;
@@ -1264,23 +1266,41 @@ class doFit_wj_and_wlvj:
 
             rrv_mean_scale_p1 = RooRealVar("CMS_sig_p1_jes","CMS_sig_p1_jes",0);
             rrv_mean_scale_p1.setConstant(kTRUE);
+            if self.channel == "mu" :             
+             rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_m","CMS_sig_p1_scale_m",0);
+             rrv_mean_scale_p2.setConstant(kTRUE);
+            else:
+             rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_e","CMS_sig_p1_scale_e",0);
+             rrv_mean_scale_p2.setConstant(kTRUE);
+                
 
-            rrv_mean_scale_X1 = RooRealVar("rrv_mean_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.mean_signal_uncertainty_jet_scale));
+            rrv_mean_scale_X1 = RooRealVar("rrv_mean_shift_scale_lep"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_shift_scale_lep"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.mean_signal_uncertainty_lep_scale));
             rrv_mean_scale_X1.setConstant(kTRUE);
+            rrv_mean_scale_X2 = RooRealVar("rrv_mean_shift_scale_jes"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_shift_scale_jes"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.mean_signal_uncertainty_jet_scale));
+            rrv_mean_scale_X2.setConstant(kTRUE);
 
-            rrv_total_mean_CB = RooFormulaVar("rrv_total_mean_CB"+label+"_"+self.channel,"@0*(1+@1*@2)", RooArgList(rrv_mean_CB,rrv_mean_scale_p1,rrv_mean_scale_X1));
+            rrv_total_mean_CB = RooFormulaVar("rrv_total_mean_CB"+label+"_"+self.channel,"@0*(1+@1*@2)*(1+@3*@4)", RooArgList(rrv_mean_CB,rrv_mean_scale_p1,rrv_mean_scale_X1,rrv_mean_scale_p2,rrv_mean_scale_X2));
             
-            rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_jes","CMS_sig_p2_jes",0);
+            if self.channel == "mu":
+             rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_m","CMS_sig_p2_scale_m",0);
+             rrv_sigma_scale_p1.setConstant(kTRUE);
+            else:
+             rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_e","CMS_sig_p2_scale_e",0);
+             rrv_sigma_scale_p1.setConstant(kTRUE);
+                         
             rrv_sigma_scale_p2 = RooRealVar("CMS_sig_p2_jer","CMS_sig_p2_jer",0);
-            rrv_sigma_scale_p1.setConstant(kTRUE);
+            rrv_sigma_scale_p3 = RooRealVar("CMS_sig_p2_jes","CMS_sig_p2_jes",0);
             rrv_sigma_scale_p2.setConstant(kTRUE);
+            rrv_sigma_scale_p3.setConstant(kTRUE);
 
-            rrv_mean_sigma_X1 = RooRealVar("rrv_sigma_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_jet_scale));
-            rrv_mean_sigma_X2 = RooRealVar("rrv_sigma_shift_res"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_res"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_jet_res));
+            rrv_mean_sigma_X1 = RooRealVar("rrv_sigma_shift_lep_scale"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_lep_scale));
+            rrv_mean_sigma_X2 = RooRealVar("rrv_sigma_shift_jes"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_jet_scale));
+            rrv_mean_sigma_X3 = RooRealVar("rrv_sigma_shift_res"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_res"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_jet_res));
             rrv_mean_sigma_X1.setConstant(kTRUE);
             rrv_mean_sigma_X2.setConstant(kTRUE);
+            rrv_mean_sigma_X3.setConstant(kTRUE);
 
-            rrv_total_sigma_CB = RooFormulaVar("rrv_total_sigma_CB"+label+"_"+self.channel,"@0*(1+@1*@2)*(1+@3*@4)", RooArgList(rrv_sigma_CB,rrv_sigma_scale_p1,rrv_mean_sigma_X1,rrv_sigma_scale_p2,rrv_mean_sigma_X2));        
+            rrv_total_sigma_CB = RooFormulaVar("rrv_total_sigma_CB"+label+"_"+self.channel,"@0*(1+@1*@2)*(1+@3*@4)*(1+@5*@6)", RooArgList(rrv_sigma_CB,rrv_sigma_scale_p1,rrv_mean_sigma_X1,rrv_sigma_scale_p2,rrv_mean_sigma_X2,rrv_sigma_scale_p3,rrv_mean_sigma_X3));        
 
             model_pdf = ROOT.RooDoubleCrystalBall("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum, rrv_x,rrv_total_mean_CB,rrv_total_sigma_CB,rrv_alpha1_CB,rrv_n1_CB,rrv_alpha2_CB,rrv_n2_CB);
 
@@ -3372,10 +3392,23 @@ class doFit_wj_and_wlvj:
         #### add signal shape parameters' uncertainty -> increase the uncertainty on the mean and the sigma since we are using a CB or a Double CB or a BWxDB or BWxCB
         if self.workspace4limit_.var("rrv_mean_CB_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)):
 
-           self.workspace4limit_.var( "rrv_mean_shift_scale_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)).setError(self.mean_signal_uncertainty_jet_scale);
-           self.workspace4limit_.var( "rrv_sigma_shift_scale_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)).setError(self.sigma_signal_uncertainty_jet_scale);
+           self.workspace4limit_.var( "rrv_mean_shift_scale_lep_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)).setError(self.mean_signal_uncertainty_lep_scale);
+           self.workspace4limit_.var( "rrv_mean_shift_scale_jes_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)).setError(self.mean_signal_uncertainty_jet_scale);
+           self.workspace4limit_.var( "rrv_sigma_shift_lep_scale_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)).setError(self.sigma_signal_uncertainty_lep_scale);
+           self.workspace4limit_.var( "rrv_sigma_shift_jes_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)).setError(self.sigma_signal_uncertainty_jet_scale);
            self.workspace4limit_.var( "rrv_sigma_shift_res_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)).setError(self.sigma_signal_uncertainty_jet_res);
 
+           if self.channel == "mu":
+            self.workspace4limit_.var("CMS_sig_p1_scale_m").setError(1);
+            self.workspace4limit_.var("CMS_sig_p2_scale_m").setError(1);
+            params_list.append(self.workspace4limit_.var("CMS_sig_p1_scale_m"));
+            params_list.append(self.workspace4limit_.var("CMS_sig_p2_scale_m"));
+           else:
+            self.workspace4limit_.var("CMS_sig_p1_scale_e").setError(1);
+            self.workspace4limit_.var("CMS_sig_p2_scale_e").setError(1);
+            params_list.append(self.workspace4limit_.var("CMS_sig_p1_scale_e"));
+            params_list.append(self.workspace4limit_.var("CMS_sig_p2_scale_e"));
+               
            self.workspace4limit_.var("CMS_sig_p1_jes").setError(1);
            self.workspace4limit_.var("CMS_sig_p2_jes").setError(1);
            self.workspace4limit_.var("CMS_sig_p2_jer").setError(1);
@@ -3475,6 +3508,14 @@ class doFit_wj_and_wlvj:
                     
 
           if self.workspace4limit_.var("rrv_mean_CB_%s_xww_signal_region_%s_%s"%(self.signal_sample, self.channel, self.wtagger_label)):
+
+             if self.channel == "mu":
+              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p1_scale_m"));
+              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p2_scale_m"));
+             else:
+              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p1_scale_e"));
+              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p2_scale_e"));
+                 
 
              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p1_jes"));
              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p2_jes"));
@@ -3628,9 +3669,9 @@ class doFit_wj_and_wlvj:
             for ipar in params_list:
               print "Name %s",ipar.GetName();
               if TString(ipar.GetName()).Contains("Deco_TTbar_xww_signal_region"):
-               datacard_out.write( "\n%s param %0.3f %0.3f "%( ipar.GetName(), ipar.getVal(), ipar.getError() ) )
+               datacard_out.write( "\n%s param %0.1f %0.1f "%( ipar.GetName(), ipar.getVal(), ipar.getError() ) )
               else:
-               datacard_out.write( "\n%s param %0.3f %0.3f "%( ipar.GetName(), ipar.getVal(), ipar.getError() ) )
+               datacard_out.write( "\n%s param %0.1f %0.1f "%( ipar.GetName(), ipar.getVal(), ipar.getError() ) )
         if mode == "counting":
            datacard_out.write( "\nShape_%s_%s lnN - - %0.3f - - -"%(self.channel, self.wtagger_label, 1+self.rrv_counting_uncertainty_from_shape_uncertainty.getError()))
 
