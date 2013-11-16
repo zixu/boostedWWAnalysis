@@ -190,6 +190,8 @@ class doFit_wj_and_wlvj:
                 self.wtagger_cut=0.5 ; self.wtagger_cut_min=0. ;
             if self.channel=="mu":
                 self.wtagger_cut=0.5 ; self.wtagger_cut_min=0. ;
+            if self.channel=="em":
+                self.wtagger_cut=0.5 ; self.wtagger_cut_min=0. ;
 
         if self.wtagger_label=="LP":
             self.wtagger_cut=0.75 ;
@@ -203,7 +205,7 @@ class doFit_wj_and_wlvj:
         if self.wtagger_label=="HP" and self.channel=="el": self.categoryID=1;
         if self.wtagger_label=="LP" and self.channel=="mu": self.categoryID=2;
         if self.wtagger_label=="HP" and self.channel=="mu": self.categoryID=3;
-
+            
         #medium wtagger_eff reweight between data and mc #Wtagger_forV SF have be add to ntuple weight;
         if self.channel=="mu" and self.wtagger_label=="HP":
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.975);
@@ -229,8 +231,22 @@ class doFit_wj_and_wlvj:
             self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.277);
             self.rrv_wtagger_eff_reweight_forV.setError(0.303);
 
+        if self.channel=="em" and self.wtagger_label=="HP":
+            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.971);
+            self.rrv_wtagger_eff_reweight_forT.setError(0.02*self.rrv_wtagger_eff_reweight_forT.getVal());
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.891);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.0717773);
+
+        if self.channel=="em" and self.wtagger_label=="LP":
+            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 1.34);
+            self.rrv_wtagger_eff_reweight_forT.setError(0.02*self.rrv_wtagger_eff_reweight_forT.getVal());
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.277);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.303);
+
+
         print "wtagger efficiency correction for Top sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forT.getVal(), self.rrv_wtagger_eff_reweight_forT.getError());
         print "wtagger efficiency correction for V sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forV.getVal(), self.rrv_wtagger_eff_reweight_forV.getError());
+
 
         #correct the W-jet mass peak difference between data and MC
         self.mean_shift=1.36; self.sigma_scale=1.102;
@@ -283,12 +299,12 @@ class doFit_wj_and_wlvj:
         self.datadriven_alpha_WJets_counting=-1;
 
         ### uncertainty for datacard
-        self.lumi_uncertainty = 0.026;
+        self.lumi_uncertainty    = 0.026;
         self.XS_STop_uncertainty = 0.30 ;
-        self.XS_VV_uncertainty = 0.25 ;
+        self.XS_VV_uncertainty   = 0.25 ;
         self.XS_TTbar_NLO_uncertainty = 0.063 ;# from AN-12-368 table8
-        self.XS_STop_NLO_uncertainty = 0.05 ;# from AN-12-368 table8
-        self.XS_VV_NLO_uncertainty = 0.10 ;# from AN-12-368 table8
+        self.XS_STop_NLO_uncertainty  = 0.05 ;# from AN-12-368 table8
+        self.XS_VV_NLO_uncertainty    = 0.10 ;# from AN-12-368 table8
 
         #el and mu trigger and eff uncertainty, AN2012_368_v5 12.3
         self.lep_trigger_uncertainty = 0.01;
@@ -301,8 +317,12 @@ class doFit_wj_and_wlvj:
          self.signal_lepton_energy_scale_uncertainty = 0.007 ;
          self.signal_lepton_energy_res_uncertainty   = 0.001 ;
          self.signal_jet_energy_res_uncertainty      = 0.003 ;
-        else:
+        elif self.channel == "el":
          self.signal_lepton_energy_scale_uncertainty = 0.002 ;
+         self.signal_lepton_energy_res_uncertainty   = 0.001 ;
+         self.signal_jet_energy_res_uncertainty      = 0.003 ;
+        elif self.channel == "em":
+         self.signal_lepton_energy_scale_uncertainty = 0.045 ;
          self.signal_lepton_energy_res_uncertainty   = 0.001 ;
          self.signal_jet_energy_res_uncertainty      = 0.003 ;
 
@@ -1289,8 +1309,11 @@ class doFit_wj_and_wlvj:
             if self.channel == "mu" :             
              rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_m","CMS_sig_p1_scale_m",0);
              rrv_mean_scale_p2.setConstant(kTRUE);
-            else:
+            elif self.channel == "el" :
              rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_e","CMS_sig_p1_scale_e",0);
+             rrv_mean_scale_p2.setConstant(kTRUE);
+            elif self.channel == "em":
+             rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_em","CMS_sig_p1_scale_em",0);
              rrv_mean_scale_p2.setConstant(kTRUE);
                 
 
@@ -1304,8 +1327,11 @@ class doFit_wj_and_wlvj:
             if self.channel == "mu":
              rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_m","CMS_sig_p2_scale_m",0);
              rrv_sigma_scale_p1.setConstant(kTRUE);
-            else:
+            elif self.channel == "el":
              rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_e","CMS_sig_p2_scale_e",0);
+             rrv_sigma_scale_p1.setConstant(kTRUE);
+            elif self.channel == "em":
+             rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_em","CMS_sig_p2_scale_em",0);
              rrv_sigma_scale_p1.setConstant(kTRUE);
                          
             rrv_sigma_scale_p2 = RooRealVar("CMS_sig_p2_jer","CMS_sig_p2_jer",0);
@@ -1468,7 +1494,7 @@ class doFit_wj_and_wlvj:
                      rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 161,70,240);
                      rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 8e-3,-1e-2,1.3e-1);
                            
-                if self.channel == "mu" :
+                if self.channel == "mu" or self.channel == "em":
                  if ismc == 1 and label_tstring.Contains("sb_lo"):
                    rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 99,10,255);
                    rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-2,-1e-2,7.5e-2);                        
@@ -3049,9 +3075,13 @@ class doFit_wj_and_wlvj:
         hnum_2region=TH1D("hnum_2region"+label+"_"+self.channel,"hnum_2region"+label+"_"+self.channel,2,-0.5,1.5);# m_lvj 0: signal_region; 1: total
 
         if self.channel=="el":
-            tmp_lumi=19531.85;
-        else: tmp_lumi=19538.85;
-
+            tmp_lumi=19700;
+        elif self.channel == "mu":
+            tmp_lumi=19700;
+        else:
+            tmp_lumi=19700;
+            
+       
         for i in range(treeIn.GetEntries()):
             if i % 100000 == 0: print "iEntry: ",i
             treeIn.GetEntry(i);
@@ -3061,10 +3091,19 @@ class doFit_wj_and_wlvj:
     
             tmp_jet_mass=getattr(treeIn, jet_mass);
 
+            self.isGoodEvent = 0 ;   
             ## event in the whole range
-            if treeIn.categories==self.categoryID and treeIn.mZZ> rrv_mass_lvj.getMin() and treeIn.mZZ<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
+            if self.channel == "mu" or self.channel == "el":
+             if treeIn.categories==self.categoryID and treeIn.mZZ> rrv_mass_lvj.getMin() and treeIn.mZZ<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
+              self.isGoodEvent = 1 ;   
+            elif self.channel == "em" :
+             if (treeIn.categories==1 or treeIn.categories==3) and treeIn.mZZ> rrv_mass_lvj.getMin() and treeIn.mZZ<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and self.wtagger_label == "HP" :
+              self.isGoodEvent = 1 ;   
+             if (treeIn.categories==0 or treeIn.categories==2) and treeIn.mZZ> rrv_mass_lvj.getMin() and treeIn.mZZ<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() and self.wtagger_label == "LP" :
+              self.isGoodEvent = 1 ;   
 
-                ### weigh MC events
+            if self.isGoodEvent == 1:
+                ### weigh MC events              
                 tmp_event_weight     = treeIn.weight*tmp_lumi;
                 tmp_event_weight4fit = treeIn.HLTweight*treeIn.PUweight*treeIn.GenWeight*treeIn.BTagWeight*treeIn.VTagWeight;
                 tmp_event_weight4fit = tmp_event_weight4fit*treeIn.LumiWeight*tmp_lumi/tmp_scale_to_lumi;
@@ -3423,11 +3462,16 @@ class doFit_wj_and_wlvj:
             self.workspace4limit_.var("CMS_sig_p2_scale_m").setError(1);
             params_list.append(self.workspace4limit_.var("CMS_sig_p1_scale_m"));
             params_list.append(self.workspace4limit_.var("CMS_sig_p2_scale_m"));
-           else:
+           elif self.channel == "el":
             self.workspace4limit_.var("CMS_sig_p1_scale_e").setError(1);
             self.workspace4limit_.var("CMS_sig_p2_scale_e").setError(1);
             params_list.append(self.workspace4limit_.var("CMS_sig_p1_scale_e"));
             params_list.append(self.workspace4limit_.var("CMS_sig_p2_scale_e"));
+           elif self.channel == "em":
+            self.workspace4limit_.var("CMS_sig_p1_scale_em").setError(1);
+            self.workspace4limit_.var("CMS_sig_p2_scale_em").setError(1);
+            params_list.append(self.workspace4limit_.var("CMS_sig_p1_scale_em"));
+            params_list.append(self.workspace4limit_.var("CMS_sig_p2_scale_em"));
                
            self.workspace4limit_.var("CMS_sig_p1_jes").setError(1);
            self.workspace4limit_.var("CMS_sig_p2_jes").setError(1);
@@ -3532,9 +3576,12 @@ class doFit_wj_and_wlvj:
              if self.channel == "mu":
               self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p1_scale_m"));
               self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p2_scale_m"));
-             else:
+             elif self.channel == "el":
               self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p1_scale_e"));
               self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p2_scale_e"));
+             elif self.channel == "em":
+              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p1_scale_em"));
+              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p2_scale_em"));
                  
 
              self.FloatingParams.add(self.workspace4limit_.var("CMS_sig_p1_jes"));
@@ -3657,8 +3704,10 @@ class doFit_wj_and_wlvj:
 
         if self.channel == "mu":
             self.channel_short = "m"
-        else:
+        elif self.channel =="el":
             self.channel_short = "e"
+        elif self.channel =="em":
+            self.channel_short = "em"
             
         ### trigger efficiency
         datacard_out.write( "\nCMS_xww_trigger_%s lnN %0.3f - %0.3f %0.3f %0.3f"%(self.channel_short, 1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty ) );
@@ -3881,12 +3930,16 @@ class doFit_wj_and_wlvj:
         banner = TLatex(0.3,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow e #nu "%(self.GetLumi())));
        elif self.channel=="mu":
         banner = TLatex(0.3,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu #nu "%(self.GetLumi())));
+       elif self.channel=="em":
+        banner = TLatex(0.3,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu,e #nu "%(self.GetLumi())));
        banner.SetNDC(); banner.SetTextSize(0.04);
       else:
        if self.channel=="el":
         banner = TLatex(0.22,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow e #nu "%(self.GetLumi())));
        if self.channel=="mu":
         banner = TLatex(0.22,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu #nu "%(self.GetLumi())));
+       if self.channel=="em":
+        banner = TLatex(0.22,0.96,("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W#rightarrow #mu,e #nu "%(self.GetLumi())));
        banner.SetNDC(); banner.SetTextSize(0.033);
                                                                                                          
       return banner;
@@ -4178,8 +4231,9 @@ objName ==objName_before ):
     ##### Get Lumi for banner title
     def GetLumi(self):
 
-        if self.channel=="el": return 19.5;
-        if self.channel=="mu": return 19.5;
+        if self.channel=="el": return 19.7;
+        elif self.channel=="mu": return 19.7;
+        elif self.channel=="em": return 19.7;
 
 
     #### function to run the selection on data to build the datasets 
