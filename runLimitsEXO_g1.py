@@ -46,6 +46,7 @@ parser.add_option('--limitMode', action='store',type="int", dest='limitMode', de
 parser.add_option('--isReReco', action='store',type="int", dest='isReReco', default=0, help='limit Mode; 0: Old signal samples ; 1: New signal Samples')
 parser.add_option('--noSys', action='store',type="int", dest='noSys', help='run limit without systematic')
 parser.add_option('--plotPvalue', action='store',type="int", default=0, dest='plotPvalue', help='plot p value')
+parser.add_option('--signalWidth', action='store',type="int", default=0, dest='signalWidth', help='analysis on non-narrow signals')
 
 
 (options, args) = parser.parse_args()
@@ -55,33 +56,53 @@ parser.add_option('--plotPvalue', action='store',type="int", default=0, dest='pl
 #########################################
 
 ### mass point for signal to be fitted
-#mass = [600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500]
-mass = [800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500]
+#mass      = [600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500]
+mass       = [800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500]
+mass_width = [1000,1500,2100]
 
 ### mass window for couting analysis
 ccmlo = [700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400]
 ccmhi = [900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,3000]
 
+ccmlo_width = [850,1300,1600]
+ccmhi_width = [1150,1700,2800]
+
 ### jet mass range
 mjlo = [ 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40]
 mjhi = [ 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130, 130]
+
+mjlo_width = [40,40,40]
+mjhi_width = [130,130,130]
 
 ### mlvj range min and max used when run with option --makeCards
 mlo = [ 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700,700]
 mhi = [ 3000, 3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000,3000]
 
+mlo_width = [ 700, 700, 700]
+mhi_width = [ 3000, 3000,3000]
+
 ### mlvj range min and max used when run with option --fitSignal
-mlo_sig = [ 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700,  1800, 1800, 1800, 1900, 2000]
+mlo_sig = [ 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1800, 1800, 1900, 2000]
 mhi_sig = [ 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2600, 2700, 2900, 3000]
+
+mlo_sig_width = [ 500, 800, 1000]
+mhi_sig_width = [ 1500, 2200, 3200]
 
 ### shape to be used for bkg when --makeCards
 shapeAlt = ["ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
-shape = ["ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
+shape    = ["ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
 
 ### shape to be used for bkg when --fitSignal
-shape_sig_width  = ["BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB","BWCB"]
+
+shape_sig_width  = ["BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB","BWDoubleCB"]
+
 #shape_sig_narrow = ["CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1","CB_v1"]
+
 shape_sig_narrow = ["DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1","DoubleCB_v1"]
+
+
+### signal mass fraction for non narrow samples
+mass_fraction = [0.05,0.15,0.3]
 
 BRnew  = [00];
 cprime = [10];
@@ -434,14 +455,24 @@ if __name__ == '__main__':
     mLo = 0;
     mHi = nMasses;
 
+    nMasses_width = len(mass_width);
+    mLo_width = 0;
+    mHi_width = nMasses_width;
+
     nCprimes = len(cprime);
     cpLo = 0;
     cpHi = nCprimes;
 
-    if options.massPoint > 0:
+    if options.massPoint > 0 and not options.signalWidth:
         curIndex = mass.index(options.massPoint);
         mLo = curIndex;
         mHi = curIndex+1;
+
+    elif options.massPoint > 0 and options.signalWidth:
+        curIndex = mass_width.index(options.massPoint);
+        mLo_width = curIndex;
+        mHi_width = curIndex+1;
+        
 
     if options.cPrime > 0:
         curIndex = cprime.index(options.cPrime);
@@ -450,7 +481,7 @@ if __name__ == '__main__':
 
     ### Make cards option analysis
     if options.makeCards:
-
+     if options.signalWidth == 0:
         for i in range(mLo,mHi):
             for j in range(cpLo,cpHi):
                 
@@ -467,6 +498,7 @@ if __name__ == '__main__':
                 else : 
                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_c0p2_M%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], os.getcwd(), options.category,options.closuretest);
 
+
                 print command ;
 
                 if options.batchMode :
@@ -476,10 +508,40 @@ if __name__ == '__main__':
                 if not options.batchMode:
                  os.system(command);
 
+     elif options.signalWidth == 1:
+      for k in range(len(mass_fraction)):
+        for i in range(mLo_width,mHi_width):
+            for j in range(cpLo,cpHi):
+                
+                print "###################################################";
+                print "###################################################";
+                print "####### R U N N I N G F I T S   W I D T H #########";
+                print "mass = ",mass_width[i],", cprime = ",cprime[j]," mass_fraction = ",mass_fraction[k];
+                print "##################################################";
+                print "##################################################";
+                
+                time.sleep(0.3);
+                if options.isReReco == 1 :
+                 if int(mass_width[i]*mass_fraction[k]) < 100:
+                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_M%03d_W%02d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d"%(CHAN, mass_width[i], mass_width[i]*mass_fraction[k],ccmlo_width[i], ccmhi_width[i], mjlo_width[i], mjhi_width[i], mlo_width[i], mhi_width[i], shape[i], shapeAlt[i], cprime[j], os.getcwd(), options.category,options.closuretest);
+                 elif int(mass_width[i]*mass_fraction[k]) >= 100 and int(mass_width[i]*mass_fraction[k]) < 1000:
+                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_M%03d_W03%d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d"%(CHAN, mass_width[i], mass_width[i]*mass_fraction[k],ccmlo_width[i], ccmhi_width[i], mjlo_width[i], mjhi_width[i], mlo_width[i], mhi_width[i], shape[i], shapeAlt[i], cprime[j], os.getcwd(), options.category,options.closuretest);
+                 else:
+                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_M%03d_W%04d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d"%(CHAN, mass_width[i], mass_width[i]*mass_fraction[k],ccmlo_width[i], ccmhi_width[i], mjlo_width[i], mjhi_width[i], mlo_width[i], mhi_width[i], shape[i], shapeAlt[i], cprime[j], os.getcwd(), options.category,options.closuretest);
+
+                print command ;
+
+                if options.batchMode :
+                 fn = "fitScript_%s_W%s_%03d_%02d_%02d_%s"%(options.channel,mass_width[i],int(mass_width[i]*mass_fraction[k]),cprime[j],BRnew[0],options.category);
+                 submitBatchJob(command,fn);
+                if not options.batchMode:
+                 os.system(command);
+
+
 
     ### Make signal fit option
     if options.fitSignal:
-
+     if options.signalWidth == 0:
         for i in range(mLo,mHi):
             for j in range(cpLo,cpHi):
                 
@@ -504,6 +566,37 @@ if __name__ == '__main__':
 
                 if not options.batchMode:
                  os.system(command);
+
+
+     elif options.signalWidth == 1:
+      for k in range(len(mass_fraction)):
+        for i in range(mLo_width,mHi_width):
+            for j in range(cpLo,cpHi):
+                
+                print "###################################################";
+                print "###################################################";
+                print "####### R U N N I N G F I T S   W I D T H #########";
+                print "mass = ",mass_width[i],", cprime = ",cprime[j]," mass_fraction = ",mass_fraction[k];
+                print "##################################################";
+                print "##################################################";
+                
+                time.sleep(0.3);
+                if options.isReReco == 1 :
+                 if int(mass_width[i]*mass_fraction[k]) < 100:
+                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_M%03d_W%02d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d --fitSignal 1"%(CHAN, mass_width[i], mass_width[i]*mass_fraction[k],ccmlo_width[i], ccmhi_width[i], mjlo_width[i], mjhi_width[i], mlo_sig_width[i], mhi_sig_width[i], shape_sig_narrow[i], shape_sig_width[i], cprime[j], os.getcwd(), options.category,options.closuretest);
+                 elif int(mass_width[i]*mass_fraction[k]) >= 100 and int(mass_width[i]*mass_fraction[k]) <= 1000:
+                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_M%03d_W%03d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d --fitSignal 1"%(CHAN, mass_width[i], mass_width[i]*mass_fraction[k],ccmlo_width[i], ccmhi_width[i], mjlo_width[i], mjhi_width[i], mlo_sig_width[i], mhi_sig_width[i], shape_sig_narrow[i], shape_sig_width[i], cprime[j], os.getcwd(), options.category,options.closuretest);
+                 else :
+                  command = "python g1_exo_doFit_class.py %s BulkG_WW_inclusive_M%03d_W%04d %02d %02d %02d %02d %02d %02d %s %s -b -m --cprime %01d --BRnew 00 --inPath %s --category %s --closuretest %01d --fitSignal 1"%(CHAN, mass_width[i], mass_width[i]*mass_fraction[k],ccmlo_width[i], ccmhi_width[i], mjlo_width[i], mjhi_width[i], mlo_sig_width[i], mhi_sig_width[i], shape_sig_narrow[i], shape_sig_width[i], cprime[j], os.getcwd(), options.category,options.closuretest);
+
+                print command ;
+
+                if options.batchMode :
+                 fn = "fitScript_%s_W%s_%03d_%02d_%02d_%s"%(options.channel,mass_width[i],int(mass_width[i]*mass_fraction[k]),cprime[j],BRnew[0],options.category);
+                 submitBatchJob(command,fn);
+                if not options.batchMode:
+                 os.system(command);
+
 
                   
     ### Compute Limits
