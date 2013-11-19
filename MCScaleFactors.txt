@@ -30,7 +30,7 @@ BulkG_c0p2_M800   0.000239849 1.0
 BulkG_c0p2_M900   0.000110223 1.0
 BulkG_c0p2_M1000  0.00001048  1.0  
 BulkG_c0p2_M1100  0.000026909 1.0  
-BulkG_c0p2_M1200  0,000003141 1.0
+BulkG_c0p2_M1200  0.000003141 1.0
 BulkG_c0p2_M1300  0.000008092 1.0
 BulkG_c0p2_M1400  0.000004602  1.0
 BulkG_c0p2_M1500  0.000000531 1.0
@@ -46,51 +46,78 @@ BulkG_c0p2_M2400  0.000000039 1.0
 BulkG_c0p2_M2500  0.000000026 1.0
 
 ### SM Diboson background
-WW  0.005483564 #(NLO 54.83 pb xs)
-WZ  0.003320906 #(NLO 33.21 pb xs
-ZZ  0.001801445 #(NLO 17.65 pb xs
+#(NLO 54.83 pb xs)
+WW  0.005483564 
+#(NLO 33.21 pb xs)
+WZ  0.003320906 
+#(NLO 17.65 pb xs)
+ZZ  0.001801445 
 
 ##### Wjets inclusive #######
-WJets_Pythia         0.492871535 #(NNLO 37509 pb xs, LO value from madgraph 30400.0 pb xs  -> k-factor = 1.233)
-WJets_Pythia_matchDn 1.713474935 #(NNLO rescaled value 36607 pb xs)
-WJets_Pythia_matchUp 1.7804836   #(NNLO rescaled value 37347,57 pb xs)
-WJets_Pythia_scaleUp 1.900497108 #(NNLO rescaled value 39456 pb xs)
-WJets_Pythia_scaleDn 1.977704803 #(NNLO rescaled value 41058.9  pb xs)
+#(NNLO 37509 pb xs LO value from madgraph 30400.0 pb xs  -> k-factor = 1.233)
+WJets_Pythia         0.492871535 
+#(NNLO rescaled value 36607 pb xs)
+WJets_Pythia_matchDn 1.713474935 
+#(NNLO rescaled value 37347 pb xs)
+WJets_Pythia_matchUp 1.7804836   
+#(NNLO rescaled value 39456 pb xs)
+WJets_Pythia_scaleUp 1.900497108 
+#(NNLO rescaled value 41058.9  pb xs)
+WJets_Pythia_scaleDn 1.977704803 
 
 ##### WJet Pt100##################
-WJets_Pythia100 0.03046937 #(NNLO rescaled value 272.86 pb xs)
+#(NNLO rescaled value 272.86 pb xs)
+WJets_Pythia100 0.03046937 
 
 #### WJet Pt100##################
-WJets_Pythia180 0.002975061 #(NNLO rescaled value 28.9755 pb xs)
+#(NNLO rescaled value 28.9755 pb xs)
+WJets_Pythia180 0.002975061 
 
 #### WJet Herwig++##################
 WJets_Herwig 0.020583747
 
 #### Exclusive samples WJets ####
-W1Jets_Pythia  0.285265521    #(Take the from the latest production: 6601.5 pb xs)  
-W2Jets_Pythia  0.061985751    #(Take the from the latest production: 2110.3 pb xs)  
-W3Jets_Pythia  0.040773505    #(Take the from the latest production: 633.6 pb xs)  
-W4Jets_Pythia  0.019716497    #(Take the from the latest production: 263.862 pb xs)  
+#(Take the from the latest production: 6601.5 pb xs)
+W1Jets_Pythia  0.285265521      
+#(Take the from the latest production: 2110.3 pb xs)  
+W2Jets_Pythia  0.061985751    
+#(Take the from the latest production: 633.6 pb xs)
+W3Jets_Pythia  0.040773505      
+#(Take the from the latest production: 263.862 pb xs)  
+W4Jets_Pythia  0.019716497   
 
 #### ZJets 
-ZJets 1.15028469111922146e-01  #(3503 pb xs)
+#(3503 pb xs)
+ZJets 1.15028469111922146e-01  
 
 #### Single Top
-sch      1.45791099434145893e-02 #(3.79 pb xs)
-sch_bar  1.25737636989726662e-02 #(1.75 pb xs)
-tWch     2.23044741569511581e-02 #(11.2 pb xs)
-tWch_bar 2.24942244558829496e-02 #(11.2 pb xs)
-tch      1.50070764751570346e-02 #(56.4 pb xs)
-tch_bar  1.58650427477633922e-02 #(30.7 pb xs)
+#(3.79 pb xs)
+sch      1.45791099434145893e-02 
+#(1.75 pb xs)
+sch_bar  1.25737636989726662e-02 
+#(11.2 pb xs)
+tWch     2.23044741569511581e-02 
+#(11.2 pb xs)
+tWch_bar 2.24942244558829496e-02 
+#(56.4 pb xs)
+tch      1.50070764751570346e-02 
+#(30.7 pb xs)
+tch_bar  1.58650427477633922e-02 
 
 #### TTbar Madgraph
-TTbar 0.035500993 #(NNLO xs 245.8 pb)
-TTbar_matchDn 0.043294239  #(NNLO xs 245.8 pb)
-TTbar_matchUp 0.0459585    #(NNLO xs 245.8 pb)
-TTbar_scaleDn 0.045626224  #(NNLO xs 245.8 pb)
-TTbar_scaleUp 0.049109851  #(NNLO xs 245.8 pb)
+#(NNLO xs 245.8 pb)
+TTbar 0.035500993
+#(NNLO xs 245.8 pb)
+TTbar_matchDn 0.043294239  
+#(NNLO xs 245.8 pb)
+TTbar_matchUp 0.0459585    
+#(NNLO xs 245.8 pb)
+TTbar_scaleDn 0.045626224  
+#(NNLO xs 245.8 pb)
+TTbar_scaleUp 0.049109851  
 
 #### TTbar Powheg
-TTbar_Powheg 0.011339746  #(NNLO xs 245.8 pb)
+#(NNLO xs 245.8 pb)
+TTbar_Powheg 0.011339746  
 
 
