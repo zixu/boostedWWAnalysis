@@ -41,8 +41,8 @@ class Samples:
               self.filenames["TTbar_matchDn"]   = self.filepath + "RD_mu_TTbar_matchingdown_CMSSW532.root"
               self.filenames["TTbar_matchUp"]   = self.filepath + "RD_mu_TTbar_matchingup_CMSSW532.root"
               self.filenames["TTbar_Powheg"]    = self.filepath + "RD_mu_TTbar_powheg_CMSSW532.root"
-              self.filenames["TTbar_scaleDn"]   = self.filepath + "RD_mu_TTbar_scaleup_CMSSW532.root"
-              self.filenames["TTbar_scaleUp"]   = self.filepath + "RD_mu_TTbar_scaledown_CMSSW532.root"
+              self.filenames["TTbar_scaleUp"]   = self.filepath + "RD_mu_TTbar_scaleup_CMSSW532.root"
+              self.filenames["TTbar_scaleDn"]   = self.filepath + "RD_mu_TTbar_scaledown_CMSSW532.root"
               self.filenames["WJets_Pythia"] = self.filepath + "RD_mu_WJets_madgraph_CMSSW532.root";
               self.filenames["WJets_Pythia_matchUp"] = self.filepath + "RD_mu_WJets_matchingup_madgraph_CMSSW532.root";
               self.filenames["WJets_Pythia_matchDw"] = self.filepath + "RD_mu_WJets_matchingdown_madgraph_CMSSW532.root";
@@ -50,12 +50,11 @@ class Samples:
               self.filenames["WJets_Pythia_scaleDw"] = self.filepath + "RD_mu_WJets_scaledown_madgraph_CMSSW532.root";
               self.filenames["WJets_Pythia180"] = self.filepath + "RD_mu_WpJPt180_CMSSW532.root"                            
               self.filenames["WJets_Pythia100"] = self.filepath + "RD_mu_WpJPt100_CMSSW532.root";              
+              self.filenames["WJets_Herwig"]    = self.filepath + "RD_mu_WpJPt100_herwig_CMSSW532.root";
               self.filenames["W1Jets_Pythia"]    = self.filepath + "RD_mu_W1Jets_CMSSW532.root";
               self.filenames["W2Jets_Pythia"]    = self.filepath + "RD_mu_W2Jets_CMSSW532.root";
               self.filenames["W3Jets_Pythia"]    = self.filepath + "RD_mu_W3Jets_CMSSW532.root";
               self.filenames["W4Jets_Pythia"]    = self.filepath + "RD_mu_W4Jets_CMSSW532.root";
-              self.filenames["WJets_Pythia"]    = self.filepath + "RD_mu_WpJPt100_CMSSW532.root"
-              self.filenames["WJets_Herwig"]    = self.filepath + "RD_mu_WpJPt100_herwig_CMSSW532.root";
               self.filenames["ZJets"] = self.filepath + "RD_mu_ZpJ_CMSSW532.root"
               self.filenames["WW"]    = self.filepath + "RD_mu_WW_CMSSW532.root"
               self.filenames["WZ"]    = self.filepath + "RD_mu_WZ_CMSSW532.root"
@@ -117,6 +116,7 @@ class Samples:
               self.filenames["WJets_Pythia_scaleDw"] = self.filepath + "RD_el_WJets_scaledown_madgraph_CMSSW532.root";
               self.filenames["WJets_Pythia180"] = self.filepath + "RD_el_WpJPt180_CMSSW532.root"                            
               self.filenames["WJets_Pythia100"] = self.filepath + "RD_el_WpJPt100_CMSSW532.root";              
+              self.filenames["WJets_Herwig"]    = self.filepath + "RD_el_WpJPt100_herwig_CMSSW532.root";
               self.filenames["W1Jets_Pythia"]    = self.filepath + "RD_el_W1Jets_CMSSW532.root";
               self.filenames["W2Jets_Pythia"]    = self.filepath + "RD_el_W2Jets_CMSSW532.root";
               self.filenames["W3Jets_Pythia"]    = self.filepath + "RD_el_W3Jets_CMSSW532.root";
@@ -172,11 +172,14 @@ class Samples:
           
           multiplicitylabel = 1.0
           scalefactor = 1.0
+          samplename =""; 
           SFfile = open(txtfile)
 
           for sfline in SFfile:
               if sfline.find("#")!=-1: continue
               if(sfline.find(keyname) != -1):
+                 samplename = string(sfline.split()[0])
+                 if(samplename !=keyname): continue;
                  scalefactor = float(sfline.split()[1])
                  if len(sfline.split()) > 2:
                     multiplicitylabel = float(sfline.split()[2])
