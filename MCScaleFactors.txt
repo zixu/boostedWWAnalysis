@@ -53,6 +53,19 @@ WZ  0.003320906 1.0
 #(NLO 17.65 pb xs)
 ZZ  0.001801445 1.0
 
+##### Wjets inclusive #######
+#(NNLO 37509 pb xs LO value from madgraph 30400.0 pb xs  -> k-factor = 1.233)
+WJets_Pythia         0.492871535 1.0
+#(NNLO rescaled value 36607 pb xs)
+WJets_Pythia_matchDn 1.713474935 1.0
+#(NNLO rescaled value 37347 pb xs)
+WJets_Pythia_matchUp 1.7804836  1.0 
+#(NNLO rescaled value 39456 pb xs)
+WJets_Pythia_scaleUp 1.900497108 1.0
+#(NNLO rescaled value 41058.9  pb xs)
+WJets_Pythia_scaleDn 1.977704803 1.0
+
+
 ##### WJet Pt100##################
 #(NNLO rescaled value 272.86 pb xs)
 WJets_Pythia100 0.03046937 1.0
@@ -103,14 +116,3 @@ TTbar_scaleUp 0.049109851  1.0
 TTbar_Powheg 0.011339746  1.0
 
 
-##### Wjets inclusive #######
-#(NNLO 37509 pb xs LO value from madgraph 30400.0 pb xs  -> k-factor = 1.233)
-WJets_Pythia         0.492871535 1.0
-#(NNLO rescaled value 36607 pb xs)
-WJets_Pythia_matchDn 1.713474935 1.0
-#(NNLO rescaled value 37347 pb xs)
-WJets_Pythia_matchUp 1.7804836  1.0 
-#(NNLO rescaled value 39456 pb xs)
-WJets_Pythia_scaleUp 1.900497108 1.0
-#(NNLO rescaled value 41058.9  pb xs)
-WJets_Pythia_scaleDn 1.977704803 1.0
